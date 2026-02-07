@@ -31,29 +31,54 @@ Interactive cybersecurity demo showcasing a Microsoft 365 security architecture 
 | Logic Apps | Orchestration & automation |
 | ONESEC SOC | 24/7 Security Operations Center |
 
-## Quick Start
+## Instalacion en Windows (Sin instalar nada)
 
-```bash
-# Option 1: Python
-python3 -m http.server 8080
+### Opcion 1: Doble clic (Recomendado)
+1. Descarga o clona este repositorio
+2. Haz doble clic en **`start.bat`**
+3. Se abre automaticamente en tu navegador
+4. Listo!
 
-# Option 2: Node.js
-npx serve .
-
-# Option 3: PHP
-php -S localhost:8080
+### Opcion 2: Linea de comandos
+```cmd
+cd ONESEC-LAB-SENTINEL
+start.bat
 ```
 
-Then open: [http://localhost:8080](http://localhost:8080)
+> El script detecta automaticamente si tienes Python instalado. Si no, usa PowerShell (incluido en Windows 10/11).
+
+## Instalacion en Mac / Linux
+
+```bash
+cd ONESEC-LAB-SENTINEL
+python3 -m http.server 8080
+```
+
+Luego abre: http://localhost:8080/index.html
+
+## Quick Start (Otras opciones)
+
+```bash
+# Python
+python3 -m http.server 8080
+
+# Node.js
+npx serve .
+
+# PHP
+php -S localhost:8080
+```
 
 ## Project Structure
 
 ```
-ONESEC-LAB/
+ONESEC-LAB-SENTINEL/
 ├── index.html          # Landing page with 3D cyber threat map
 ├── lab.html            # Security architecture lab (main demo)
 ├── admin.html          # Admin configuration panel
 ├── ai_core.js          # AI personality module
+├── start.bat           # Windows launcher (doble clic para iniciar)
+├── server.ps1          # PowerShell HTTP server (portable)
 ├── cybermap/           # 3D globe threat visualization
 │   ├── index.html
 │   ├── assets/
@@ -66,18 +91,17 @@ ONESEC-LAB/
 └── README.md
 ```
 
-## Deployment
+## Deployment (Produccion)
 
 ### Netlify (Recommended - Free)
 1. Go to [app.netlify.com](https://app.netlify.com)
-2. Drag & drop the `ONESEC-LAB` folder
+2. Drag & drop the project folder
 3. Done! Get your URL instantly
 
 ### GitHub Pages
-1. Push this repo to GitHub
-2. Go to Settings > Pages
-3. Select branch `main`, folder `/ (root)`
-4. Your site will be live at `https://username.github.io/ONESEC-LAB`
+1. Go to Settings > Pages
+2. Select branch `main`, folder `/ (root)`
+3. Your site will be live at `https://dolewys.github.io/ONESEC-LAB-SENTINEL`
 
 ### Vercel
 ```bash
@@ -86,6 +110,8 @@ npx vercel
 
 ## Requirements
 
+- **Windows 10/11** - Solo haz doble clic en `start.bat` (no necesitas instalar nada)
+- **Mac/Linux** - Python 3 o cualquier servidor HTTP
 - Modern browser (Chrome/Edge recommended for voice features)
 - HTTPS required for Speech Recognition in production
 - No backend needed - 100% static site
