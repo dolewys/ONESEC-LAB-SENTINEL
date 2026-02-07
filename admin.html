@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ONESEC - Configuración IA</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #0a1f1a;
+            --bg-secondary: #0d2b22;
+            --onesec-green: #61ba7c;
+            --onesec-dark: #0a1f1a;
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.8);
+            --text-muted: rgba(255, 255, 255, 0.5);
+            --cyan: #00e5ff;
+            --purple: #8661c5;
+            --success: #27ae60;
+            --warning: #f39c12;
+            --attack: #e74c3c;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(ellipse at top, rgba(0, 229, 255, 0.1) 0%, var(--bg-primary) 50%);
+        }
+
+        .admin-container {
+            width: 90%;
+            max-width: 600px;
+            padding: 40px;
+        }
+
+        .admin-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .admin-logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+
+        .admin-logo-icon {
+            font-size: 2.5rem;
+            color: var(--onesec-green);
+            font-weight: 700;
+        }
+
+        .admin-logo-text {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 4px;
+        }
+
+        .admin-subtitle {
+            color: var(--text-muted);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .admin-card {
+            background: linear-gradient(145deg, rgba(20, 60, 50, 0.9) 0%, rgba(10, 35, 28, 0.95) 100%);
+            border-radius: 20px;
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .admin-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.6), transparent);
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .card-title span {
+            font-size: 1.5rem;
+        }
+
+        .provider-selector {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .provider-btn {
+            padding: 20px 15px;
+            border-radius: 12px;
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            background: rgba(0, 0, 0, 0.2);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .provider-btn:hover {
+            border-color: rgba(0, 229, 255, 0.4);
+            background: rgba(0, 229, 255, 0.1);
+        }
+
+        .provider-btn.active {
+            border-color: var(--onesec-green);
+            background: rgba(97, 186, 124, 0.15);
+        }
+
+        .provider-btn.active .provider-icon {
+            transform: scale(1.1);
+        }
+
+        .provider-icon {
+            font-size: 2rem;
+            margin-bottom: 8px;
+            transition: transform 0.3s ease;
+        }
+
+        .provider-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .provider-desc {
+            font-size: 0.65rem;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 14px 18px;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            background: rgba(0, 0, 0, 0.3);
+            color: white;
+            font-size: 0.95rem;
+            font-family: 'JetBrains Mono', monospace;
+            transition: all 0.3s ease;
+        }
+
+        .input-field:focus {
+            outline: none;
+            border-color: var(--onesec-green);
+            box-shadow: 0 0 25px rgba(0, 229, 255, 0.2);
+        }
+
+        .input-field::placeholder {
+            color: var(--text-muted);
+        }
+
+        .btn-primary {
+            width: 100%;
+            padding: 16px 24px;
+            border-radius: 12px;
+            border: none;
+            background: linear-gradient(135deg, var(--onesec-green) 0%, #00b8d4 100%);
+            color: var(--onesec-dark);
+            font-size: 0.95rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0, 229, 255, 0.4);
+        }
+
+        .btn-secondary {
+            width: 100%;
+            padding: 14px 24px;
+            border-radius: 12px;
+            border: 1px solid var(--onesec-green);
+            background: transparent;
+            color: var(--onesec-green);
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: block;
+            text-align: center;
+        }
+
+        .btn-secondary:hover {
+            background: rgba(0, 229, 255, 0.1);
+        }
+
+        .btn-danger {
+            width: 100%;
+            padding: 12px 24px;
+            border-radius: 12px;
+            border: 1px solid var(--attack);
+            background: transparent;
+            color: var(--attack);
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+
+        .btn-danger:hover {
+            background: rgba(231, 76, 60, 0.15);
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .status-badge.success {
+            background: rgba(39, 174, 96, 0.2);
+            border: 1px solid rgba(39, 174, 96, 0.4);
+            color: var(--success);
+        }
+
+        .status-badge.warning {
+            background: rgba(243, 156, 18, 0.2);
+            border: 1px solid rgba(243, 156, 18, 0.4);
+            color: var(--warning);
+        }
+
+        .status-badge.error {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid rgba(231, 76, 60, 0.4);
+            color: var(--attack);
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.5;
+            }
+        }
+
+        .info-text {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-align: center;
+            margin-top: 20px;
+            line-height: 1.6;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 0.85rem;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert.success {
+            background: rgba(39, 174, 96, 0.2);
+            border: 1px solid rgba(39, 174, 96, 0.4);
+            color: var(--success);
+        }
+
+        .alert.error {
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid rgba(231, 76, 60, 0.4);
+            color: var(--attack);
+        }
+
+        .current-config {
+            padding: 15px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .current-config-title {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+        }
+
+        .current-config-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.9rem;
+            color: var(--onesec-green);
+        }
+
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.3), transparent);
+            margin: 25px 0;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="admin-container">
+        <div class="admin-header">
+            <div class="admin-logo">
+                <span class="admin-logo-icon">Ω</span>
+                <span class="admin-logo-text">ONESEC</span>
+            </div>
+            <div class="admin-subtitle">Configuración IA</div>
+        </div>
+
+        <div class="admin-card">
+            <div class="card-title">
+                <span>🔧</span>
+                Proveedor de IA
+            </div>
+
+            <!-- Status actual -->
+            <div id="currentStatus"></div>
+
+            <!-- Configuración actual -->
+            <div class="current-config" id="currentConfig" style="display: none;">
+                <div class="current-config-title">Configuración Actual</div>
+                <div class="current-config-value" id="configValue"></div>
+            </div>
+
+            <!-- Selector de proveedor -->
+            <div class="provider-selector">
+                <button class="provider-btn" data-provider="openai" onclick="selectProvider('openai')">
+                    <div class="provider-icon">🤖</div>
+                    <div class="provider-name">OpenAI</div>
+                    <div class="provider-desc">GPT-4o / Mini</div>
+                </button>
+                <button class="provider-btn" data-provider="anthropic" onclick="selectProvider('anthropic')">
+                    <div class="provider-icon">🧠</div>
+                    <div class="provider-name">Claude</div>
+                    <div class="provider-desc">Anthropic</div>
+                </button>
+                <button class="provider-btn" data-provider="google" onclick="selectProvider('google')">
+                    <div class="provider-icon">✨</div>
+                    <div class="provider-name">Gemini</div>
+                    <div class="provider-desc">Google AI</div>
+                </button>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="card-title">
+                <span>🤝</span>
+                Datos de la Sesión
+            </div>
+
+            <div class="input-group">
+                <label>Nombre del Cliente (Para la Demo)</label>
+                <input type="text" class="input-field" id="clientName" placeholder="Ej: Juan Pérez">
+            </div>
+
+            <div class="input-group">
+                <label>Empresa</label>
+                <input type="text" class="input-field" id="companyName" placeholder="Ej: TechCorp">
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="input-group">
+                <label id="apiKeyLabel">API Key (LLM)</label>
+                <input type="password" class="input-field" id="apiKeyInput"
+                    placeholder="Ingresa tu API Key para la IA (OpenAI, etc)...">
+            </div>
+
+            <div class="input-group">
+                <label>API Key de Voz (Opcional - Google Cloud/Gemini TTS)</label>
+                <input type="password" class="input-field" id="geminiKeyInput"
+                    placeholder="Ingresa API Key para Voz Premium...">
+            </div>
+
+            <div class="alert" id="alertBox"></div>
+
+            <button class="btn-primary" onclick="saveConfig()">
+                💾 Guardar Configuración
+            </button>
+
+            <button class="btn-danger" onclick="clearConfig()" id="btnClear" style="display: none;">
+                🗑️ Eliminar Configuración
+            </button>
+        </div>
+
+        <a href="index.html" class="btn-secondary">
+            ← Volver al Demo
+        </a>
+
+        <p class="info-text">
+            Esta configuración se guarda localmente en tu navegador.<br>
+            El demo usará la IA configurada automáticamente.
+        </p>
+    </div>
+
+    <script>
+        let selectedProvider = 'openai';
+
+        const providerConfig = {
+            openai: {
+                name: 'OpenAI',
+                keyPrefix: 'sk-',
+                placeholder: 'sk-...',
+                label: 'OpenAI API Key'
+            },
+            anthropic: {
+                name: 'Anthropic (Claude)',
+                keyPrefix: 'sk-ant-',
+                placeholder: 'sk-ant-...',
+                label: 'Anthropic API Key'
+            },
+            google: {
+                name: 'Google (Gemini)',
+                keyPrefix: 'AI',
+                placeholder: 'AIza...',
+                label: 'Google AI API Key'
+            }
+        };
+
+        function selectProvider(provider) {
+            selectedProvider = provider;
+
+            // Actualizar UI
+            document.querySelectorAll('.provider-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelector(`[data-provider="${provider}"]`).classList.add('active');
+
+            // Actualizar placeholder e label
+            const config = providerConfig[provider];
+            document.getElementById('apiKeyInput').placeholder = config.placeholder;
+            document.getElementById('apiKeyLabel').textContent = config.label;
+        }
+
+        function saveConfig() {
+            const apiKey = document.getElementById('apiKeyInput').value.trim();
+            const geminiKey = document.getElementById('geminiKeyInput').value.trim();
+            const clientName = document.getElementById('clientName').value.trim();
+            const companyName = document.getElementById('companyName').value.trim();
+            const alertBox = document.getElementById('alertBox');
+
+            if (!apiKey) {
+                showAlert('error', '⚠️ Por favor ingresa tu API Key (LLM)');
+                return;
+            }
+
+            const config = providerConfig[selectedProvider];
+
+            // Validar formato básico
+            if (selectedProvider === 'openai' && !apiKey.startsWith('sk-')) {
+                showAlert('error', '🚨 La API Key de OpenAI debe comenzar con "sk-"');
+                return;
+            }
+
+            if (selectedProvider === 'anthropic' && !apiKey.startsWith('sk-ant-')) {
+                showAlert('error', '🚨 La API Key de Anthropic debe comenzar con "sk-ant-"');
+                return;
+            }
+
+            // Guardar en localStorage
+            const configData = {
+                provider: selectedProvider,
+                providerName: config.name,
+                apiKey: apiKey,
+                geminiKey: geminiKey, // Guardar Key de Voz
+                clientName: clientName,
+                companyName: companyName,
+                configuredAt: new Date().toISOString()
+            };
+
+            localStorage.setItem('onesec_ia_config', JSON.stringify(configData));
+
+            showAlert('success', '✅ Configuración guardada correctamente');
+
+            // Actualizar vista
+            setTimeout(() => {
+                loadCurrentConfig();
+            }, 1000);
+        }
+
+        function clearConfig() {
+            if (confirm('¿Estás seguro de que deseas eliminar la configuración de IA?')) {
+                localStorage.removeItem('onesec_ia_config');
+                localStorage.removeItem('onesec_openai_key'); // Legacy
+                showAlert('success', '🗑️ Configuración eliminada');
+                setTimeout(() => {
+                    loadCurrentConfig();
+                }, 1000);
+            }
+        }
+
+        function showAlert(type, message) {
+            const alertBox = document.getElementById('alertBox');
+            alertBox.className = `alert ${type} show`;
+            alertBox.textContent = message;
+
+            setTimeout(() => {
+                alertBox.classList.remove('show');
+            }, 3000);
+        }
+
+        function loadCurrentConfig() {
+            const configData = localStorage.getItem('onesec_ia_config');
+            const legacyKey = localStorage.getItem('onesec_openai_key');
+
+            const statusDiv = document.getElementById('currentStatus');
+            const configDiv = document.getElementById('currentConfig');
+            const configValue = document.getElementById('configValue');
+            const btnClear = document.getElementById('btnClear');
+
+            if (configData) {
+                const config = JSON.parse(configData);
+
+                statusDiv.innerHTML = `
+                    <div class="status-badge success">
+                        <div class="status-dot"></div>
+                        IA Configurada - ${config.providerName}
+                    </div>
+                `;
+
+                configDiv.style.display = 'block';
+                configValue.textContent = `${config.providerName} (${config.apiKey.substring(0, 8)}...${config.apiKey.slice(-4)})`;
+                if (config.geminiKey) configValue.innerHTML += `<br>🔊 Voice Key: Configurada`;
+
+                if (config.clientName) configValue.innerHTML += `<br><span style="font-size:0.8em;color:#fff;opacity:0.7">Cliente: ${config.clientName} | Empresa: ${config.companyName}</span>`;
+                btnClear.style.display = 'block';
+
+                // Seleccionar el proveedor actual
+                selectProvider(config.provider);
+
+                // Rellenar campos
+                document.getElementById('apiKeyInput').value = config.apiKey;
+                if (config.geminiKey) document.getElementById('geminiKeyInput').value = config.geminiKey;
+                if (config.clientName) document.getElementById('clientName').value = config.clientName;
+                if (config.companyName) document.getElementById('companyName').value = config.companyName;
+
+            } else if (legacyKey) {
+                // Migrar configuración legacy
+                const newConfig = {
+                    provider: 'openai',
+                    providerName: 'OpenAI',
+                    apiKey: legacyKey,
+                    configuredAt: new Date().toISOString()
+                };
+                localStorage.setItem('onesec_ia_config', JSON.stringify(newConfig));
+                loadCurrentConfig();
+
+            } else {
+                statusDiv.innerHTML = `
+                    <div class="status-badge warning">
+                        <div class="status-dot"></div>
+                        Sin configurar
+                    </div>
+                `;
+                configDiv.style.display = 'none';
+                btnClear.style.display = 'none';
+            }
+        }
+
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', () => {
+            selectProvider('openai');
+            loadCurrentConfig();
+        });
+    </script>
+</body>
+
+</html>

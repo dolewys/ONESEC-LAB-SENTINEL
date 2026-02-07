@@ -1,0 +1,5176 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ONESEC - Laboratorio Interactivo</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --onesec-green: #00e5ff;
+            --onesec-dark: #0b2b22;
+            --onesec-light: #e5e3e3;
+            --ms-blue: #0078d4;
+            --sentinel: #8661c5;
+            --defender: #ff8c00;
+            --copilot: #6264a7;
+            --attack: #e74c3c;
+            --warning: #f39c12;
+            --success: #27ae60;
+            --bg-primary: #0b2b22;
+            --bg-secondary: #0d332a;
+            --bg-panel: rgba(13, 51, 42, 0.95);
+            --text-primary: #e5e3e3;
+            --text-secondary: #a8c4b8;
+            --text-muted: #6b8f7d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* Premium Animations from cyber-dashboard-mini */
+        @keyframes flow-h {
+            0% {
+                transform: translateX(-100%);
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                box-shadow: 0 0 0 0 rgba(0, 229, 255, 0.7);
+            }
+
+            70% {
+                box-shadow: 0 0 0 12px rgba(0, 229, 255, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(0, 229, 255, 0);
+            }
+        }
+
+        @keyframes glitch {
+            0% {
+                transform: translate(0);
+                filter: hue-rotate(0deg);
+            }
+
+            20% {
+                transform: translate(-2px, 2px);
+                filter: hue-rotate(90deg);
+            }
+
+            40% {
+                transform: translate(-2px, -2px);
+                filter: hue-rotate(180deg);
+            }
+
+            60% {
+                transform: translate(2px, 2px);
+                filter: hue-rotate(270deg);
+            }
+
+            80% {
+                transform: translate(2px, -2px);
+                filter: hue-rotate(360deg);
+            }
+
+            100% {
+                transform: translate(0);
+                filter: hue-rotate(0deg);
+            }
+        }
+
+        @keyframes scan-v {
+            0% {
+                top: 0%;
+                opacity: 0;
+            }
+
+            50% {
+                opacity: 1;
+            }
+
+            100% {
+                top: 100%;
+                opacity: 0;
+            }
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            10%,
+            30%,
+            50%,
+            70%,
+            90% {
+                transform: translateX(-3px);
+            }
+
+            20%,
+            40%,
+            60%,
+            80% {
+                transform: translateX(3px);
+            }
+        }
+
+        @keyframes bounce-sm {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-6px);
+            }
+        }
+
+        @keyframes heartbeat {
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            15% {
+                transform: scale(1.15);
+            }
+
+            30% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes forcefield {
+            0% {
+                box-shadow: 0 0 0 0 rgba(249, 115, 22, 0.7);
+            }
+
+            50% {
+                box-shadow: 0 0 20px 10px rgba(249, 115, 22, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(249, 115, 22, 0);
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes spin-slow {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes glow {
+
+            0%,
+            100% {
+                opacity: 0.5;
+            }
+
+            50% {
+                opacity: 1;
+            }
+        }
+
+        /* Glassmorphism effect */
+        .glass-effect {
+            background: rgba(13, 51, 42, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(0, 229, 255, 0.1);
+        }
+
+        .animate-spin-slow {
+            animation: spin-slow 3s linear infinite;
+        }
+
+        .animate-glitch {
+            animation: glitch 0.3s infinite;
+        }
+
+        .animate-shake {
+            animation: shake 0.5s infinite;
+        }
+
+        .animate-bounce-sm {
+            animation: bounce-sm 1s infinite;
+        }
+
+        .animate-forcefield {
+            animation: forcefield 1s infinite;
+        }
+
+        .animate-heartbeat {
+            animation: heartbeat 2s infinite;
+        }
+
+        .animate-pulse-ring {
+            animation: pulse-ring 3s infinite;
+        }
+
+        .animate-scan-v {
+            animation: scan-v 1.5s linear infinite;
+        }
+
+        .animate-slideInUp {
+            animation: slideInUp 0.3s ease-out;
+        }
+
+        .animate-glow {
+            animation: glow 3s ease-in-out infinite;
+        }
+
+        .animate-flow-h {
+            animation: flow-h 1.5s ease-in-out infinite;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            overflow: hidden;
+            /* Premium gradient background */
+            background: radial-gradient(ellipse at top, rgba(0, 229, 255, 0.1) 0%, var(--bg-primary) 50%);
+        }
+
+        /* Header */
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 6px 12px;
+            background: var(--bg-primary);
+            border-bottom: 2px solid var(--onesec-green);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .logo-icon {
+            font-size: 1.5rem;
+            color: var(--onesec-green);
+            font-weight: 700;
+        }
+
+        .logo-text {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            letter-spacing: 3px;
+        }
+
+        .tagline {
+            font-size: 0.45rem;
+            color: var(--onesec-green);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .scenarios {
+            display: flex;
+            gap: 10px;
+            flex: 1;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .sc-btn {
+            padding: 8px 16px;
+            border-radius: 10px;
+            background: linear-gradient(145deg, rgba(20, 60, 50, 0.8) 0%, rgba(10, 35, 28, 0.9) 100%);
+            border: 1px solid rgba(0, 229, 255, 0.25);
+            cursor: pointer;
+            font-size: 0.6rem;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.8);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .sc-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .sc-btn:hover::before {
+            left: 100%;
+        }
+
+        .sc-btn:hover {
+            border-color: var(--onesec-green);
+            color: var(--onesec-green);
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.3);
+            transform: translateY(-2px);
+        }
+
+        #clientInput {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--onesec-green);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 1rem;
+            width: 250px;
+            text-align: center;
+            font-family: inherit;
+            margin-bottom: 10px;
+        }
+
+        /* Hacker Terminal */
+        .hacker-term {
+            position: fixed;
+            top: 100px;
+            left: 20px;
+            width: 300px;
+            height: 200px;
+            background: rgba(10, 10, 10, 0.95);
+            border: 1px solid #333;
+            border-top: 2px solid var(--attack);
+            border-radius: 5px;
+            padding: 10px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.45rem;
+            color: #00ff00;
+            z-index: 110;
+            display: none;
+            flex-direction: column;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+        }
+
+        .term-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 3px;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        .term-body {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .cmd-line {
+            opacity: 0;
+            animation: typeLine 0.1s forwards;
+        }
+
+        .cmd-line.err {
+            color: var(--attack);
+        }
+
+        @keyframes typeLine {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .sc-btn.active {
+            background: var(--onesec-green);
+            color: var(--onesec-dark);
+            border-color: var(--onesec-green);
+        }
+
+        .sc-btn.attack:hover {
+            border-color: var(--attack);
+            color: var(--attack);
+        }
+
+        .sc-btn.attack.active {
+            background: var(--attack);
+            border-color: var(--attack);
+            color: white;
+        }
+
+        .controls {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .ctrl-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            background: linear-gradient(145deg, rgba(20, 60, 50, 0.8) 0%, rgba(10, 35, 28, 0.9) 100%);
+            color: var(--onesec-green);
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .ctrl-btn:hover {
+            border-color: var(--onesec-green);
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .ctrl-btn.pro-btn {
+            width: auto;
+            padding: 8px 16px;
+            font-size: 0.65rem;
+            font-weight: 700;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, rgba(0, 229, 255, 0.2) 0%, rgba(134, 97, 197, 0.2) 100%);
+            border: 1px solid rgba(0, 229, 255, 0.5);
+            animation: proGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes proGlow {
+
+            0%,
+            100% {
+                box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
+            }
+
+            50% {
+                box-shadow: 0 0 25px rgba(0, 229, 255, 0.5), 0 0 40px rgba(134, 97, 197, 0.3);
+            }
+        }
+
+        .ctrl-btn.pro-btn:hover {
+            background: linear-gradient(135deg, rgba(0, 229, 255, 0.35) 0%, rgba(134, 97, 197, 0.35) 100%);
+            transform: scale(1.05);
+        }
+
+        .ctrl-btn.admin-btn {
+            width: auto;
+            height: 32px;
+            padding: 0 12px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            opacity: 0.7;
+            text-decoration: none;
+            border-color: rgba(243, 156, 18, 0.4);
+            background: rgba(243, 156, 18, 0.1);
+            color: rgba(243, 156, 18, 0.9);
+        }
+
+        .ctrl-btn.admin-btn:hover {
+            opacity: 1;
+            border-color: rgba(243, 156, 18, 0.7);
+            background: rgba(243, 156, 18, 0.2);
+            color: #f39c12;
+        }
+
+        .ctrl-group {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            background: rgba(97, 186, 124, 0.1);
+            border-radius: 5px;
+            border: 1px solid rgba(97, 186, 124, 0.2);
+        }
+
+        .ctrl-group label {
+            font-size: 0.4rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .ctrl-group input[type="range"] {
+            width: 50px;
+            accent-color: var(--onesec-green);
+        }
+
+        .ctrl-group select {
+            padding: 3px 6px;
+            border-radius: 3px;
+            background: var(--bg-primary);
+            border: 1px solid var(--onesec-green);
+            color: var(--text-primary);
+            font-size: 0.5rem;
+        }
+
+        .btn {
+            padding: 6px 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 0.55rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--onesec-green);
+            color: var(--onesec-dark);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 1px solid var(--onesec-green);
+            color: var(--onesec-green);
+        }
+
+        .btn-pause {
+            background: var(--warning);
+            color: var(--onesec-dark);
+        }
+
+        .btn-pause.paused {
+            background: var(--success);
+            color: white;
+        }
+
+        /* LAB VIEW - INTERACTIVO */
+        .lab-view {
+            position: fixed;
+            top: 46px;
+            left: 0;
+            right: 0;
+            bottom: 85px;
+            overflow: hidden;
+            background:
+                radial-gradient(ellipse at 20% 20%, rgba(97, 186, 124, 0.08) 0%, transparent 40%),
+                radial-gradient(ellipse at 80% 80%, rgba(134, 97, 197, 0.06) 0%, transparent 40%),
+                radial-gradient(ellipse at 50% 50%, rgba(0, 120, 212, 0.04) 0%, transparent 60%),
+                linear-gradient(135deg, #0b2b22 0%, #0d332a 50%, #0b2418 100%);
+            cursor: grab;
+            animation: bgShift 15s ease infinite;
+        }
+
+        @keyframes bgShift {
+
+            0%,
+            100% {
+                filter: hue-rotate(0deg) brightness(1);
+            }
+
+            50% {
+                filter: hue-rotate(5deg) brightness(1.05);
+            }
+        }
+
+        .lab-view:active {
+            cursor: grabbing;
+        }
+
+        .lab-view::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(97, 186, 124, 0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(97, 186, 124, 0.015) 1px, transparent 1px);
+            background-size: 35px 35px;
+            pointer-events: none;
+        }
+
+        /* CANVAS GRANDE para navegación libre */
+        .lab {
+            width: 1400px;
+            height: 500px;
+            position: absolute;
+            transform-origin: 0 0;
+            transition: transform 0.5s ease;
+        }
+
+        .lab.dragging {
+            transition: none;
+        }
+
+        .lab.animating {
+            transition: transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        /* Zoom controls - PREMIUM */
+        .zoom-indicator {
+            display: flex;
+            position: fixed;
+            bottom: 100px;
+            right: 20px;
+            z-index: 95;
+            background: linear-gradient(145deg, rgba(20, 60, 50, 0.9) 0%, rgba(10, 35, 28, 0.95) 100%);
+            padding: 8px 12px;
+            border-radius: 12px;
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            font-size: 0.55rem;
+            align-items: center;
+            gap: 10px;
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+        }
+
+        .zoom-indicator button {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 229, 255, 0.4);
+            background: linear-gradient(145deg, rgba(0, 229, 255, 0.1) 0%, rgba(0, 229, 255, 0.05) 100%);
+            color: var(--onesec-green);
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .zoom-indicator button:hover {
+            background: rgba(0, 229, 255, 0.25);
+            border-color: var(--onesec-green);
+            box-shadow: 0 0 15px rgba(0, 229, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .zoom-indicator button:active {
+            transform: scale(0.95);
+        }
+
+        .zoom-indicator span {
+            min-width: 50px;
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--onesec-green);
+            font-weight: 600;
+        }
+
+        /* Navigation hint */
+        .nav-hint {
+            display: none;
+            /* Oculto por solicitud del usuario */
+            position: fixed;
+            bottom: 92px;
+            left: 12px;
+            z-index: 95;
+            background: var(--bg-panel);
+            padding: 8px 12px;
+            border-radius: 6px;
+            border: 1px solid rgba(97, 186, 124, 0.3);
+            font-size: 0.45rem;
+            color: var(--text-muted);
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .nav-hint .hint-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .nav-hint .hint-icon {
+            font-size: 0.7rem;
+        }
+
+        /* Minimap */
+        .minimap {
+            display: none;
+            /* Oculto por solicitud del usuario */
+            position: fixed;
+            top: 52px;
+            right: 12px;
+            z-index: 95;
+            width: 180px;
+            height: 70px;
+            background: var(--bg-panel);
+            border-radius: 8px;
+            border: 1px solid var(--onesec-green);
+            padding: 6px;
+            overflow: hidden;
+        }
+
+        .minimap-content {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 4px;
+        }
+
+        .minimap-viewport {
+            position: absolute;
+            border: 2px solid var(--onesec-green);
+            background: rgba(97, 186, 124, 0.15);
+            border-radius: 2px;
+            transition: all 0.1s;
+        }
+
+        .minimap-dot {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .minimap-dot:hover {
+            transform: scale(1.4);
+            background: var(--onesec-green);
+        }
+
+        .minimap-dot.active {
+            background: var(--onesec-green);
+            box-shadow: 0 0 8px var(--onesec-green);
+        }
+
+        /* Zones */
+        .zone {
+            position: absolute;
+            border: 1px solid rgba(97, 186, 124, 0.12);
+            border-radius: 12px;
+            background: rgba(97, 186, 124, 0.015);
+            transition: all 0.4s;
+        }
+
+        .zone.active {
+            border-color: var(--onesec-green);
+            background: rgba(97, 186, 124, 0.06);
+            box-shadow: 0 0 30px rgba(97, 186, 124, 0.1);
+        }
+
+        .zone-lbl {
+            position: absolute;
+            top: -10px;
+            left: 12px;
+            background: var(--bg-primary);
+            padding: 2px 10px;
+            font-size: 0.5rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .zone.active .zone-lbl {
+            color: var(--onesec-green);
+        }
+
+        /* Nodes - PREMIUM DESIGN */
+        .node {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+        }
+
+        .node:hover {
+            transform: scale(1.15) translateY(-5px);
+        }
+
+        .node:hover .node-ico {
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.5),
+                0 0 30px var(--glow-color, rgba(0, 229, 255, 0.5));
+        }
+
+        .node:hover .node-ico::before {
+            opacity: 1;
+        }
+
+        .node.hl {
+            animation: nodeHL 1.5s ease infinite;
+        }
+
+        @keyframes nodeHL {
+
+            0%,
+            100% {
+                filter: drop-shadow(0 0 10px var(--onesec-green));
+            }
+
+            50% {
+                filter: drop-shadow(0 0 25px var(--onesec-green));
+            }
+        }
+
+        .node.atk-hl {
+            animation: nodeAtkHL 0.5s ease infinite;
+        }
+
+        @keyframes nodeAtkHL {
+
+            0%,
+            100% {
+                filter: drop-shadow(0 0 10px var(--attack));
+            }
+
+            50% {
+                filter: drop-shadow(0 0 30px var(--attack));
+            }
+        }
+
+        .node-ico {
+            width: 65px;
+            height: 65px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            position: relative;
+            background: linear-gradient(145deg,
+                    rgba(20, 60, 50, 0.9) 0%,
+                    rgba(10, 35, 28, 0.95) 100%);
+            border: 2px solid rgba(0, 229, 255, 0.3);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow:
+                0 8px 25px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1),
+                inset 0 -2px 10px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            overflow: hidden;
+        }
+
+        /* Efecto de brillo superior */
+        .node-ico::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 50%;
+            background: linear-gradient(180deg,
+                    rgba(255, 255, 255, 0.1) 0%,
+                    transparent 100%);
+            border-radius: 14px 14px 50% 50%;
+            opacity: 0.7;
+            transition: opacity 0.3s;
+        }
+
+        /* Efecto de borde animado */
+        .node-ico::after {
+            content: '';
+            position: absolute;
+            inset: -2px;
+            border-radius: 18px;
+            background: linear-gradient(45deg,
+                    transparent 30%,
+                    var(--glow-color, rgba(0, 229, 255, 0.5)) 50%,
+                    transparent 70%);
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .node:hover .node-ico::after {
+            opacity: 1;
+            animation: borderGlow 2s linear infinite;
+        }
+
+        @keyframes borderGlow {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* Node Types - Premium Styles */
+        .node.attacker {
+            --glow-color: rgba(231, 76, 60, 0.6);
+        }
+
+        .node.attacker .node-ico {
+            border-color: var(--attack);
+            background: linear-gradient(145deg,
+                    rgba(80, 30, 30, 0.9) 0%,
+                    rgba(50, 15, 15, 0.95) 100%);
+            box-shadow:
+                0 8px 25px rgba(231, 76, 60, 0.3),
+                inset 0 1px 0 rgba(255, 100, 100, 0.2);
+        }
+
+        .node.firewall {
+            --glow-color: rgba(249, 115, 22, 0.6);
+        }
+
+        .node.firewall .node-ico {
+            border-color: #f97316;
+            background: linear-gradient(145deg,
+                    rgba(80, 50, 20, 0.9) 0%,
+                    rgba(50, 30, 10, 0.95) 100%);
+            box-shadow:
+                0 8px 25px rgba(249, 115, 22, 0.3),
+                inset 0 1px 0 rgba(255, 180, 100, 0.2);
+        }
+
+        .node.cloud {
+            --glow-color: rgba(0, 120, 212, 0.6);
+        }
+
+        .node.cloud .node-ico {
+            border-color: var(--ms-blue);
+            background: linear-gradient(145deg,
+                    rgba(20, 50, 80, 0.9) 0%,
+                    rgba(10, 30, 50, 0.95) 100%);
+            box-shadow:
+                0 8px 25px rgba(0, 120, 212, 0.3),
+                inset 0 1px 0 rgba(100, 180, 255, 0.2);
+        }
+
+        .node.endpoint {
+            --glow-color: rgba(0, 229, 255, 0.6);
+        }
+
+        .node.endpoint .node-ico {
+            border-color: var(--onesec-green);
+            background: linear-gradient(145deg,
+                    rgba(20, 60, 60, 0.9) 0%,
+                    rgba(10, 35, 35, 0.95) 100%);
+            box-shadow:
+                0 8px 25px rgba(0, 229, 255, 0.3),
+                inset 0 1px 0 rgba(100, 255, 255, 0.2);
+        }
+
+        .node.server {
+            --glow-color: rgba(134, 97, 197, 0.6);
+        }
+
+        .node.server .node-ico {
+            border-color: var(--sentinel);
+            background: linear-gradient(145deg,
+                    rgba(50, 40, 70, 0.9) 0%,
+                    rgba(30, 25, 45, 0.95) 100%);
+            box-shadow:
+                0 8px 25px rgba(134, 97, 197, 0.3),
+                inset 0 1px 0 rgba(180, 150, 255, 0.2);
+        }
+
+        .node.user {
+            --glow-color: rgba(39, 174, 96, 0.6);
+        }
+
+        .node.user .node-ico {
+            border-color: var(--success);
+            background: linear-gradient(145deg,
+                    rgba(20, 60, 40, 0.9) 0%,
+                    rgba(10, 35, 25, 0.95) 100%);
+            box-shadow:
+                0 8px 25px rgba(39, 174, 96, 0.3),
+                inset 0 1px 0 rgba(100, 255, 150, 0.2);
+        }
+
+        /* Premium Node Animations - Dynamic States */
+        .node.attacker.active .node-ico {
+            animation: glitch 0.3s infinite;
+        }
+
+        .node.firewall.blocking .node-ico {
+            animation: forcefield 1s infinite;
+            box-shadow: 0 0 20px rgba(249, 115, 22, 0.5);
+        }
+
+        .node.endpoint.compromised .node-ico {
+            animation: shake 0.5s infinite;
+            border-color: var(--attack);
+        }
+
+        .node.cloud.warning .node-ico {
+            animation: bounce-sm 1s infinite;
+        }
+
+        .node.server.active .node-ico {
+            animation: heartbeat 2s infinite;
+        }
+
+        .node.soc .node-ico {
+            animation: pulse-ring 3s infinite;
+        }
+
+        /* Efecto de escaneo para Sentinel cuando está analizando */
+        .panel.scanning::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--sentinel);
+            animation: scan-v 1.5s linear infinite;
+            box-shadow: 0 0 10px var(--sentinel);
+        }
+
+        .node-name {
+            font-size: 0.5rem;
+            font-weight: 600;
+            background: rgba(11, 43, 34, 0.9);
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+
+        .node-sub {
+            font-size: 0.4rem;
+            color: var(--text-muted);
+        }
+
+        .node-st {
+            position: absolute;
+            top: -4px;
+            right: -4px;
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            font-size: 0.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--bg-primary);
+        }
+
+        /* Panels - PREMIUM GLASSMORPHISM */
+        .panel {
+            position: absolute;
+            border-radius: 16px;
+            padding: 14px;
+            background: linear-gradient(145deg,
+                    rgba(20, 60, 50, 0.85) 0%,
+                    rgba(13, 45, 38, 0.9) 50%,
+                    rgba(10, 35, 28, 0.95) 100%);
+            border: 1px solid rgba(0, 229, 255, 0.25);
+            backdrop-filter: blur(20px) saturate(200%);
+            -webkit-backdrop-filter: blur(20px) saturate(200%);
+            box-shadow:
+                0 12px 40px rgba(0, 0, 0, 0.5),
+                0 0 0 1px rgba(0, 229, 255, 0.1) inset,
+                0 1px 0 rgba(255, 255, 255, 0.1) inset;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            cursor: pointer;
+            overflow: hidden;
+        }
+
+        /* Efecto de brillo superior en paneles */
+        .panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg,
+                    transparent,
+                    rgba(0, 229, 255, 0.5),
+                    transparent);
+        }
+
+        /* Efecto de reflejo */
+        .panel::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 40%;
+            background: linear-gradient(180deg,
+                    rgba(255, 255, 255, 0.05) 0%,
+                    transparent 100%);
+            border-radius: 16px 16px 0 0;
+            pointer-events: none;
+        }
+
+        .panel:hover {
+            border-color: rgba(0, 229, 255, 0.6);
+            box-shadow:
+                0 20px 60px rgba(0, 229, 255, 0.2),
+                0 0 0 1px rgba(0, 229, 255, 0.3) inset,
+                0 0 40px rgba(0, 229, 255, 0.15);
+            transform: translateY(-6px) scale(1.03);
+        }
+
+        .panel:hover::before {
+            background: linear-gradient(90deg,
+                    transparent,
+                    rgba(0, 229, 255, 0.8),
+                    transparent);
+        }
+
+        .panel.hl {
+            border-color: var(--onesec-green);
+            box-shadow:
+                0 0 30px rgba(0, 229, 255, 0.3),
+                0 0 60px rgba(0, 229, 255, 0.15);
+            animation: panelPulse 2s ease-in-out infinite;
+        }
+
+        @keyframes panelPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 30px rgba(0, 229, 255, 0.3);
+            }
+
+            50% {
+                box-shadow: 0 0 50px rgba(0, 229, 255, 0.5);
+            }
+        }
+
+        .panel-hd {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(0, 229, 255, 0.15);
+            position: relative;
+            z-index: 1;
+        }
+
+        .panel-ico {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            background: linear-gradient(145deg, rgba(0, 229, 255, 0.15) 0%, rgba(0, 229, 255, 0.05) 100%);
+            border: 1px solid rgba(0, 229, 255, 0.2);
+        }
+
+        .panel-title {
+            font-size: 0.65rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .panel-sub {
+            font-size: 0.45rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .panel-st {
+            margin-left: auto;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.42rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        /* Log Analytics */
+        .p-la {
+            width: 200px;
+            height: 140px;
+            border-color: rgba(0, 120, 212, 0.3);
+        }
+
+        .p-la .panel-ico {
+            background: rgba(0, 120, 212, 0.2);
+        }
+
+        .p-la .panel-title {
+            color: var(--ms-blue);
+        }
+
+        .kql {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 5px;
+            padding: 6px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.4rem;
+            line-height: 1.4;
+            margin-bottom: 6px;
+            height: 38px;
+            overflow: hidden;
+        }
+
+        .kql .kw {
+            color: #ff7b72
+        }
+
+        .kql .tb {
+            color: #79c0ff
+        }
+
+        .kql .cmt {
+            color: #6e7681
+        }
+
+        .logs {
+            background: rgba(0, 0, 0, 0.4);
+            border-radius: 5px;
+            padding: 4px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.38rem;
+            height: 42px;
+            overflow-y: auto;
+        }
+
+        .log-row {
+            padding: 3px 4px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .log-sev {
+            padding: 1px 4px;
+            border-radius: 3px;
+            font-size: 0.35rem;
+            margin-right: 4px;
+            font-weight: 600;
+        }
+
+        .log-sev.high {
+            background: rgba(231, 76, 60, 0.3);
+            color: var(--attack)
+        }
+
+        .log-sev.med {
+            background: rgba(243, 156, 18, 0.3);
+            color: var(--warning)
+        }
+
+        .log-sev.info {
+            background: rgba(97, 186, 124, 0.3);
+            color: var(--onesec-green)
+        }
+
+        /* Sentinel */
+        .p-sen {
+            width: 210px;
+            height: 155px;
+            border-color: rgba(134, 97, 197, 0.3);
+        }
+
+        .p-sen .panel-ico {
+            background: rgba(134, 97, 197, 0.2);
+        }
+
+        .p-sen .panel-title {
+            color: var(--sentinel);
+        }
+
+        .metrics {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 4px;
+            margin-bottom: 6px;
+        }
+
+        .metric {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            padding: 6px 3px;
+            text-align: center;
+        }
+
+        .metric-v {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+
+        .metric-v.r {
+            color: var(--attack)
+        }
+
+        .metric-v.g {
+            color: var(--success)
+        }
+
+        .metric-v.y {
+            color: var(--warning)
+        }
+
+        .metric-v.b {
+            color: var(--ms-blue)
+        }
+
+        .metric-l {
+            font-size: 0.35rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+        }
+
+        .chart-box {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            padding: 5px;
+            height: 42px;
+        }
+
+        .chart {
+            height: 100%;
+            display: flex;
+            align-items: flex-end;
+            gap: 2px;
+        }
+
+        .bar {
+            flex: 1;
+            background: var(--onesec-green);
+            border-radius: 2px 2px 0 0;
+            transition: height 0.3s;
+            opacity: 0.7;
+        }
+
+        .bar.threat {
+            background: var(--attack);
+            opacity: 1;
+        }
+
+        /* Copilot */
+        .p-cp {
+            width: 190px;
+            height: 140px;
+            border-color: rgba(98, 100, 167, 0.3);
+        }
+
+        .p-cp .panel-ico {
+            background: linear-gradient(135deg, var(--copilot), var(--sentinel));
+        }
+
+        .p-cp .panel-title {
+            color: var(--copilot);
+        }
+
+        .cp-chat {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            padding: 5px;
+            height: 72px;
+            overflow-y: auto;
+            margin-bottom: 5px;
+        }
+
+        .cp-msg {
+            margin-bottom: 4px;
+            font-size: 0.4rem;
+        }
+
+        .cp-msg.ai {
+            display: flex;
+            gap: 5px;
+        }
+
+        .cp-av {
+            width: 16px;
+            height: 16px;
+            background: linear-gradient(135deg, var(--copilot), var(--sentinel));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.5rem;
+            flex-shrink: 0;
+        }
+
+        .cp-bub {
+            background: rgba(98, 100, 167, 0.2);
+            border-radius: 5px;
+            padding: 4px 6px;
+            line-height: 1.3;
+        }
+
+        .cp-in {
+            display: flex;
+            gap: 3px;
+        }
+
+        .cp-in input {
+            flex: 1;
+            padding: 4px 6px;
+            border-radius: 4px;
+            border: 1px solid var(--copilot);
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--text-primary);
+            font-size: 0.4rem;
+        }
+
+        .cp-in button {
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: none;
+            background: var(--copilot);
+            color: white;
+            cursor: pointer;
+            font-size: 0.4rem;
+        }
+
+        /* Logic Apps */
+        .p-logic {
+            width: 165px;
+            height: 165px;
+            border-color: rgba(0, 120, 212, 0.3);
+        }
+
+        .p-logic .panel-ico {
+            background: rgba(0, 120, 212, 0.2);
+        }
+
+        .p-logic .panel-title {
+            color: var(--ms-blue);
+        }
+
+        .logic-flow {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .lg-step {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 6px;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            border-left: 3px solid transparent;
+            opacity: 0.4;
+            transition: all 0.3s;
+        }
+
+        .lg-step.active {
+            opacity: 1;
+            border-left-color: var(--warning);
+            background: rgba(243, 156, 18, 0.1);
+        }
+
+        .lg-step.done {
+            opacity: 1;
+            border-left-color: var(--onesec-green);
+            background: rgba(97, 186, 124, 0.1);
+        }
+
+        .lg-num {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: rgba(0, 120, 212, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.4rem;
+            font-weight: 600;
+        }
+
+        .lg-step.done .lg-num {
+            background: var(--onesec-green);
+            color: var(--onesec-dark);
+        }
+
+        .lg-step.active .lg-num {
+            background: var(--warning);
+            color: var(--onesec-dark);
+        }
+
+        .lg-ico {
+            font-size: 0.6rem;
+        }
+
+        .lg-txt {
+            font-size: 0.42rem;
+            font-weight: 500;
+        }
+
+        /* SOC */
+        .p-soc {
+            width: 175px;
+            height: 140px;
+            border-color: rgba(97, 186, 124, 0.4);
+        }
+
+        .p-soc .panel-ico {
+            background: var(--onesec-green);
+        }
+
+        .p-soc .panel-title {
+            color: var(--onesec-green);
+        }
+
+        .soc-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 4px;
+        }
+
+        .soc-svc {
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 5px;
+            padding: 8px;
+            text-align: center;
+            border: 1px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .soc-svc.active {
+            border-color: var(--onesec-green);
+            background: rgba(97, 186, 124, 0.15);
+        }
+
+        .soc-svc-ico {
+            font-size: 0.9rem;
+        }
+
+        .soc-svc-name {
+            font-size: 0.4rem;
+            font-weight: 600;
+            margin-top: 3px;
+        }
+
+        /* Connections - Energy Beam System */
+        .conns {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .conn {
+            fill: none;
+            stroke-width: 2;
+            stroke-linecap: round;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        /* Línea base tenue siempre visible para mostrar topología */
+        .conn.topology {
+            opacity: 0.12;
+            stroke-dasharray: none;
+            stroke-width: 1.5;
+        }
+
+        .conn.on {
+            opacity: 1;
+            stroke-width: 2.5;
+            stroke-dasharray: 12 6;
+            animation: connFlow 0.8s linear infinite;
+            filter: drop-shadow(0 0 3px currentColor);
+        }
+
+        /* Efecto glow pulsante cuando activo */
+        .conn.on.atk {
+            filter: drop-shadow(0 0 6px var(--attack)) drop-shadow(0 0 12px rgba(231, 76, 60, 0.3));
+            stroke-width: 3;
+        }
+
+        .conn.on.data {
+            filter: drop-shadow(0 0 6px var(--ms-blue)) drop-shadow(0 0 12px rgba(0, 120, 212, 0.3));
+        }
+
+        .conn.on.def {
+            filter: drop-shadow(0 0 6px var(--onesec-green)) drop-shadow(0 0 12px rgba(97, 186, 124, 0.3));
+        }
+
+        @keyframes connFlow {
+            0% { stroke-dashoffset: 18; }
+            100% { stroke-dashoffset: 0; }
+        }
+
+        .conn.atk {
+            stroke: var(--attack);
+        }
+
+        .conn.def {
+            stroke: var(--onesec-green);
+        }
+
+        .conn.data {
+            stroke: var(--ms-blue);
+        }
+
+        /* Timeline */
+        .timeline {
+            position: fixed;
+            bottom: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 90;
+            display: none;
+            align-items: center;
+            background: var(--bg-panel);
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 1px solid var(--onesec-green);
+        }
+
+        .timeline.show {
+            display: flex;
+        }
+
+        .tl-step {
+            display: flex;
+            align-items: center;
+        }
+
+        .tl-node {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: rgba(97, 186, 124, 0.1);
+            border: 2px solid var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            transition: all 0.3s;
+        }
+
+        .tl-node.active {
+            border-color: var(--warning);
+            background: rgba(243, 156, 18, 0.2);
+            animation: tlPulse 1s ease infinite;
+        }
+
+        .tl-node.done {
+            border-color: var(--onesec-green);
+            background: rgba(97, 186, 124, 0.25);
+        }
+
+        .tl-node.threat {
+            border-color: var(--attack);
+            background: rgba(231, 76, 60, 0.25);
+        }
+
+        @keyframes tlPulse {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(243, 156, 18, 0.4)
+            }
+
+            50% {
+                box-shadow: 0 0 12px rgba(243, 156, 18, 0.5)
+            }
+        }
+
+        .tl-line {
+            width: 25px;
+            height: 2px;
+            background: var(--text-muted);
+            margin: 0 2px;
+            border-radius: 1px;
+        }
+
+        .tl-line.done {
+            background: var(--onesec-green);
+        }
+
+        .tl-line.active {
+            background: var(--warning);
+        }
+
+        /* KPIs */
+        .kpis {
+            position: fixed;
+            top: 130px;
+            right: 12px;
+            z-index: 90;
+            background: var(--bg-panel);
+            padding: 8px;
+            border-radius: 8px;
+            border: 1px solid var(--onesec-green);
+            display: none;
+            min-width: 120px;
+        }
+
+        .kpis.show {
+            display: block;
+        }
+
+        .kpi-title {
+            font-size: 0.42rem;
+            font-weight: 600;
+            color: var(--onesec-green);
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            text-align: center;
+        }
+
+        .kpi-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(97, 186, 124, 0.08);
+        }
+
+        .kpi-row:last-child {
+            border: none;
+        }
+
+        .kpi-ico {
+            font-size: 0.65rem;
+        }
+
+        .kpi-data {
+            flex: 1;
+        }
+
+        .kpi-lbl {
+            font-size: 0.32rem;
+            color: var(--text-muted);
+        }
+
+        .kpi-val {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.5rem;
+            font-weight: 600;
+        }
+
+        .kpi-val.good {
+            color: var(--onesec-green);
+        }
+
+        /* Narrator */
+        .narrator {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            background: linear-gradient(0deg, var(--bg-primary) 70%, transparent);
+            padding: 8px 12px 10px;
+        }
+
+        .nar-content {
+            max-width: 850px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nar-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--onesec-green) 0%, #4a9d62 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            flex-shrink: 0;
+            box-shadow: 0 4px 12px rgba(97, 186, 124, 0.3);
+        }
+
+        .nar-avatar.speaking {
+            animation: avSpeak 0.8s ease infinite;
+        }
+
+        @keyframes avSpeak {
+
+            0%,
+            100% {
+                box-shadow: 0 0 0 0 rgba(97, 186, 124, 0.4)
+            }
+
+            50% {
+                box-shadow: 0 0 15px rgba(97, 186, 124, 0.5)
+            }
+        }
+
+        .nar-box {
+            flex: 1;
+            background: rgba(97, 186, 124, 0.06);
+            border-radius: 8px;
+            padding: 8px 12px;
+            border: 1px solid rgba(97, 186, 124, 0.15);
+        }
+
+        .nar-label {
+            font-size: 0.42rem;
+            color: var(--onesec-green);
+            margin-bottom: 3px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .nar-phase {
+            background: var(--onesec-green);
+            color: var(--onesec-dark);
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 0.38rem;
+        }
+
+        .nar-text {
+            font-size: 0.68rem;
+            line-height: 1.45;
+        }
+
+        .nar-text .hl {
+            color: var(--onesec-green);
+            font-weight: 600;
+        }
+
+        .nar-text .ms {
+            color: #50e6ff;
+            font-weight: 500;
+        }
+
+        .nar-text .rd {
+            color: var(--attack);
+            font-weight: 600;
+        }
+
+        .nar-text .gn {
+            color: var(--onesec-green);
+            font-weight: 600;
+        }
+
+        .nar-prog {
+            min-width: 80px;
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+        }
+
+        .prog-bar {
+            height: 5px;
+            background: rgba(97, 186, 124, 0.15);
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .prog-fill {
+            height: 100%;
+            background: var(--onesec-green);
+            width: 0%;
+            transition: width 0.4s;
+        }
+
+        .prog-txt {
+            font-size: 0.38rem;
+            color: var(--text-muted);
+            text-align: center;
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        /* Toasts */
+        .toasts {
+            position: fixed;
+            top: 52px;
+            left: 12px;
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .toast {
+            padding: 6px 10px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            animation: toastIn 0.3s ease;
+            font-size: 0.48rem;
+            font-weight: 500;
+            border: 1px solid;
+        }
+
+        @keyframes toastIn {
+            from {
+                transform: translateX(-100%);
+                opacity: 0
+            }
+
+            to {
+                transform: translateX(0);
+                opacity: 1
+            }
+        }
+
+        .toast.alert {
+            background: rgba(231, 76, 60, 0.9);
+            border-color: var(--attack);
+        }
+
+        .toast.success {
+            background: rgba(97, 186, 124, 0.9);
+            color: var(--onesec-dark);
+            border-color: var(--onesec-green);
+        }
+
+        .toast.info {
+            background: rgba(0, 120, 212, 0.9);
+            border-color: var(--ms-blue);
+        }
+
+        /* Pause */
+        .pause-ovl {
+            position: fixed;
+            inset: 0;
+            background: rgba(11, 43, 34, 0.9);
+            z-index: 150;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .pause-ovl.show {
+            display: flex;
+        }
+
+        .pause-msg {
+            text-align: center;
+        }
+
+        .pause-msg .ico {
+            font-size: 4rem;
+            margin-bottom: 15px;
+        }
+
+        .pause-msg .txt {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--onesec-green);
+            letter-spacing: 5px;
+            margin-bottom: 25px;
+        }
+
+        .resume-btn {
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            background: var(--onesec-green);
+            color: var(--onesec-dark);
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 0 auto;
+            transition: all 0.3s;
+        }
+
+        .resume-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px rgba(97, 186, 124, 0.5);
+        }
+
+        .pause-hint {
+            margin-top: 20px;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .pause-msg {
+            text-align: center;
+        }
+
+        .pause-msg .ico {
+            font-size: 3.5rem;
+            color: var(--onesec-green);
+        }
+
+        .pause-msg .txt {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--onesec-green);
+            margin-top: 10px;
+        }
+
+        /* Holographic Tooltip */
+        .tooltip {
+            position: fixed;
+            z-index: 200;
+            background: rgba(11, 43, 34, 0.9);
+            border: 1px solid var(--onesec-green);
+            box-shadow: 0 0 20px rgba(97, 186, 124, 0.2), inset 0 0 20px rgba(97, 186, 124, 0.1);
+            border-radius: 4px;
+            padding: 12px;
+            font-size: 0.5rem;
+            pointer-events: none;
+            opacity: 0;
+            transform: perspective(1000px) rotateX(10deg) translateZ(0) scale(0.9);
+            transform-origin: top center;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-width: 220px;
+            backdrop-filter: blur(10px);
+        }
+
+        .tooltip::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--onesec-green);
+            box-shadow: 0 0 10px var(--onesec-green);
+        }
+
+        .tooltip.show {
+            opacity: 1;
+            transform: perspective(1000px) rotateX(0deg) translateZ(0) scale(1);
+        }
+
+        .tooltip-title {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            color: var(--onesec-green);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            border-bottom: 1px solid rgba(97, 186, 124, 0.3);
+            padding-bottom: 4px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .tooltip-desc {
+            color: var(--text-primary);
+            font-size: 0.45rem;
+            line-height: 1.5;
+        }
+
+        /* Cinema Mode */
+        body {
+            transition: background 0.5s;
+        }
+
+        body.cinema-mode .header {
+            opacity: 0.1;
+            pointer-events: none;
+            filter: blur(2px);
+            transform: translateY(-10px);
+        }
+
+        body.cinema-mode .minimap,
+        body.cinema-mode .zoom-indicator {
+            opacity: 0.3;
+        }
+
+        body.cinema-mode .nav-hint {
+            opacity: 0;
+        }
+
+        .header,
+        .minimap,
+        .zoom-indicator,
+        .nav-hint {
+            transition: all 0.8s ease;
+        }
+
+        /* SFX & Particles */
+        #bgCanvas {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.4;
+        }
+
+        .data-packet {
+            r: 4;
+            fill: var(--text-primary);
+            filter: drop-shadow(0 0 6px white) drop-shadow(0 0 12px white);
+            animation: packetFlow 1.5s linear infinite;
+            opacity: 0;
+        }
+
+        .data-packet.atk {
+            r: 5;
+            fill: var(--attack);
+            filter: drop-shadow(0 0 8px var(--attack)) drop-shadow(0 0 16px var(--attack));
+        }
+
+        .data-packet.def {
+            r: 5;
+            fill: var(--onesec-green);
+            filter: drop-shadow(0 0 8px var(--onesec-green)) drop-shadow(0 0 16px var(--onesec-green));
+        }
+
+        .data-packet.data {
+            r: 4;
+            fill: var(--ms-blue);
+            filter: drop-shadow(0 0 8px var(--ms-blue)) drop-shadow(0 0 16px var(--ms-blue));
+        }
+
+        @keyframes packetFlow {
+            0% {
+                opacity: 0;
+                r: 2;
+            }
+            8% {
+                opacity: 1;
+                r: 5;
+            }
+            50% {
+                opacity: 1;
+                r: 4;
+            }
+            92% {
+                opacity: 1;
+                r: 5;
+            }
+            100% {
+                opacity: 0;
+                r: 2;
+            }
+        }
+
+        /* Glitch Effect */
+        body.attack-mode {
+            animation: shake 0.5s cubic-bezier(.36, .07, .19, .97) both;
+        }
+
+        body.attack-mode .lab-view {
+            filter: hue-rotate(90deg) contrast(1.2) sepia(0.3);
+        }
+
+        @keyframes shake {
+
+            10%,
+            90% {
+                transform: translate3d(-1px, 0, 0);
+            }
+
+            20%,
+            80% {
+                transform: translate3d(2px, 0, 0);
+            }
+
+            30%,
+            50%,
+            70% {
+                transform: translate3d(-4px, 0, 0);
+            }
+
+            40%,
+            60% {
+                transform: translate3d(4px, 0, 0);
+            }
+        }
+
+        /* Start Overlay */
+        /* Start Overlay */
+        #startOvl {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.6);
+            /* Semi-transparente para ver el mapa 3D detrás */
+            backdrop-filter: blur(5px);
+            z-index: 999;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            transition: opacity 0.5s;
+        }
+
+        #startOvl h1 {
+            font-size: 3rem;
+            color: var(--onesec-green);
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            text-shadow: 0 0 20px var(--onesec-green);
+        }
+
+        #startBtn {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            background: rgba(0, 0, 0, 0.8);
+            border: 2px solid var(--onesec-green);
+            color: var(--onesec-green);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
+        }
+
+        #startBtn:hover {
+            transform: scale(1.05);
+            background: var(--onesec-green);
+            color: #000;
+        }
+
+        #cyberMap {
+            position: fixed;
+            top: 55px !important;
+            /* Pantalla completa */
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #000 !important;
+            z-index: 50;
+            /* Detrás del overlay de inicio (999) y del dashboard (si aplica) */
+            display: none;
+            overflow: hidden;
+        }
+
+        #cyberMap.active {
+            display: block !important;
+        }
+
+        .globe-container {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 450px;
+            height: 450px;
+            border-radius: 50%;
+            box-shadow:
+                inset 20px 0 60px rgba(0, 0, 0, 0.8),
+                inset -5px 0 20px rgba(255, 255, 255, 0.05),
+                0 0 50px rgba(0, 120, 212, 0.4);
+            background: #091016;
+            overflow: hidden;
+            z-index: 10;
+        }
+
+        .world-map {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 200%;
+            height: 100%;
+            background-image: url('data:image/svg+xml;utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%202000%201000%22%20fill%3D%22%23213544%22%3E%3Cpath%20d%3D%22M1456%2C684c-12-3-22-10-24-21c-3-9-16-16-16-16s-2-12%2C3-17c10-9%2C4-25-11-28c-12-2-15%2C5-21%2C6c-3-2-2-13-11-15c-15-4-32-4-37%2C13c0%2C0-20%2C4-24-1c-2-3-2-29-2-29l-19-14c0%2C0-14-1-19%2C2s-19%2C0-19%2C0l-9-9l15-22l-10-18c0%2C0%2C9-25%2C4-32c-3-5%2C0-18-9-18c-8%2C0-28%2C6-35%2C2c-2-1-2-16%2C3-20c2-2%2C10-14%2C8-17c-5-9-33-31-33-31s-23-38-34-40c-11-1-31-8-38-1s-3%2C20-10%2C24c-9%2C6-18%2C6-21-2c-3-7-19-21-36-21c-15-1-63%2C20-72%2C27c-4%2C3-18%2C14-17%2C18s10%2C10%2C10%2C10l-12%2C21l-18%2C28l-23%2C10c0%2C0-18-1-22%2C4s-10%2C23-10%2C23l-34-31l-36-22c0%2C0-8-19-17-17c-6%2C1-30%2C11-30%2C11l-17-15l-19-4l-9-19l-78-22l-21-3c0%2C0-24%2C13-33%2C14s-37%2C5-43-1c-8-8-17-11-20-19c-1-5-17-21-26-21c-15%2C1-45%2C15-54%2C19c-8%2C4-15%2C7-15%2C7l-26-17l-35%2C5c0%2C0-21-8-21-2s11%2C30%2C9%2C34c-1%2C2-16%2C0-19%2C4c-1%2C3-7%2C21-7%2C21l22%2C27l1%2C26l-31%2C47l-15%2C49c0%2C0-17%2C63-18%2C70c0%2C3-11%2C26-8%2C28c5%2C3%2C47%2C10%2C51%2C13c3%2C2%2C17%2C29%2C11%2C30c-15%2C2-68%2C26-72%2C28c-36%2C17-64%2C62-67%2C77c-3%2C13-26%2C53-33%2C60c-2%2C3-19%2C42-26%2C47c-5%2C4-24%2C20-30%2C28c-5%2C7%2C5%2C23%2C5%2C23s-6%2C6-16%2C12c-5%2C3-34%2C47-38%2C55c-1%2C3-10%2C43-13%2C49c-3%2C4-3%2C25-9%2C23c-5-2-19-35-18-42c0-5%2C12-28%2C13-32c1-6-15-53-15-53l-24-37l3-35l14-25l-1-23l-19-20l-30%2C22l-10-8l-18-2l-23%2C16l-39-16l-46-15l-33%2C12l-51-17l-19%2C1l5-24l-31-29l-13-28l-37-8l-40%2C9l-18%2C11l-36%2C25l-20-4l14-26l7-45l-16-15l-32-1l-24%2C29l-14%2C40l-21%2C19l-38%2C18l-8%2C23l1%2C24l-11%2C19l-33%2C29l-12%2C35l-23%2C16l25%2C28l13%2C38l-1%2C39l-14%2C23l-34%2C24l-36-8l-3%2C5l7%2C20l-16%2C13l-45-7l-29-22l-19-1l1%2C24l22%2C51l11%2C45l3%2C39l19%2C17l2%2C20l-22%2C38l-2%2C20l-8%2C14l11%2C17l40%2C6l38-9l20-19l19%2C1l15%2C11l25-5l13%2C11l66-10l44-23l42-16l25%2C4l38%2C26l23%2C22l14%2C33l62%2C40l28%2C43l13%2C46l25%2C52l9%2C19l31%2C6l26-4l27-20l36%2C9l59%2C37l16%2C25l34%2C19l61%2C9l37-1l35-18l33-31l18-19l5-35l7%2C6l21%2C2l19-15l5-33l-15-28l-4-26l11-27l-5-29l10-18l24-19l32%2C3l16%2C17l23-2l17%2C18l18-7l9-24l-8-23l5-23l28-21l-4-21l-21-21l2-21l31-28l-8-19l2-20l32-14l13%2C1l3%2C17l21%2C6l6-16l20%2C7l22-12l27-8l3%2C17l36%2C18l23%2C9l29-19l2%2C20l25%2C6l33-12l18%2C4l9-10l19%2C27l34%2C9l14-9l12%2C10l20-15l8-15l-19-21l-14%2C1l-11%2C13l-11-2l-2-21l5-17l16-9l23%2C1l9-12l-10-18l-15%2C2l-18-11l3-18l14-8l29%2C10l14-5l3%2C20l23%2C6l28-5l19%2C9l-3%2C26l19%2C8l13-9l2-25l-2-32l29-21l-6-24l-31-41l-20-43l-34-31l-50-24l-30-22l-6-29l3-30l10%2C3l11%2C22l20%2C4l25-14l6-21l16-16l18%2C7l6%2C14l19%2C7l16-6l7-17l25-5l13%2C4l3%2C17l18%2C17l23%2C6l14-11l28%2C4l31-15l5-26l21-6l18%2C15l22%2C5l6-15l25%2C2l12-16l-3-22l24-13l37-4l26%2C11l6%2C13l22%2C4l27-8l19-1l1%2C15l20%2C14l32%2C1l16-16l8-30l28-14l27%2C8l30%2C15l48%2C12l32%2C1l31-8l21%2C3l14-13l35-13l23%2C11l41%2C4l82-14l25%2C4l29%2C19l41%2C6l37%2C11l20-6l28%2C2l10-11l29%2C1l42-12l16-2l-2-16l-18-9l-13-17l22-19l20-1l11%2C10l13-7l-1-15l-21-4l-7-14l17-10l26%2C9l9%2C11l15-7l4-16l27-7l20%2C3l-2%2C20l-28%2C3l-9%2C12l8%2C13l23%2C6l-1%2C16l-16%2C15l-19%2C4l-14%2C17l13%2C12l37-1l18-12l26%2C6l31-11l-3%2C34l-31%2C19l-9%2C23l-30%2C19l-37%2C4l-13-6l-16%2C6l-7%2C18l24%2C16l27%2C4l18-8l17%2C7l12%2C17l34-6l16-14l13-2l7-13l27-14l13%2C4l8%2C15l4%2C23l25-1l35%2C15l-4%2C15l-29%2C12l-15%2C25l1%2C18l21%2C18l12-11l-3-20l17-2l11%2C17l-1%2C19l-11%2C9l-10-8l-15-7l-16%2C9l6%2C16l-16%2C23l-4%2C19l11%2C17l14%2C3l-5%2C18l-37-1l-24%2C14l-11%2C19l13%2C6l12-6l4%2C18l-12%2C23l8%2C14l20%2C2l5-16l21-1l13%2C8l13%2C3l13-13l6-21l-8-14l1-16l19-1l16%2C24l-3%2C29l-19%2C13l-13%2C24l6%2C19l5%2C16l13%2C6l8-15l23%2C1l5-13l13-3l6%2C12l10-1l7-10l5-24l22-1l10-15l26%2C5l14%2C23l4%2C14l5%2C32l-13%2C18l-14-1l-9%2C11l-9-9l-9-3l-7%2C8l-17%2C2l-10-9l-12%2C3l-10-6l-5%2C15l-19%2C7l-8%2C13l-24%2C14l-10%2C20l-16%2C9l-10%2C28l-13%2C4l-25-10l-17%2C8l-43-16l-21%2C7l-14-10l-16-1l-14-5l-17%2C12l-16-6l-12-10l-26%2C4l-13%2C17l-17-4l-10-18l-15-2l-21%2C7l-18%2C22l-7%2C16l-15%2C17l-14%2C22l-28%2C2l-4%2C14l-15-6l-12%2C10l-13%2C2l-8%2C12l-21-4l-12%2C9l-12%2C14l-2%2C29l8%2C12l27%2C11l14%2C18l19-8l20-20l19%2C5l7%2C15l8%2C24l-8%2C18l-6%2C25l4%2C28l-5%2C13l-25%2C14l-19%2C20l-12%2C29l-11%2C13l2%2C25l24-5l23-28l9-24l7-17l19%2C6l4-20l10-4l14%2C11l9-3l19-14l30-10l10%2C7l4%2C23l25%2C6l14%2C8l17-10l20-9l34-11l35-7l34-1l24%2C5l16-7l19-4l24-16l19-6l18-1l18%2C10l19%2C4l18-8l12-16l3-18l13-7l14%2C6l11-8l24-11l32%2C10l22%2C16l12%2C19l2%2C13l-13%2C15l-7%2C18l-4%2C22l11%2C15l7%2C19l-13%2C20l-5%2C18l5%2C19l13%2C9l21%2C1l5%2C16l-8%2C24l-3%2C23l7%2C18l9%2C9l-3%2C12l-13%2C6l-8%2C16l3%2C21l10%2C8l17%2C2l19-4l1%2C15l-6%2C20l-9%2C10l-19%2C3l-14-11l-3%2C16l-20-4l-16-14l-24-3l-45%2C21l-32%2C9l-22%2C13l-15%2C12l-16%2C8l-23%2C4l-31-4l-22-12l-19-4l-18%2C3l-14%2C10l-12-8l-15-3l-20%2C14l-24%2C8l-24%2C1l-18-9l-19-16l-9-19l-26-9l-25-1l-30%2C12l-23%2C2l-18-11l-16-3l-34%2C10l-37%2C18l-29%2C3l-24-9l-14-17l6-31l-3-22l-11-8l-18-5l-12%2C1l-16%2C11l-2%2C19l-17%2C13l-18-7l-15%2C13l-10-6l-16%2C2l-5-19l-25-24l-14-6l-14%2C2l-10-11l-19-20l-8-19l-19-11l-34-31l-34-19l-4-23l-3-28l11-16l9-24l19-26l24-17l16-24l19-9l2-16l-13-14l-23-4l-11%2C9l-12%2C16l-19%2C0l-9%2C13l-14%2C5l-14-11l-5-19l9-27l22-26l11-26l-14-38l-16-16l-4-23l12-32l24-15l15-22l-4-25l-21-25l-25-11l-37-8l-19%2C5l-4-15l12-16l25-14l30%2C1l22%2C25l16%2C5l10-18l-3-20l-20-22l-3-20l13-13l33%2C6l33-14l27-5l20%2C2l10%2C13l21%2C9l25-8l11-13l13-2l2%2C14l20%2C10l33%2C25l15%2C16l26-10l11-17l-8-25l-19-14l-26%2C1l-22-14l-14-23l-13-9l-16%2C7l-8%2C16l-12%2C6l-12-10l-5-22l11-16l29-19l31-7l29%2C7l22%2C9l18-5l16%2C6l14%2C19l3%2C31l18%2C12l16%2C1l9-12l-1-20l12-16l31-15l38-1l18%2C16l11%2C24l-2%2C18l24%2C14l21%2C2l19-13l3-18l-19-20l-7-19l26-14l42-1l24%2C10l19-3l12-15l4-24l-11-20l-15-5l-4%2C11l-14%2C5l-12-16l5-16l22-15l32-6l8%2C11l6%2C21l16%2C14l33%2C16l17-3l23-24l6-16l-5-18l-19-14l-14-2l-12%2C13l-12%2C15l-18-4l-14-23l-3-23l25-30l32-15l23%2C11l15%2C24l5%2C24l-14%2C20l-3%2C18l14%2C15l23%2C1l23-14l27-6l3-17l-15-28l-23-10l-10-12l11-20l25-8l28%2C10l26%2C21l10%2C20l-6%2C23l-1%2C21l15%2C17l24%2C9l13-12l3-19l-9-29l-11-11l3-19l26-14l16%2C2l15%2C11l7%2C20l-5%2C25l-13%2C14l1%2C16l15%2C7l12-10l-2-22l-14-19l5-18l19-9l20%2C3l16%2C16l3%2C21l-8%2C15l-19%2C8l-11-11l-6-29l-18-10l-12%2C7l-8%2C16l5%2C47l25%2C26l23%2C9l25-10l18-16l14-6l18%2C12l17%2C2l13-13l-4-23l-15-18l-8-22z%22%2F%3E%3C%2Fsvg%3E');
+            background-size: 100% 100%;
+            opacity: 0.4;
+            animation: mapMove 30s linear infinite;
+        }
+
+        @keyframes mapMove {
+            from {
+                transform: translateX(0);
+            }
+
+            to {
+                transform: translateX(-50%);
+            }
+        }
+
+
+        #mapCanvas {
+            position: absolute;
+            inset: 0;
+            pointer-events: none;
+        }
+
+        .map-stats {
+            position: absolute;
+            bottom: 40px;
+            left: 40px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--onesec-green);
+            background: rgba(11, 43, 34, 0.8);
+            padding: 15px;
+            border: 1px solid var(--onesec-green);
+            border-radius: 8px;
+            backdrop-filter: blur(5px);
+        }
+
+        .map-stat-row {
+            display: flex;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 5px;
+            font-size: 0.6rem;
+        }
+
+        .chk-country {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: var(--attack);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--attack);
+            opacity: 0;
+        }
+
+        /* Cinema Mode - FIX: Header visible */
+        body.cinema-mode .header {
+            opacity: 1 !important;
+            pointer-events: auto !important;
+            filter: none !important;
+            transform: none !important;
+        }
+
+        /* Voice Waveform */
+        .nar-avatar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+            overflow: hidden;
+            padding: 0 8px;
+            /* Override previous styles */
+            width: 50px;
+            /* Slight adjust */
+        }
+
+        .wave-bar {
+            width: 3px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 2px;
+            height: 10%;
+            transition: height 0.1s;
+        }
+
+        .nar-avatar.speaking .wave-bar {
+            animation: waveAnim 0.4s ease infinite alternate;
+        }
+
+        .nar-avatar.speaking .wave-bar:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .nar-avatar.speaking .wave-bar:nth-child(2) {
+            animation-delay: 0.1s;
+        }
+
+        .nar-avatar.speaking .wave-bar:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+
+        .nar-avatar.speaking .wave-bar:nth-child(4) {
+            animation-delay: 0.3s;
+        }
+
+        .nar-avatar.speaking .wave-bar:nth-child(5) {
+            animation-delay: 0.1s;
+        }
+
+        @keyframes waveAnim {
+            0% {
+                height: 20%;
+            }
+
+            100% {
+                height: 80%;
+            }
+        }
+
+        /* Packet Inspector */
+        .packet-inspector {
+            position: fixed;
+            z-index: 300;
+            background: rgba(11, 25, 30, 0.95);
+            border: 1px solid var(--onesec-green);
+            border-radius: 6px;
+            padding: 0;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.45rem;
+            color: #eee;
+            min-width: 200px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            display: none;
+            animation: flipIn 0.3s ease;
+        }
+
+        @keyframes flipIn {
+            from {
+                transform: rotateX(90deg);
+                opacity: 0;
+            }
+
+            to {
+                transform: rotateX(0);
+                opacity: 1;
+            }
+        }
+
+        .pi-head {
+            background: rgba(97, 186, 124, 0.2);
+            padding: 5px 8px;
+            border-bottom: 1px solid var(--onesec-green);
+            font-weight: bold;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .pi-body {
+            padding: 8px;
+        }
+
+        .pi-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 3px;
+        }
+
+        .pi-lbl {
+            color: var(--text-muted);
+        }
+
+        .pi-hex {
+            margin-top: 8px;
+            color: #50e6ff;
+            font-size: 0.4rem;
+            line-height: 1.2;
+            opacity: 0.8;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        /* Make conns clickable */
+        .conn {
+            pointer-events: stroke;
+            cursor: pointer;
+            transition: stroke-width 0.2s, filter 0.3s;
+        }
+
+        .conn:hover {
+            stroke-width: 5 !important;
+            filter: drop-shadow(0 0 8px currentColor) drop-shadow(0 0 16px currentColor) !important;
+        }
+    </style>
+    <style>
+        /* CORRECCIONES CORTEX */
+        #startOvl {
+            display: none !important;
+        }
+
+        .nav-hint {
+            top: 130px !important;
+            bottom: auto !important;
+            left: 20px !important;
+            background: rgba(5, 10, 20, 0.9) !important;
+            border: 1px solid var(--onesec-green) !important;
+            backdrop-filter: blur(5px);
+        }
+
+        /* Botón IR AL LABORATORIO - Glassmorphism Premium */
+        .btn-to-lab {
+            position: fixed;
+            bottom: 80px;
+            right: 30px;
+            z-index: 9999;
+            padding: 14px 28px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            color: #00e5ff;
+            background: linear-gradient(135deg, rgba(11, 43, 34, 0.85) 0%, rgba(13, 51, 42, 0.9) 100%);
+            border: 2px solid rgba(0, 229, 255, 0.5);
+            border-radius: 12px;
+            cursor: pointer;
+            backdrop-filter: blur(16px) saturate(200%);
+            -webkit-backdrop-filter: blur(16px) saturate(200%);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5),
+                0 0 40px rgba(0, 229, 255, 0.25),
+                inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            text-transform: uppercase;
+            animation: btnGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes btnGlow {
+
+            0%,
+            100% {
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5),
+                    0 0 40px rgba(0, 229, 255, 0.25),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            }
+
+            50% {
+                box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5),
+                    0 0 60px rgba(0, 229, 255, 0.45),
+                    inset 0 1px 0 rgba(255, 255, 255, 0.15);
+            }
+        }
+
+        .btn-to-lab:hover {
+            background: linear-gradient(135deg, rgba(0, 229, 255, 0.2) 0%, rgba(0, 229, 255, 0.3) 100%);
+            border-color: #00e5ff;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.6),
+                0 0 80px rgba(0, 229, 255, 0.6),
+                inset 0 1px 0 rgba(255, 255, 255, 0.25);
+            transform: translateY(-4px) scale(1.05);
+            animation: none;
+        }
+
+        .btn-to-lab:active {
+            transform: translateY(0) scale(0.98);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5),
+                0 0 20px rgba(0, 229, 255, 0.4);
+        }
+
+        /* Botón Volver al Mapa desde el Laboratorio */
+        .btn-to-map {
+            position: fixed;
+            bottom: 100px;
+            left: 20px;
+            z-index: 200;
+            padding: 12px 20px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.7rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            color: var(--onesec-green);
+            background: linear-gradient(135deg, rgba(11, 43, 34, 0.9) 0%, rgba(13, 51, 42, 0.95) 100%);
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            border-radius: 10px;
+            cursor: pointer;
+            backdrop-filter: blur(12px) saturate(180%);
+            -webkit-backdrop-filter: blur(12px) saturate(180%);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-to-map:hover {
+            border-color: var(--onesec-green);
+            box-shadow: 0 6px 30px rgba(0, 229, 255, 0.3),
+                inset 0 1px 0 rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        /* Transición Cinematográfica - Immersive Zoom */
+        .immersive-transition {
+            position: fixed;
+            inset: 0;
+            z-index: 10000;
+            background: radial-gradient(circle at center, transparent 0%, rgba(0, 0, 0, 0.95) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        .immersive-transition.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .immersive-tunnel {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .tunnel-ring {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            border: 2px solid rgba(0, 229, 255, 0.3);
+            border-radius: 50%;
+            animation: tunnelExpand 1.5s ease-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes tunnelExpand {
+            0% {
+                width: 0;
+                height: 0;
+                opacity: 1;
+            }
+
+            100% {
+                width: 300vmax;
+                height: 300vmax;
+                opacity: 0;
+            }
+        }
+
+        .tunnel-ring:nth-child(1) {
+            animation-delay: 0s;
+        }
+
+        .tunnel-ring:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+
+        .tunnel-ring:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .tunnel-ring:nth-child(4) {
+            animation-delay: 0.45s;
+        }
+
+        .tunnel-ring:nth-child(5) {
+            animation-delay: 0.6s;
+        }
+
+        .cyber-particles {
+            position: absolute;
+            inset: 0;
+            overflow: hidden;
+        }
+
+        .cyber-particle {
+            position: absolute;
+            width: 3px;
+            height: 20px;
+            background: linear-gradient(to bottom, var(--onesec-green), transparent);
+            animation: particleStream 0.8s ease-out forwards;
+        }
+
+        @keyframes particleStream {
+            0% {
+                transform: translateY(-100vh) scale(0.5);
+                opacity: 1;
+            }
+
+            100% {
+                transform: translateY(100vh) scale(2);
+                opacity: 0;
+            }
+        }
+
+        /* Panel Glassmorphism Mejorado */
+        .panel {
+            background: linear-gradient(135deg,
+                    rgba(13, 51, 42, 0.85) 0%,
+                    rgba(11, 43, 34, 0.9) 50%,
+                    rgba(9, 35, 28, 0.95) 100%);
+            border: 1px solid rgba(0, 229, 255, 0.2);
+            backdrop-filter: blur(20px) saturate(200%);
+            -webkit-backdrop-filter: blur(20px) saturate(200%);
+            box-shadow:
+                0 8px 32px rgba(0, 0, 0, 0.4),
+                0 0 0 1px rgba(0, 229, 255, 0.1) inset,
+                0 20px 40px -10px rgba(0, 0, 0, 0.3);
+        }
+
+        .panel::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg,
+                    transparent,
+                    rgba(0, 229, 255, 0.4),
+                    transparent);
+        }
+
+        .panel:hover {
+            border-color: rgba(0, 229, 255, 0.5);
+            box-shadow:
+                0 16px 48px rgba(0, 229, 255, 0.2),
+                0 0 0 1px rgba(0, 229, 255, 0.2) inset,
+                0 30px 60px -15px rgba(0, 0, 0, 0.4);
+            transform: translateY(-4px) scale(1.02);
+        }
+
+        /* Attack Travel Animation - Conexión Visual del Mapa al Lab */
+        .attack-travel-indicator {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 9998;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            animation: attackPulse 0.5s ease-in-out infinite alternate;
+        }
+
+        .attack-travel-indicator.active {
+            display: flex;
+        }
+
+        .attack-icon {
+            font-size: 3rem;
+            filter: drop-shadow(0 0 20px var(--attack));
+            animation: attackBounce 0.6s ease-in-out infinite;
+        }
+
+        @keyframes attackBounce {
+
+            0%,
+            100% {
+                transform: translateY(0) scale(1);
+            }
+
+            50% {
+                transform: translateY(-10px) scale(1.1);
+            }
+        }
+
+        @keyframes attackPulse {
+            0% {
+                filter: brightness(1);
+            }
+
+            100% {
+                filter: brightness(1.3);
+            }
+        }
+
+        .attack-trail {
+            position: fixed;
+            z-index: 9997;
+            pointer-events: none;
+        }
+
+        .attack-trail-particle {
+            position: absolute;
+            width: 6px;
+            height: 6px;
+            background: var(--attack);
+            border-radius: 50%;
+            box-shadow: 0 0 10px var(--attack), 0 0 20px var(--attack);
+            animation: trailFade 1s ease-out forwards;
+        }
+
+        @keyframes trailFade {
+            0% {
+                opacity: 1;
+                transform: scale(1);
+            }
+
+            100% {
+                opacity: 0;
+                transform: scale(0.3);
+            }
+        }
+
+        /* Logo flotante en el mapa 3D - LADO IZQUIERDO */
+        .cybermap-header {
+            position: absolute;
+            top: 20px;
+            left: 25px;
+            z-index: 200;
+            display: flex;
+            align-items: center;
+            padding: 15px 25px;
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.7) 0%, rgba(0, 0, 0, 0.4) 100%);
+            border-radius: 12px;
+            border: 1px solid rgba(0, 229, 255, 0.2);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        #cyberMap iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+
+        .cybermap-logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            pointer-events: auto;
+        }
+
+        .cybermap-logo-icon {
+            font-size: 2.5rem;
+            color: var(--onesec-green);
+            font-weight: 700;
+            text-shadow: 0 0 30px rgba(0, 229, 255, 0.5);
+            animation: logoGlow 3s ease-in-out infinite;
+        }
+
+        @keyframes logoGlow {
+
+            0%,
+            100% {
+                text-shadow: 0 0 30px rgba(0, 229, 255, 0.5);
+            }
+
+            50% {
+                text-shadow: 0 0 50px rgba(0, 229, 255, 0.8), 0 0 80px rgba(0, 229, 255, 0.4);
+            }
+        }
+
+        .cybermap-logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .cybermap-logo-name {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #fff;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            text-shadow: 0 2px 20px rgba(0, 229, 255, 0.3);
+        }
+
+        .cybermap-logo-tagline {
+            font-size: 0.7rem;
+            color: var(--onesec-green);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            opacity: 0.9;
+        }
+
+        /* Subtítulo del mapa */
+        .cybermap-subtitle {
+            position: absolute;
+            top: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 200;
+            font-size: 0.85rem;
+            color: rgba(255, 255, 255, 0.7);
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            pointer-events: none;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Ocultar logo cuando el mapa no está activo */
+        #cyberMap:not(.active) .cybermap-header {
+            display: none;
+        }
+
+        /* Pro Modal */
+        .pro-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .pro-modal-overlay.active {
+            display: flex;
+            opacity: 1;
+        }
+
+        .pro-modal {
+            background: linear-gradient(145deg, rgba(20, 60, 50, 0.95) 0%, rgba(10, 35, 28, 0.98) 100%);
+            border-radius: 20px;
+            border: 1px solid rgba(0, 229, 255, 0.4);
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.6), 0 0 50px rgba(0, 229, 255, 0.2);
+            position: relative;
+            overflow: hidden;
+            animation: modalSlideIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .pro-modal::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.8), transparent);
+        }
+
+        .pro-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 25px;
+        }
+
+        .pro-modal-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .pro-modal-title h2 {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--onesec-green);
+            margin: 0;
+        }
+
+        .pro-modal-title span {
+            font-size: 1.5rem;
+        }
+
+        .pro-modal-close {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.05);
+            color: white;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .pro-modal-close:hover {
+            background: rgba(231, 76, 60, 0.3);
+            border-color: var(--attack);
+        }
+
+        .pro-modal-body {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .pro-feature {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            padding: 15px;
+            background: rgba(0, 229, 255, 0.05);
+            border-radius: 12px;
+            border: 1px solid rgba(0, 229, 255, 0.15);
+        }
+
+        .pro-feature-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, rgba(0, 229, 255, 0.2), rgba(134, 97, 197, 0.2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+
+        .pro-feature-text h3 {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: white;
+            margin: 0 0 5px 0;
+        }
+
+        .pro-feature-text p {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .pro-input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .pro-input-group label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .pro-input {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(0, 229, 255, 0.3);
+            border-radius: 10px;
+            padding: 12px 15px;
+            color: white;
+            font-size: 0.85rem;
+            transition: all 0.3s ease;
+        }
+
+        .pro-input:focus {
+            outline: none;
+            border-color: var(--onesec-green);
+            box-shadow: 0 0 20px rgba(0, 229, 255, 0.2);
+        }
+
+        .pro-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .pro-btn-primary {
+            background: linear-gradient(135deg, var(--onesec-green) 0%, #00b8d4 100%);
+            color: var(--onesec-dark);
+            border: none;
+            border-radius: 12px;
+            padding: 14px 24px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+        }
+
+        .pro-btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 229, 255, 0.4);
+        }
+
+        .pro-btn-secondary {
+            background: transparent;
+            color: var(--onesec-green);
+            border: 1px solid var(--onesec-green);
+            border-radius: 12px;
+            padding: 12px 24px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .pro-btn-secondary:hover {
+            background: rgba(0, 229, 255, 0.1);
+        }
+
+        .pro-status {
+            padding: 12px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            text-align: center;
+            display: none;
+        }
+
+        .pro-status.success {
+            display: block;
+            background: rgba(39, 174, 96, 0.2);
+            border: 1px solid rgba(39, 174, 96, 0.4);
+            color: var(--success);
+        }
+
+        .pro-status.error {
+            display: block;
+            background: rgba(231, 76, 60, 0.2);
+            border: 1px solid rgba(231, 76, 60, 0.4);
+            color: var(--attack);
+        }
+
+        /* Ocultar controles de zoom cuando el mapa está activo */
+        #cyberMap.active~.zoom-indicator,
+        #cyberMap.active~.header,
+        #cyberMap.active~.kpis,
+        #cyberMap.active~.timeline {
+            display: none !important;
+        }
+
+        /* Animated Flow Arrows & Packets */
+        .flow-arrow {
+            fill: none;
+            stroke-width: 2;
+            stroke-dasharray: 10, 5;
+            animation: flowDash 1s linear infinite;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .flow-arrow.active {
+            opacity: 1;
+        }
+
+        .flow-arrow.atk {
+            stroke: var(--attack);
+            filter: drop-shadow(0 0 5px var(--attack));
+        }
+
+        .flow-arrow.def {
+            stroke: var(--success);
+            filter: drop-shadow(0 0 5px var(--success));
+        }
+
+        @keyframes flowDash {
+            to {
+                stroke-dashoffset: -15;
+            }
+        }
+
+        .data-packet {
+            r: 4;
+            filter: drop-shadow(0 0 8px currentColor);
+        }
+
+        .data-packet.atk {
+            fill: #ff0000;
+            color: #ff0000;
+        }
+
+        .data-packet.def {
+            fill: #00ff00;
+            color: #00ff00;
+        }
+
+        /* --- NARRATION OVERLAY STYLES --- */
+        .nar-ovl {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 700px;
+            max-width: 90%;
+            background: rgba(10, 25, 47, 0.95);
+            border: 1px solid var(--onesec-green);
+            backdrop-filter: blur(10px);
+            padding: 20px;
+            border-radius: 10px;
+            display: none;
+            /* Hide on map by default */
+            align-items: center;
+            gap: 20px;
+            z-index: 1000;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: opacity 0.5s, transform 0.5s;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Show overlay when content updates */
+        body:has(.nar-avatar.speaking) .nar-ovl,
+        .nar-ovl:has(.nar-txt:not(:empty)) {
+            opacity: 1;
+            transform: translateX(-50%) translateY(0);
+            pointer-events: auto;
+        }
+
+        .nar-avatar {
+            width: 60px;
+            height: 60px;
+            background: #000;
+            border-radius: 50%;
+            border: 2px solid var(--onesec-green);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .nar-avatar.speaking {
+            box-shadow: 0 0 15px var(--onesec-green);
+            animation: pulse-speak 1s infinite;
+        }
+
+        @keyframes pulse-speak {
+            0% {
+                box-shadow: 0 0 5px var(--onesec-green);
+            }
+
+            50% {
+                box-shadow: 0 0 20px var(--onesec-green);
+            }
+
+            100% {
+                box-shadow: 0 0 5px var(--onesec-green);
+            }
+        }
+
+        .nar-avatar-img {
+            font-family: 'Impact', sans-serif;
+            color: var(--onesec-green);
+            font-size: 1.5rem;
+        }
+
+        .nar-content {
+            flex: 1;
+        }
+
+        .nar-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+
+        .nar-txt {
+            font-size: 1.1rem;
+            color: #fff;
+            line-height: 1.4;
+            font-family: 'Segoe UI', sans-serif;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- startOvl removed -->
+
+    <!-- Hacker Terminal -->
+    <div class="hacker-term" id="hackerTerm">
+        <div class="term-header"><span>CMD.EXE - Administrator</span><span style="color:var(--attack)">● REC</span>
+        </div>
+        <div class="term-body" id="termBody"></div>
+    </div>
+
+    <div id="inspector" class="packet-inspector">
+        <div class="pi-head"><span>PACKET INSPECTOR</span><span id="piType">DATA</span></div>
+        <div class="pi-body">
+            <div class="pi-row"><span class="pi-lbl">PROTO:</span><span id="piProto">TCP</span></div>
+            <div class="pi-row"><span class="pi-lbl">SOURCE:</span><span id="piSrc">10.0.0.1</span></div>
+            <div class="pi-row"><span class="pi-lbl">DEST:</span><span id="piDst">192.168.1.5</span></div>
+            <div class="pi-hex" id="piHex">00 1A 2B 3C ...</div>
+        </div>
+    </div>
+
+    <!-- Immersive Transition Overlay -->
+    <div class="immersive-transition" id="immersiveTransition">
+        <div class="immersive-tunnel" id="immersiveTunnel">
+            <div class="tunnel-ring"></div>
+            <div class="tunnel-ring"></div>
+            <div class="tunnel-ring"></div>
+            <div class="tunnel-ring"></div>
+            <div class="tunnel-ring"></div>
+        </div>
+        <div class="cyber-particles" id="cyberParticles"></div>
+    </div>
+
+    <!-- Attack Travel Indicator -->
+    <div class="attack-travel-indicator" id="attackTravelIndicator">
+        <div class="attack-icon">🎯</div>
+        <div style="color: var(--attack); font-weight: 600; text-transform: uppercase; letter-spacing: 2px;">Amenaza
+            Detectada</div>
+    </div>
+
+    <!-- CyberMap 3D Integration -->
+    <!-- CyberMap 3D Integration (ACTIVE BY DEFAULT) -->
+    <div id="cyberMap" class="active">
+        <!-- Logo ONESEC flotante -->
+        <div class="cybermap-header">
+            <div class="cybermap-logo">
+                <span class="cybermap-logo-icon">Ω</span>
+                <div class="cybermap-logo-text">
+                    <span class="cybermap-logo-name">ONESEC</span>
+                    <span class="cybermap-logo-tagline">Always Secure, Never at Risk</span>
+                </div>
+            </div>
+        </div>
+
+        <iframe id="mapFrame" src="./cybermap/index.html" style="width:100%;height:100%;border:none;"></iframe>
+        <button class="btn-to-lab" onclick="startImmersiveTransition()">
+            🔬 IR AL LABORATORIO
+        </button>
+    </div>
+
+    <canvas id="bgCanvas"></canvas>
+
+    <header class="header">
+        <div class="brand">
+            <div class="logo">
+                <span class="logo-icon">Ω</span>
+                <div>
+                    <div class="logo-text">ONESEC</div>
+                    <div class="tagline">Always Secure, Never at Risk</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scenario Buttons -->
+        <div class="scenarios">
+            <button class="sc-btn" id="sc-impl" onclick="startScenario('impl')">🛠️ IMPLEMENTACIÓN</button>
+            <button class="sc-btn attack" id="sc-phish" onclick="startScenario('phish')">🎣 PHISHING</button>
+            <button class="sc-btn attack" id="sc-srv" onclick="startScenario('srv')">🔓 SERVIDOR</button>
+            <button class="sc-btn attack" id="sc-insider" onclick="startScenario('insider')">👤 INSIDER</button>
+            <button class="sc-btn attack" id="sc-brute" onclick="startScenario('brute')">🔑 BRUTE FORCE</button>
+        </div>
+
+        <!-- Controls -->
+        <div class="controls">
+            <button class="ctrl-btn pro-btn" id="btnPro" onclick="openProModal()" title="ONESEC IA Pro">
+                ✨ IA PRO
+            </button>
+            <button class="ctrl-btn" id="btnVoice" onclick="toggleVoice()" title="Activar/Desactivar Narración">
+                🔊
+            </button>
+            <button class="ctrl-btn" id="btnPause" onclick="togglePause()" style="display:none">⏸️</button>
+            <button class="ctrl-btn" onclick="resetLab()" title="Reiniciar">🔄</button>
+            <a href="admin.html" class="ctrl-btn admin-btn" title="Configuración Admin">
+                ⚙️ Admin
+            </a>
+        </div>
+    </header>
+
+    <!-- Status Bar (Missing Elements Fix) -->
+    <div class="status-bar"
+        style="position: fixed; top: 80px; left: 0; right: 0; padding: 10px 40px; display: none; align-items: center; justify-content: space-between; z-index: 90; background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent); pointer-events: none;">
+        <div class="phase-display"
+            style="font-family: 'Share Tech Mono', monospace; color: var(--onesec-green); font-size: 1.2rem; text-shadow: 0 0 10px var(--onesec-green);">
+            FASE: <span id="phase">Esperando...</span>
+        </div>
+
+        <div class="progress-wrapper" style="flex: 1; margin: 0 40px; display: flex; align-items: center; gap: 15px;">
+            <div class="progress-track"
+                style="flex: 1; height: 6px; background: rgba(255,255,255,0.1); border-radius: 3px; overflow: hidden;">
+                <div class="progress-fill" id="progFill"
+                    style="width: 0%; height: 100%; background: var(--onesec-green); box-shadow: 0 0 15px var(--onesec-green); transition: width 0.5s ease;">
+                </div>
+            </div>
+            <div class="progress-text" id="progTxt"
+                style="font-family: 'Share Tech Mono', monospace; color: #fff; width: 40px;">0%</div>
+        </div>
+
+        <div class="atk-type-display" id="atkType"
+            style="font-family: 'Impact', sans-serif; color: var(--attack); font-size: 1.5rem; text-transform: uppercase; letter-spacing: 2px; text-shadow: 0 0 10px var(--attack);">
+        </div>
+    </div>
+
+    <div class="toasts" id="toasts"></div>
+
+    <!-- Botón Volver al Mapa Global -->
+    <button class="btn-to-map" id="btnToMap" onclick="returnToMap()">
+        🌐 Mapa Global
+    </button>
+
+    <div class="pause-ovl" id="pauseOvl" onclick="togglePause()">
+        <div class="pause-msg">
+            <div class="ico">⏸️</div>
+            <div class="txt">PAUSADO</div>
+            <button class="resume-btn" onclick="togglePause(); event.stopPropagation();">▶️ Reanudar</button>
+            <div class="pause-hint">Clic en cualquier lugar para continuar</div>
+        </div>
+    </div>
+    <div class="tooltip" id="tooltip">
+        <div class="tooltip-title"></div>
+        <div class="tooltip-desc"></div>
+    </div>
+
+    <!-- Navigation hints -->
+    <div class="nav-hint">
+        <div class="hint-row"><span class="hint-icon">🖱️</span> Arrastra para mover</div>
+        <div class="hint-row"><span class="hint-icon">🔍</span> Scroll para zoom</div>
+        <div class="hint-row"><span class="hint-icon">👆</span> Clic para acercar</div>
+    </div>
+
+    <!-- Zoom controls -->
+    <div class="zoom-indicator">
+        <button onclick="zoomOut()">−</button>
+        <span id="zoomLevel">100%</span>
+        <button onclick="zoomIn()">+</button>
+    </div>
+
+    <!-- Minimap -->
+    <div class="minimap">
+        <div class="minimap-content" id="minimapContent">
+            <div class="minimap-viewport" id="minimapViewport"></div>
+            <div class="minimap-dot" style="left:8%;top:35%" data-target="attacker" onclick="focusOn('attacker')">
+            </div>
+            <div class="minimap-dot" style="left:15%;top:38%" data-target="firewall" onclick="focusOn('firewall')">
+            </div>
+            <div class="minimap-dot" style="left:25%;top:25%" data-target="email" onclick="focusOn('email')"></div>
+            <div class="minimap-dot" style="left:32%;top:35%" data-target="endpoint" onclick="focusOn('endpoint')">
+            </div>
+            <div class="minimap-dot" style="left:25%;top:50%" data-target="user" onclick="focusOn('user')"></div>
+            <div class="minimap-dot" style="left:40%;top:38%" data-target="server" onclick="focusOn('server')">
+            </div>
+            <div class="minimap-dot" style="left:55%;top:22%" data-target="loganalytics"
+                onclick="focusOn('loganalytics')"></div>
+            <div class="minimap-dot" style="left:55%;top:55%" data-target="sentinel" onclick="focusOn('sentinel')">
+            </div>
+            <div class="minimap-dot" style="left:72%;top:22%" data-target="copilot" onclick="focusOn('copilot')">
+            </div>
+            <div class="minimap-dot" style="left:72%;top:55%" data-target="logic" onclick="focusOn('logic')"></div>
+            <div class="minimap-dot" style="left:88%;top:40%" data-target="soc" onclick="focusOn('soc')"></div>
+        </div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="kpis" id="kpis">
+        <div class="kpi-title">📊 Métricas</div>
+        <div class="kpi-row"><span class="kpi-ico">⏱️</span>
+            <div class="kpi-data">
+                <div class="kpi-lbl">Detección</div>
+                <div class="kpi-val good" id="kpiMttd">--</div>
+            </div>
+        </div>
+        <div class="kpi-row"><span class="kpi-ico">⚡</span>
+            <div class="kpi-data">
+                <div class="kpi-lbl">Respuesta</div>
+                <div class="kpi-val good" id="kpiMttr">--</div>
+            </div>
+        </div>
+        <div class="kpi-row"><span class="kpi-ico">💰</span>
+            <div class="kpi-data">
+                <div class="kpi-lbl">Ahorro</div>
+                <div class="kpi-val good" id="kpiCost">--</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Timeline -->
+    <div class="timeline" id="timeline">
+        <div class="tl-step">
+            <div class="tl-node" id="tl1">☠️</div>
+            <div class="tl-line" id="tlL1"></div>
+        </div>
+        <div class="tl-step">
+            <div class="tl-node" id="tl2">📧</div>
+            <div class="tl-line" id="tlL2"></div>
+        </div>
+        <div class="tl-step">
+            <div class="tl-node" id="tl3">💻</div>
+            <div class="tl-line" id="tlL3"></div>
+        </div>
+        <div class="tl-step">
+            <div class="tl-node" id="tl4">🛡️</div>
+            <div class="tl-line" id="tlL4"></div>
+        </div>
+        <div class="tl-step">
+            <div class="tl-node" id="tl5">⚡</div>
+            <div class="tl-line" id="tlL5"></div>
+        </div>
+        <div class="tl-step">
+            <div class="tl-node" id="tl6">✅</div>
+        </div>
+    </div>
+
+    <div class="lab-view" id="labView">
+        <div class="lab" id="lab">
+            <!-- SVG Connections - Energy Beam System -->
+            <svg class="conns" viewBox="0 0 1400 500">
+                <defs>
+                    <!-- Flechas de ataque (rojas) -->
+                    <marker id="arrowAtk" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+                        <path d="M 0 0 L 10 4 L 0 8 L 3 4 Z" fill="var(--attack)" />
+                    </marker>
+                    <!-- Flechas de datos (azules) -->
+                    <marker id="arrowData" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+                        <path d="M 0 0 L 10 4 L 0 8 L 3 4 Z" fill="var(--ms-blue)" />
+                    </marker>
+                    <!-- Flechas de defensa (verdes) -->
+                    <marker id="arrowDef" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+                        <path d="M 0 0 L 10 4 L 0 8 L 3 4 Z" fill="var(--onesec-green)" />
+                    </marker>
+                    <!-- Filtro de glow para energy beams -->
+                    <filter id="glowAtk" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur stdDeviation="3" result="blur" />
+                        <feFlood flood-color="var(--attack)" flood-opacity="0.6" />
+                        <feComposite in2="blur" operator="in" />
+                        <feMerge><feMergeNode /><feMergeNode in="SourceGraphic" /></feMerge>
+                    </filter>
+                    <filter id="glowData" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur stdDeviation="3" result="blur" />
+                        <feFlood flood-color="var(--ms-blue)" flood-opacity="0.6" />
+                        <feComposite in2="blur" operator="in" />
+                        <feMerge><feMergeNode /><feMergeNode in="SourceGraphic" /></feMerge>
+                    </filter>
+                    <filter id="glowDef" x="-50%" y="-50%" width="200%" height="200%">
+                        <feGaussianBlur stdDeviation="3" result="blur" />
+                        <feFlood flood-color="var(--onesec-green)" flood-opacity="0.6" />
+                        <feComposite in2="blur" operator="in" />
+                        <feMerge><feMergeNode /><feMergeNode in="SourceGraphic" /></feMerge>
+                    </filter>
+                </defs>
+
+                <!-- Líneas base de topología (siempre visibles, tenues) -->
+                <path class="conn atk topology" d="M 92 177 Q 135 177 145 192" />
+                <path class="conn atk topology" d="M 210 197 Q 260 165 285 140" />
+                <path class="conn data topology" d="M 465 177 Q 560 120 615 100" />
+                <path class="conn data topology" d="M 545 202 Q 580 170 615 140" />
+                <path class="conn data topology" d="M 545 307 Q 580 340 615 350" />
+
+                <!-- Conexiones activas con flechas -->
+                <!-- c1: Atacante → Firewall -->
+                <path id="c1" class="conn atk" d="M 92 177 Q 135 177 145 192" marker-end="url(#arrowAtk)" />
+                <!-- c2: Firewall → Exchange -->
+                <path id="c2" class="conn atk" d="M 210 197 Q 260 165 285 140" marker-end="url(#arrowAtk)" />
+                <!-- c3: Exchange → Endpoint -->
+                <path id="c3" class="conn atk" d="M 350 127 Q 385 127 400 155" marker-end="url(#arrowAtk)" />
+                <!-- c4: Endpoint → Sentinel -->
+                <path id="c4" class="conn data" d="M 465 177 Q 560 220 615 260" marker-end="url(#arrowData)" />
+                <!-- c5: Endpoint → Log Analytics -->
+                <path id="c5" class="conn data" d="M 465 165 Q 560 110 615 90" marker-end="url(#arrowData)" />
+                <!-- c6: Servidor → Log Analytics -->
+                <path id="c6" class="conn data" d="M 545 195 Q 580 160 615 130" marker-end="url(#arrowData)" />
+                <!-- c7: Database → Sentinel -->
+                <path id="c7" class="conn data" d="M 545 307 Q 580 330 615 340" marker-end="url(#arrowData)" />
+                <!-- c8: Sentinel → Logic Apps -->
+                <path id="c8" class="conn data" d="M 830 285 Q 880 285 840 285" marker-end="url(#arrowData)" />
+                <!-- c9: Sentinel → SOC -->
+                <path id="c9" class="conn data" d="M 830 300 Q 950 330 1045 265" marker-end="url(#arrowData)" />
+                <!-- c10: Logic Apps → SOC -->
+                <path id="c10" class="conn data" d="M 1050 285 Q 1090 275 1045 255" marker-end="url(#arrowData)" />
+                <!-- c11: Defensa → Servidor (protección) -->
+                <path id="c11" class="conn def" d="M 615 260 Q 580 230 545 210" marker-end="url(#arrowDef)" />
+                <!-- c12: Firewall bloqueo (vertical) -->
+                <path id="c12" class="conn def" d="M 177 165 L 177 145" marker-end="url(#arrowDef)" />
+
+                <!-- Data Packets Container -->
+                <g id="dataPackets"></g>
+            </svg>
+
+            <!-- Zones -->
+            <div class="zone" id="zExt" style="left:15px;top:100px;width:100px;height:160px">
+                <div class="zone-lbl">🌐 Zona Externa</div>
+            </div>
+            <div class="zone" id="zPer" style="left:130px;top:80px;width:100px;height:195px">
+                <div class="zone-lbl">🔥 Perímetro</div>
+            </div>
+            <div class="zone" id="zInt" style="left:245px;top:60px;width:325px;height:260px">
+                <div class="zone-lbl">🏢 Red Interna</div>
+            </div>
+            <div class="zone" id="zAzure" style="left:595px;top:30px;width:395px;height:420px">
+                <div class="zone-lbl">☁️ Microsoft Azure</div>
+            </div>
+            <div class="zone" id="zSoc" style="left:1015px;top:120px;width:210px;height:240px">
+                <div class="zone-lbl">👁️ ONESEC SOC</div>
+            </div>
+
+            <!-- Nodes con iconos SVG Premium -->
+            <div class="node attacker" id="nAtk" style="left:30px;top:145px" data-name="Atacante"
+                data-desc="Actor de amenaza externo intentando comprometer la red" onclick="focusOn('attacker')">
+                <div class="node-ico">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                        style="color: #e74c3c;">
+                        <circle cx="12" cy="8" r="5" />
+                        <path d="M8 10 L6 16 L8 14 L10 18 L12 14 L14 18 L16 14 L18 16 L16 10" />
+                        <circle cx="9.5" cy="7.5" r="1" fill="currentColor" />
+                        <circle cx="14.5" cy="7.5" r="1" fill="currentColor" />
+                        <path d="M9 11 Q12 13, 15 11" />
+                    </svg>
+                </div>
+                <div class="node-name">Atacante</div>
+                <div class="node-sub" id="atkType">Externo</div>
+            </div>
+            <div class="node firewall" id="nFw" style="left:145px;top:165px" data-name="FortiGate"
+                data-desc="Firewall de próxima generación protegiendo el perímetro" onclick="focusOn('firewall')">
+                <div class="node-ico">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                        style="color: #f97316;">
+                        <path d="M12 2 L4 6 L4 12 C4 17.5 12 22 12 22 C12 22 20 17.5 20 12 L20 6 L12 2Z" />
+                        <path d="M12 8 L12 14 M9 10 L12 8 L15 10 M10 13 L12 16 L14 13" stroke-linecap="round" />
+                    </svg>
+                    <div class="node-st" id="fwSt" style="background:var(--success)">✓</div>
+                </div>
+                <div class="node-name">FortiGate</div>
+            </div>
+            <div class="node cloud" id="nMail" style="left:285px;top:95px" data-name="Exchange Online"
+                data-desc="Servidor de correo Microsoft 365 protegido por Defender" onclick="focusOn('email')">
+                <div class="node-ico">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                        style="color: #0078d4;">
+                        <rect x="3" y="5" width="18" height="14" rx="2" />
+                        <path d="M3 7 L12 13 L21 7" />
+                    </svg>
+                    <div class="node-st" id="mailSt" style="background:var(--ms-blue)">●</div>
+                </div>
+                <div class="node-name">Exchange</div>
+            </div>
+            <div class="node endpoint" id="nEp" style="left:400px;top:145px" data-name="Endpoint"
+                data-desc="Estación de trabajo protegida por Defender for Endpoint" onclick="focusOn('endpoint')">
+                <div class="node-ico">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                        style="color: #00e5ff;">
+                        <rect x="3" y="4" width="18" height="12" rx="2" />
+                        <path d="M7 20 L17 20" />
+                        <path d="M12 16 L12 20" />
+                        <circle cx="12" cy="10" r="1" fill="currentColor" />
+                    </svg>
+                    <div class="node-st" id="epSt" style="background:var(--defender)">●</div>
+                </div>
+                <div class="node-name">Endpoint</div>
+            </div>
+            <div class="node user" id="nUser" style="left:285px;top:230px" data-name="Usuario"
+                data-desc="Empleado de la organización con acceso a recursos" onclick="focusOn('user')">
+                <div class="node-ico">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                        style="color: #27ae60;">
+                        <circle cx="12" cy="8" r="4" />
+                        <path d="M4 20 C4 16 8 14 12 14 C16 14 20 16 20 20" />
+                    </svg>
+                    <div class="node-st" id="userSt" style="background:var(--success)">●</div>
+                </div>
+                <div class="node-name">Usuario</div>
+            </div>
+            <div class="node server" id="nSrv" style="left:480px;top:170px" data-name="Servidor Web"
+                data-desc="Servidor de aplicaciones protegido por Defender for Servers" onclick="focusOn('server')">
+                <div class="node-ico">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                        style="color: #8661c5;">
+                        <rect x="4" y="2" width="16" height="6" rx="1" />
+                        <rect x="4" y="9" width="16" height="6" rx="1" />
+                        <rect x="4" y="16" width="16" height="6" rx="1" />
+                        <circle cx="7" cy="5" r="1" fill="currentColor" />
+                        <circle cx="7" cy="12" r="1" fill="currentColor" />
+                        <circle cx="7" cy="19" r="1" fill="currentColor" />
+                    </svg>
+                    <div class="node-st" id="srvSt" style="background:var(--sentinel)">●</div>
+                </div>
+                <div class="node-name">Servidor</div>
+            </div>
+            <div class="node server" id="nDb" style="left:480px;top:275px" data-name="Base de Datos"
+                data-desc="SQL Server con datos sensibles de la organización" onclick="focusOn('database')">
+                <div class="node-ico">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"
+                        style="color: #8661c5;">
+                        <ellipse cx="12" cy="5" rx="8" ry="3" />
+                        <path d="M4 5 L4 19 C4 21 8 22 12 22 C16 22 20 21 20 19 L20 5" />
+                        <path d="M4 12 C4 14 8 15 12 15 C16 15 20 14 20 12" />
+                    </svg>
+                    <div class="node-st" id="dbSt" style="background:var(--sentinel)">●</div>
+                </div>
+                <div class="node-name">Database</div>
+            </div>
+
+            <!-- Panels -->
+            <div class="panel p-la" id="pLa" style="left:615px;top:50px" data-name="Log Analytics Workspace"
+                data-desc="Repositorio central de logs y eventos de seguridad" onclick="focusOn('loganalytics')">
+                <div class="panel-hd">
+                    <div class="panel-ico">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" style="color: #00e5ff;">
+                            <path d="M3 3 L3 21 L21 21" />
+                            <path d="M7 16 L7 12" />
+                            <path d="M11 16 L11 8" />
+                            <path d="M15 16 L15 10" />
+                            <path d="M19 16 L19 6" />
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="panel-title">Log Analytics</div>
+                        <div class="panel-sub">Workspace</div>
+                    </div>
+                    <div class="panel-st" id="laSt" style="background:rgba(97,186,124,0.2);color:var(--onesec-green)">OK
+                    </div>
+                </div>
+                <div class="kql" id="kql"><span class="cmt">// Query KQL</span><br><span
+                        class="tb">SecurityEvent</span><br><span class="kw">| where</span> TimeGenerated > ago(1h)
+                </div>
+                <div class="logs" id="logs">
+                    <div class="log-row"><span class="log-sev info">INFO</span>Sistema listo</div>
+                </div>
+            </div>
+
+            <div class="panel p-sen" id="pSen" style="left:615px;top:210px" data-name="Microsoft Sentinel"
+                data-desc="SIEM cloud-native con capacidades SOAR integradas" onclick="focusOn('sentinel')">
+                <div class="panel-hd">
+                    <div class="panel-ico">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" style="color: #8661c5;">
+                            <path d="M12 2 L4 7 L4 15 C4 19 12 22 12 22 C12 22 20 19 20 15 L20 7 L12 2Z" />
+                            <path d="M9 12 L11 14 L15 10" />
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="panel-title">Microsoft Sentinel</div>
+                        <div class="panel-sub">SIEM + SOAR</div>
+                    </div>
+                    <div class="panel-st" id="senSt" style="background:rgba(97,186,124,0.2);color:var(--onesec-green)">
+                        Active</div>
+                </div>
+                <div class="metrics">
+                    <div class="metric">
+                        <div class="metric-v b" id="mEv">0</div>
+                        <div class="metric-l">Eventos</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-v y" id="mAl">0</div>
+                        <div class="metric-l">Alertas</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-v r" id="mTh">0</div>
+                        <div class="metric-l">Amenazas</div>
+                    </div>
+                    <div class="metric">
+                        <div class="metric-v g" id="mBl">0</div>
+                        <div class="metric-l">Bloqueados</div>
+                    </div>
+                </div>
+                <div class="chart-box">
+                    <div class="chart" id="chart"></div>
+                </div>
+            </div>
+
+            <div class="panel p-cp" id="pCp" style="left:840px;top:50px" data-name="Security Copilot"
+                data-desc="Asistente de IA para análisis de seguridad avanzado" onclick="focusOn('copilot')">
+                <div class="panel-hd">
+                    <div class="panel-ico">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" style="color: #00e5ff;">
+                            <circle cx="12" cy="12" r="3" />
+                            <path d="M12 2 L12 6 M12 18 L12 22 M2 12 L6 12 M18 12 L22 12" />
+                            <path d="M4.93 4.93 L7.76 7.76 M16.24 16.24 L19.07 19.07" />
+                            <path d="M19.07 4.93 L16.24 7.76 M7.76 16.24 L4.93 19.07" />
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="panel-title">Security Copilot</div>
+                        <div class="panel-sub">AI Analysis</div>
+                    </div>
+                    <div class="panel-st" style="background:rgba(97,186,124,0.2);color:var(--onesec-green)">6 SCU
+                    </div>
+                </div>
+                <div class="cp-chat" id="cpChat">
+                    <div class="cp-msg ai">
+                        <div class="cp-av">✨</div>
+                        <div class="cp-bub">Listo para investigar incidentes.</div>
+                    </div>
+                </div>
+                <div class="cp-in"><input id="cpIn" placeholder="Pregunta a Copilot..."><button
+                        onclick="askCp()">→</button></div>
+            </div>
+
+            <div class="panel p-logic" id="pLogic" style="left:840px;top:210px" data-name="Logic Apps"
+                data-desc="Playbooks de respuesta automática ante incidentes" onclick="focusOn('logic')">
+                <div class="panel-hd">
+                    <div class="panel-ico">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" style="color: #f97316;">
+                            <path d="M13 2 L3 14 L12 14 L11 22 L21 10 L12 10 L13 2Z" />
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="panel-title">Logic Apps</div>
+                        <div class="panel-sub">Playbooks SOAR</div>
+                    </div>
+                    <div class="panel-st" id="lgSt" style="background:rgba(0,120,212,0.2);color:var(--ms-blue)">
+                        Ready
+                    </div>
+                </div>
+                <div class="logic-flow">
+                    <div class="lg-step" id="lg1">
+                        <div class="lg-num">1</div>
+                        <div class="lg-ico">📥</div>
+                        <div class="lg-txt">Trigger</div>
+                    </div>
+                    <div class="lg-step" id="lg2">
+                        <div class="lg-num">2</div>
+                        <div class="lg-ico">🔍</div>
+                        <div class="lg-txt">Enrich</div>
+                    </div>
+                    <div class="lg-step" id="lg3">
+                        <div class="lg-num">3</div>
+                        <div class="lg-ico">🔒</div>
+                        <div class="lg-txt">Contain</div>
+                    </div>
+                    <div class="lg-step" id="lg4">
+                        <div class="lg-num">4</div>
+                        <div class="lg-ico">📧</div>
+                        <div class="lg-txt">Notify</div>
+                    </div>
+                    <div class="lg-step" id="lg5">
+                        <div class="lg-num">5</div>
+                        <div class="lg-ico">📝</div>
+                        <div class="lg-txt">Document</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel p-soc" id="pSoc" style="left:1045px;top:165px" data-name="ONESEC SOC"
+                data-desc="Centro de Operaciones de Seguridad 24/7" onclick="focusOn('soc')">
+                <div class="panel-hd">
+                    <div class="panel-ico">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" style="color: #00e5ff;">
+                            <path d="M1 12 C5 5, 19 5, 23 12 C19 19, 5 19, 1 12Z" />
+                            <circle cx="12" cy="12" r="3" />
+                        </svg>
+                    </div>
+                    <div>
+                        <div class="panel-title">ONESEC SOC</div>
+                        <div class="panel-sub">24/7 Monitoring</div>
+                    </div>
+                </div>
+                <div class="soc-grid">
+                    <div class="soc-svc" id="svcRed">
+                        <div class="soc-svc-ico">🔴</div>
+                        <div class="soc-svc-name">Red Team</div>
+                    </div>
+                    <div class="soc-svc" id="svcBlue">
+                        <div class="soc-svc-ico">🔵</div>
+                        <div class="soc-svc-name">Blue Team</div>
+                    </div>
+                    <div class="soc-svc" id="svcSoc">
+                        <div class="soc-svc-ico">👁️</div>
+                        <div class="soc-svc-name">SOC 24/7</div>
+                    </div>
+                    <div class="soc-svc" id="svcCon">
+                        <div class="soc-svc-ico">💼</div>
+                        <div class="soc-svc-name">Consulting</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+    <script>
+        const synth = window.speechSynthesis;
+
+        // === AUDIO SYSTEM (Web Audio API) ===
+        const AudioSys = {
+            ctx: null,
+            on: true,
+            init: function () {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+                if (this.ctx.state === 'suspended') this.ctx.resume();
+            },
+            play: function (type) {
+                if (!this.on || !this.ctx) return;
+                const o = this.ctx.createOscillator();
+                const g = this.ctx.createGain();
+                o.connect(g); g.connect(this.ctx.destination);
+
+                const now = this.ctx.currentTime;
+                if (type === 'click') {
+                    o.type = 'sine'; o.frequency.setValueAtTime(800, now); o.frequency.exponentialRampToValueAtTime(1200, now + 0.1);
+                    g.gain.setValueAtTime(0.1, now); g.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                    o.start(now); o.stop(now + 0.1);
+                } else if (type === 'hover') {
+                    o.type = 'triangle'; o.frequency.setValueAtTime(400, now);
+                    g.gain.setValueAtTime(0.02, now); g.gain.linearRampToValueAtTime(0, now + 0.05);
+                    o.start(now); o.stop(now + 0.05);
+                } else if (type === 'alert') {
+                    o.type = 'sawtooth'; o.frequency.setValueAtTime(200, now); o.frequency.linearRampToValueAtTime(150, now + 0.3);
+                    g.gain.setValueAtTime(0.1, now); g.gain.linearRampToValueAtTime(0, now + 0.3);
+                    o.start(now); o.stop(now + 0.3);
+                } else if (type === 'scan') {
+                    o.type = 'square'; o.frequency.setValueAtTime(800, now); o.frequency.exponentialRampToValueAtTime(200, now + 0.2);
+                    g.gain.setValueAtTime(0.05, now); g.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+                    o.start(now); o.stop(now + 0.2);
+                } else if (type === 'success') {
+                    o.type = 'sine'; o.frequency.setValueAtTime(400, now); o.frequency.linearRampToValueAtTime(800, now + 0.3);
+                    g.gain.setValueAtTime(0.1, now); g.gain.linearRampToValueAtTime(0, now + 0.4);
+                    o.start(now); o.stop(now + 0.4);
+                } else if (type === 'glitch') {
+                    o.type = 'sawtooth'; o.frequency.setValueAtTime(100, now); o.frequency.linearRampToValueAtTime(50, now + 0.5);
+                    g.gain.setValueAtTime(0.2, now); g.gain.exponentialRampToValueAtTime(0.01, now + 0.5);
+                    o.start(now); o.stop(now + 0.5);
+                } else if (type === 'transition') {
+                    // Warp/teleport sound: sweep up then sparkle
+                    o.type = 'sine';
+                    o.frequency.setValueAtTime(200, now);
+                    o.frequency.exponentialRampToValueAtTime(800, now + 0.25);
+                    o.frequency.exponentialRampToValueAtTime(1400, now + 0.5);
+                    o.frequency.exponentialRampToValueAtTime(2000, now + 0.7);
+                    g.gain.setValueAtTime(0.05, now);
+                    g.gain.linearRampToValueAtTime(0.15, now + 0.3);
+                    g.gain.linearRampToValueAtTime(0.08, now + 0.5);
+                    g.gain.linearRampToValueAtTime(0, now + 0.8);
+                    o.start(now); o.stop(now + 0.8);
+                    // Second oscillator for shimmer
+                    var o2 = this.ctx.createOscillator();
+                    var g2 = this.ctx.createGain();
+                    o2.connect(g2); g2.connect(this.ctx.destination);
+                    o2.type = 'triangle';
+                    o2.frequency.setValueAtTime(600, now + 0.2);
+                    o2.frequency.exponentialRampToValueAtTime(1800, now + 0.6);
+                    g2.gain.setValueAtTime(0, now);
+                    g2.gain.linearRampToValueAtTime(0.06, now + 0.3);
+                    g2.gain.linearRampToValueAtTime(0, now + 0.7);
+                    o2.start(now + 0.2); o2.stop(now + 0.7);
+                }
+            }
+        };
+
+        // === BACKGROUND PARTICLES ===
+        const bgCanvas = document.getElementById('bgCanvas');
+        const bgCtx = bgCanvas.getContext('2d');
+        let particles = [];
+        function initBg() {
+            bgCanvas.width = window.innerWidth;
+            bgCanvas.height = window.innerHeight;
+            particles = Array(40).fill().map(() => ({
+                x: Math.random() * bgCanvas.width,
+                y: Math.random() * bgCanvas.height,
+                vx: (Math.random() - 0.5) * 0.5,
+                vy: (Math.random() - 0.5) * 0.5,
+                s: Math.random() * 2 + 1
+            }));
+        }
+        function animBg() {
+            bgCtx.clearRect(0, 0, bgCanvas.width, bgCanvas.height);
+            bgCtx.fillStyle = 'rgba(97, 186, 124, 0.2)';
+            bgCtx.strokeStyle = 'rgba(97, 186, 124, 0.1)';
+
+            particles.forEach((p, i) => {
+                p.x += p.vx; p.y += p.vy;
+                if (p.x < 0 || p.x > bgCanvas.width) p.vx *= -1;
+                if (p.y < 0 || p.y > bgCanvas.height) p.vy *= -1;
+                bgCtx.beginPath(); bgCtx.arc(p.x, p.y, p.s, 0, Math.PI * 2); bgCtx.fill();
+
+                particles.slice(i + 1).forEach(p2 => {
+                    const d = Math.hypot(p.x - p2.x, p.y - p2.y);
+                    if (d < 150) {
+                        bgCtx.beginPath(); bgCtx.moveTo(p.x, p.y); bgCtx.lineTo(p2.x, p2.y); bgCtx.stroke();
+                    }
+                });
+            });
+            requestAnimationFrame(animBg);
+        }
+        window.addEventListener('resize', initBg);
+        initBg(); animBg();
+
+        const lab = document.getElementById('lab');
+        const labView = document.getElementById('labView');
+
+        // State
+        let voiceOn = true, running = false, paused = false, pauseRes = null, speed = 1;
+        let chartData = Array(20).fill(0).map(() => Math.random() * 25 + 5);
+        let startTime = 0, detectTime = 0;
+
+        // === INTERACTIVE NAVIGATION ===
+        let isDragging = false;
+        let startX, startY;
+        let currentX = 0, currentY = 0;
+        let currentZoom = 0.85; // Start zoomed out to see everything
+        const minZoom = 0.4;
+        const maxZoom = 2.5;
+        const labWidth = 1400;
+        const labHeight = 500;
+
+        // Initialize view to show entire architecture
+        function initView() {
+            const vw = labView.clientWidth;
+            const vh = labView.clientHeight;
+            // Calculate zoom to fit entire lab
+            const zoomX = vw / labWidth;
+            const zoomY = vh / labHeight;
+            currentZoom = Math.min(zoomX, zoomY) * 0.95;
+            // Center the lab
+            currentX = (vw - labWidth * currentZoom) / 2;
+            currentY = (vh - labHeight * currentZoom) / 2;
+            updateTransform();
+        }
+
+        function updateTransform(animate = false) {
+            if (animate) {
+                lab.classList.add('animating');
+                lab.classList.remove('dragging');
+            } else {
+                lab.classList.remove('animating');
+            }
+            lab.style.transform = `translate(${currentX}px, ${currentY}px) scale(${currentZoom})`;
+            document.getElementById('zoomLevel').textContent = Math.round(currentZoom * 100) + '%';
+            updateMinimap();
+        }
+
+        // Mouse drag
+        labView.addEventListener('mousedown', (e) => {
+            if (e.target.closest('.node') || e.target.closest('.panel')) return;
+            isDragging = true;
+            startX = e.clientX - currentX;
+            startY = e.clientY - currentY;
+            lab.classList.add('dragging');
+            labView.style.cursor = 'grabbing';
+        });
+
+        document.addEventListener('mousemove', (e) => {
+            if (!isDragging) return;
+            currentX = e.clientX - startX;
+            currentY = e.clientY - startY;
+            updateTransform();
+        });
+
+        document.addEventListener('mouseup', () => {
+            isDragging = false;
+            lab.classList.remove('dragging');
+            labView.style.cursor = 'grab';
+        });
+
+        // Mouse wheel zoom
+        labView.addEventListener('wheel', (e) => {
+            e.preventDefault();
+            const rect = labView.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            // Calculate zoom
+            const delta = e.deltaY > 0 ? 0.9 : 1.1;
+            const newZoom = Math.max(minZoom, Math.min(maxZoom, currentZoom * delta));
+
+            // Zoom towards mouse position
+            const scale = newZoom / currentZoom;
+            currentX = mouseX - (mouseX - currentX) * scale;
+            currentY = mouseY - (mouseY - currentY) * scale;
+            currentZoom = newZoom;
+
+            updateTransform();
+        });
+
+        // Zoom buttons
+        function zoomIn() {
+            const vw = labView.clientWidth;
+            const vh = labView.clientHeight;
+            const centerX = vw / 2;
+            const centerY = vh / 2;
+
+            const newZoom = Math.min(maxZoom, currentZoom * 1.2);
+            const scale = newZoom / currentZoom;
+            currentX = centerX - (centerX - currentX) * scale;
+            currentY = centerY - (centerY - currentY) * scale;
+            currentZoom = newZoom;
+            updateTransform(true);
+        }
+
+        function zoomOut() {
+            const vw = labView.clientWidth;
+            const vh = labView.clientHeight;
+            const centerX = vw / 2;
+            const centerY = vh / 2;
+
+            const newZoom = Math.max(minZoom, currentZoom / 1.2);
+            const scale = newZoom / currentZoom;
+            currentX = centerX - (centerX - currentX) * scale;
+            currentY = centerY - (centerY - currentY) * scale;
+            currentZoom = newZoom;
+            updateTransform(true);
+        }
+
+        function resetView() {
+            initView();
+            lab.classList.add('animating');
+            setTimeout(() => lab.classList.remove('animating'), 500);
+        }
+
+        // Component positions for focus
+        const componentPos = {
+            attacker: { x: 55, y: 170, z: 2.2 },
+            firewall: { x: 170, y: 190, z: 2.0 },
+            email: { x: 310, y: 120, z: 2.0 },
+            endpoint: { x: 425, y: 170, z: 2.0 },
+            user: { x: 310, y: 255, z: 2.0 },
+            server: { x: 505, y: 195, z: 1.8 },
+            database: { x: 505, y: 300, z: 1.8 },
+            loganalytics: { x: 715, y: 120, z: 1.5 },
+            sentinel: { x: 720, y: 290, z: 1.4 },
+            copilot: { x: 935, y: 120, z: 1.5 },
+            logic: { x: 920, y: 295, z: 1.4 },
+            soc: { x: 1130, y: 235, z: 1.3 },
+            overview: { x: 700, y: 250, z: 0.85 }
+        };
+
+        // Focus on component
+        function focusOn(target) {
+            const pos = componentPos[target];
+            if (!pos) return;
+
+            const vw = labView.clientWidth;
+            const vh = labView.clientHeight;
+
+            currentZoom = pos.z;
+            currentX = (vw / 2) - (pos.x * currentZoom);
+            currentY = (vh / 2) - (pos.y * currentZoom);
+
+            updateTransform(true);
+
+            // Update minimap
+            document.querySelectorAll('.minimap-dot').forEach(d => {
+                d.classList.toggle('active', d.dataset.target === target);
+            });
+
+            // Highlight component
+            document.querySelectorAll('.node,.panel').forEach(n => n.classList.remove('hl'));
+            const el = document.querySelector(`[data-name]`);
+        }
+
+        // Minimap
+        function updateMinimap() {
+            const vw = labView.clientWidth;
+            const vh = labView.clientHeight;
+            const mmContent = document.getElementById('minimapContent');
+            const mmViewport = document.getElementById('minimapViewport');
+
+            const mmWidth = mmContent.clientWidth;
+            const mmHeight = mmContent.clientHeight;
+
+            // Calculate viewport rectangle
+            const scaleX = mmWidth / labWidth;
+            const scaleY = mmHeight / labHeight;
+
+            const vpLeft = (-currentX / currentZoom) * scaleX;
+            const vpTop = (-currentY / currentZoom) * scaleY;
+            const vpWidth = (vw / currentZoom) * scaleX;
+            const vpHeight = (vh / currentZoom) * scaleY;
+
+            mmViewport.style.left = Math.max(0, vpLeft) + 'px';
+            mmViewport.style.top = Math.max(0, vpTop) + 'px';
+            mmViewport.style.width = Math.min(mmWidth - vpLeft, vpWidth) + 'px';
+            mmViewport.style.height = Math.min(mmHeight - vpTop, vpHeight) + 'px';
+        }
+
+        // Tooltip
+        const tooltip = document.getElementById('tooltip');
+        document.querySelectorAll('[data-name]').forEach(el => {
+            el.addEventListener('mouseenter', (e) => {
+                const name = el.dataset.name;
+                const desc = el.dataset.desc;
+                if (!name) return;
+
+                tooltip.querySelector('.tooltip-title').textContent = name;
+                tooltip.querySelector('.tooltip-desc').textContent = desc;
+                tooltip.classList.add('show');
+            });
+
+            el.addEventListener('mousemove', (e) => {
+                tooltip.style.left = (e.clientX + 15) + 'px';
+                tooltip.style.top = (e.clientY + 15) + 'px';
+            });
+
+            el.addEventListener('mouseleave', () => {
+                tooltip.classList.remove('show');
+            });
+        });
+
+        // === VOICE & SCENARIOS ===
+        function setSpeed(v) { speed = parseFloat(v); }
+        function getDelay(ms) { return ms / speed; }
+
+        // FIX: Carga robusta de voces para Chrome
+        let voices = [];
+        function loadVoices() {
+            if (!window.synth) return;
+            voices = window.synth.getVoices();
+            console.log('🗣️ Voces disponibles:', voices.length);
+        }
+        if (window.synth) {
+            loadVoices();
+            window.synth.onvoiceschanged = loadVoices;
+            // Backup load
+            setTimeout(loadVoices, 1000);
+        }
+
+        // === ELEVEN LABS CONFIG ===
+        const ELEVEN_API_KEY = "5fa63e566482005b2266712d7f373553edef4b8501ac69474ab79e7725f486ba";
+        const ELEVEN_VOICE_ID = "ErXwobaYiN019PkySvjV"; // Antoni
+
+        function speak_OLD(text, cb) {
+            return new Promise((resolve) => {
+                const finish = () => {
+                    document.getElementById('avatar')?.classList.remove('speaking');
+                    if (cb) cb();
+                    resolve();
+                };
+
+                updNar(text);
+
+                if (!voiceOn || !window.synth) {
+                    setTimeout(finish, Math.max(1500, text.length * 50));
+                    return;
+                }
+
+                try {
+                    window.synth.cancel();
+
+                    // Ajustes fonéticos para mejor pronunciación en español
+                    let voiceText = text
+                        .replace(/ONESEC/gi, 'Uán Sec')
+                        .replace(/Microsoft/gi, 'Máikrosoft')
+                        .replace(/Sentinel/gi, 'Séntinel')
+                        .replace(/Copilot/gi, 'Cópailot')
+                        .replace(/Log Analytics/gi, 'Log Analítics')
+                        .replace(/FortiGate/gi, 'Fórti Guéit')
+                        .replace(/Playbook/gi, 'Pléibuk')
+                        .replace(/MITRE/g, 'Máitri')
+                        .replace(/IOCs/gi, 'indicadores de compromiso')
+                        .replace(/MFA/g, 'eme efe a')
+                        .replace(/SQL/gi, 'ese cu ele')
+                        .replace(/API/gi, 'a pi i')
+                        .replace(/TTP/gi, 'tácticas, técnicas y procedimientos')
+                        .replace(/SIEM/gi, 'siem')
+                        .replace(/SOAR/gi, 'soar')
+                        .replace(/24\/7/g, 'veinticuatro siete');
+
+                    const u = new SpeechSynthesisUtterance(voiceText);
+
+                    // Selección optimizada de voz en español (Google/Microsoft)
+                    const voices = window.synth.getVoices();
+                    let v = voices.find(x => (x.name.includes('Google') || x.name.includes('Microsoft')) && x.lang.includes('es'));
+                    // Fallback a cualquier voz en español
+                    if (!v) v = voices.find(x => x.lang.startsWith('es'));
+
+                    if (v) u.voice = v;
+
+                    u.rate = 1.0; // Velocidad normal
+                    u.pitch = 1.0;
+                    u.volume = 1.0;
+
+                    u.onstart = () => document.getElementById('avatar')?.classList.add('speaking');
+
+                    // Safety timeout por si el navegador bloquea el evento onend
+                    const safetyTimer = setTimeout(() => {
+                        finish();
+                    }, (voiceText.length * 80) + 2000);
+
+                    u.onend = () => {
+                        clearTimeout(safetyTimer);
+                        finish();
+                    };
+
+                    u.onerror = (e) => {
+                        console.warn('TTS Error:', e);
+                        clearTimeout(safetyTimer);
+                        finish();
+                    };
+
+                    window.synth.speak(u);
+                } catch (e) {
+                    console.error('TTS Exception:', e);
+                    finish();
+                }
+            });
+        }
+
+        function updNar(t) {
+            document.getElementById('narTxt').innerHTML = t
+                .replace(/ONESEC/gi, '<span class="hl">ONESEC</span>')
+                .replace(/Microsoft Sentinel|Sentinel/gi, '<span class="ms">$&</span>')
+                .replace(/Security Copilot|Copilot/gi, '<span class="ms">$&</span>')
+                .replace(/Log Analytics|Logic App|Playbook|Azure|Defender|Entra ID|FortiGate/gi, '<span class="ms">$&</span>')
+                .replace(/LockBit|ransomware|malware|CRÍTICA|ALERTA|phishing/gi, '<span class="rd">$&</span>')
+                .replace(/NEUTRALIZADA|BLOQUEADO|COMPLETADO|CONTENIDO|protegidos/gi, '<span class="gn">$&</span>');
+        }
+
+        function toggleVoice() { voiceOn = !voiceOn; document.getElementById('btnVoice').textContent = voiceOn ? '🔊' : '🔇'; if (!voiceOn) synth.cancel(); }
+        function togglePause() {
+            paused = !paused;
+            const b = document.getElementById('btnPause');
+            if (paused) { b.textContent = '▶️'; b.classList.add('paused'); document.getElementById('pauseOvl').classList.add('show'); synth.pause(); }
+            else { b.textContent = '⏸️'; b.classList.remove('paused'); document.getElementById('pauseOvl').classList.remove('show'); synth.resume(); if (pauseRes) { pauseRes = null; } }
+        }
+
+        // Camera for scenarios (uses focusOn)
+        function moveCam(target, dur = 1000) {
+            focusOn(target);
+            document.querySelectorAll('.zone').forEach(z => z.classList.remove('active'));
+            const zones = { attacker: 'zExt', firewall: 'zPer', email: 'zInt', endpoint: 'zInt', user: 'zInt', server: 'zInt', database: 'zInt', loganalytics: 'zAzure', sentinel: 'zAzure', copilot: 'zAzure', logic: 'zAzure', soc: 'zSoc', overview: '' };
+            if (zones[target]) document.getElementById(zones[target])?.classList.add('active');
+        }
+
+        // Utilities
+        function setTL(n, state) { const node = document.getElementById(`tl${n}`), line = document.getElementById(`tlL${n}`); node.classList.remove('active', 'done', 'threat'); if (line) line.classList.remove('active', 'done'); if (state === 'active') { node.classList.add('active'); if (line) line.classList.add('active'); } else if (state === 'done') { node.classList.add('done'); if (line) line.classList.add('done'); } else if (state === 'threat') { node.classList.add('threat'); } }
+        function resetTL() { for (let i = 1; i <= 6; i++) setTL(i, ''); }
+        function showTL(show) { document.getElementById('timeline').classList.toggle('show', show); }
+        function showKpis(show) { document.getElementById('kpis').classList.toggle('show', show); }
+        function setKpi(id, val, cls = '') { const e = document.getElementById(id); e.textContent = val; e.className = 'kpi-val' + (cls ? ' ' + cls : ''); }
+
+        const wait = ms => new Promise((resolve, reject) => {
+            const d = getDelay(ms);
+            const check = () => {
+                if (!running) { resolve(); return; } // Si se detuvo, resolver inmediatamente
+                if (paused) { pauseRes = () => setTimeout(check, 100); return; }
+                setTimeout(resolve, d);
+            };
+            check();
+        });
+        function initChart() { const c = document.getElementById('chart'); c.innerHTML = ''; chartData.forEach(h => { const b = document.createElement('div'); b.className = 'bar'; b.style.height = h + '%'; c.appendChild(b); }); }
+        function updChart(threat = false) { chartData.shift(); chartData.push(threat ? 60 + Math.random() * 40 : 5 + Math.random() * 25); document.querySelectorAll('.bar').forEach((b, i) => { b.style.height = chartData[i] + '%'; b.className = i === chartData.length - 1 && threat ? 'bar threat' : 'bar'; }); }
+        function toast(type, txt) {
+            const c = document.getElementById('toasts'), icons = { alert: '🚨', success: '✅', info: 'ℹ️' };
+            const t = document.createElement('div'); t.className = `toast ${type}`;
+            t.innerHTML = `<span class="toast-ico">${icons[type]}</span><span>${txt}</span>`;
+            c.appendChild(t); setTimeout(() => t.remove(), 3500);
+            AudioSys.play(type === 'alert' ? 'alert' : 'success');
+        }
+        function metrics(e, a, t, b) { document.getElementById('mEv').textContent = e; document.getElementById('mAl').textContent = a; document.getElementById('mTh').textContent = t; document.getElementById('mBl').textContent = b; }
+        function addLog(sev, msg) { const l = document.getElementById('logs'), r = document.createElement('div'); r.className = 'log-row'; r.innerHTML = `<span class="log-sev ${sev}">${sev.toUpperCase().slice(0, 3)}</span>${msg}`; l.insertBefore(r, l.firstChild); if (l.children.length > 5) l.removeChild(l.lastChild); }
+        function setKql(c) { document.getElementById('kql').innerHTML = c; }
+        function addCp(ai, txt) { const c = document.getElementById('cpChat'), m = document.createElement('div'); m.className = `cp-msg ${ai ? 'ai' : 'user'}`; m.innerHTML = ai ? `<div class="cp-av">✨</div><div class="cp-bub">${txt}</div>` : `<div class="cp-bub">${txt}</div>`; c.appendChild(m); c.scrollTop = c.scrollHeight; }
+        function askCp() { const i = document.getElementById('cpIn'), q = i.value.trim(); if (!q) return; addCp(false, q); i.value = ''; setTimeout(() => addCp(true, ['IOCs identificados.', 'Análisis completo.'][Math.floor(Math.random() * 2)]), 600); }
+        function setLg(n, st) { const s = document.getElementById(`lg${n}`); s.classList.remove('active', 'done'); if (st) { s.classList.add(st); if (st === 'active') AudioSys.play('hover'); if (st === 'done') AudioSys.play('click'); } }
+        function conn(id, on = true) {
+            const c = document.getElementById(id);
+            if (c) {
+                c.classList.toggle('on', on);
+                if (on) {
+                    AudioSys.play('scan');
+                    const type = c.classList.contains('atk') ? 'atk' : (c.classList.contains('def') ? 'def' : 'data');
+                    const container = document.getElementById('dataPackets');
+                    // Crear múltiples paquetes con delay para efecto de ráfaga
+                    const packetCount = type === 'atk' ? 3 : 2;
+                    for (let i = 0; i < packetCount; i++) {
+                        setTimeout(() => {
+                            const pkt = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                            pkt.setAttribute("class", `data-packet ${type}`);
+                            const dur = (1.2 + Math.random() * 0.6) / speed;
+                            pkt.innerHTML = `<animateMotion dur="${dur}s" repeatCount="indefinite" rotate="auto"><mpath href="#${id}"></mpath></animateMotion>`;
+                            container.appendChild(pkt);
+                        }, i * 300);
+                    }
+                }
+            }
+        }
+        function setSt(id, col, txt = '●') { const e = document.getElementById(id); if (e) { e.style.background = col; e.textContent = txt; } }
+        function actSvc(id) { document.getElementById(id)?.classList.add('active'); }
+        function setPhase(p) { document.getElementById('phase').textContent = p; }
+        function setProg(p) { document.getElementById('progFill').style.width = p + '%'; document.getElementById('progTxt').textContent = p + '%'; }
+        function hl(id) { document.getElementById(id)?.classList.add('hl'); }
+        function hlAtk(id) { document.getElementById(id)?.classList.add('atk-hl'); }
+
+        function stopScenario() {
+            running = false;
+            paused = false;
+            document.body.classList.remove('cinema-mode'); // Disable Cinema Mode
+            synth?.cancel();
+            document.getElementById('pauseOvl').classList.remove('show');
+            document.getElementById('btnPause').textContent = '⏸️';
+            document.getElementById('btnPause').classList.remove('paused');
+            if (pauseRes) { pauseRes = null; }
+        }
+
+        function runScenario(sc) {
+            // Si hay un escenario corriendo, detenerlo primero
+            if (running) {
+                stopScenario();
+                // Pequeño delay para asegurar que se detuvo
+                setTimeout(() => startScenario(sc), 100);
+                return;
+            }
+            AudioSys.init(); // Init audio on start interaction
+            startScenario(sc);
+            AudioSys.play('click');
+        }
+
+        function startScenario(sc) {
+            // Limpiar estado anterior
+            resetLab(true); // true = soft reset (no muestra toast)
+
+            document.querySelectorAll('.sc-btn').forEach(c => c.classList.remove('active'));
+            document.getElementById(`sc-${sc}`).classList.add('active');
+            document.getElementById('btnPause').style.display = 'block';
+            document.body.classList.add('cinema-mode'); // Enable Cinema Mode
+
+            showKpis(true); startTime = Date.now();
+
+            // Explicación contextual IA Sarcástica
+            if (window.OneSecAI) {
+                window.OneSecAI.explainScenario(sc);
+            }
+
+            switch (sc) { case 'impl': runImpl(); break; case 'phish': showTL(true); runPhish(); break; case 'srv': showTL(true); runSrv(); break; case 'insider': showTL(true); runInsider(); break; case 'brute': showTL(true); runBrute(); break; }
+        }
+
+        // === SCENARIOS (abbreviated for space) ===
+        async function runImpl() {
+            running = true; setProg(0); showTL(false);
+            setPhase('Introducción'); moveCam('overview'); await new Promise(r => speak('Bienvenidos. Soy el consultor de ONESEC y les presentaré cómo implementamos Microsoft Sentinel.', r)); setProg(10); await wait(800);
+            setPhase('Fase 1'); moveCam('loganalytics'); await wait(1000); hl('pLa'); await new Promise(r => speak('Primera fase: Configuramos el espacio de trabajo de Log Analytics, el repositorio central de eventos.', r)); addLog('info', 'Workspace OK'); toast('success', 'Log Analytics ✓'); setProg(25); await wait(1000);
+            setPhase('Fase 2'); moveCam('overview'); await wait(1000); await new Promise(r => speak('Segunda fase: Conectamos Microsoft 365, Entra ID, Defender y FortiGate.', r)); conn('c5'); conn('c6'); conn('c7'); metrics('25K', 0, 0, 0); toast('info', 'Conectores OK'); setProg(40); await wait(1000);
+            setPhase('Fase 3'); moveCam('sentinel'); await wait(1000); hl('pSen'); await new Promise(r => speak('Tercera fase: Activamos Sentinel con reglas de detección MITRE.', r)); metrics('52K', 5, 0, 0); updChart(); toast('success', 'Sentinel OK'); setProg(55); await wait(1000);
+            setPhase('Fase 4'); moveCam('logic'); await wait(1000); hl('pLogic'); await new Promise(r => speak('Cuarta fase: Implementamos playbooks de respuesta automática.', r)); for (let i = 1; i <= 5; i++) { setLg(i, 'active'); await wait(400); setLg(i, 'done'); } conn('c8'); toast('success', 'Playbooks OK'); setProg(70); await wait(1000);
+            setPhase('Fase 5'); moveCam('copilot'); await wait(1000); hl('pCp'); await new Promise(r => speak('Quinta fase: Habilitamos Security Copilot con inteligencia artificial.', r)); addCp(true, 'Copilot listo.'); toast('success', 'Copilot OK'); setProg(85); await wait(1000);
+            setPhase('Fase 6'); moveCam('soc'); await wait(1000); hl('pSoc'); await new Promise(r => speak('Sexta fase: El SOC de ONESEC monitorea veinticuatro siete.', r)); conn('c10'); actSvc('svcSoc'); actSvc('svcCon'); setProg(95); await wait(1000);
+            setPhase('Completado'); moveCam('overview'); await wait(1000); await new Promise(r => speak('¡Implementación completada! Contáctenos en onesec punto m x.', r)); toast('success', '🎉 Completo'); setProg(100); running = false;
+        }
+
+        const delay = ms => new Promise(res => setTimeout(res, ms));
+
+        /* --- ESCENARIO: PHISHING & RANSOMWARE (Defender for Office 365 + XDR) --- */
+        async function runPhish() {
+            running = true; setProg(0); resetLab(true);
+            document.getElementById('atkType').textContent = 'Phishing / Ransomware';
+
+            // FASE 1: El ataque llega
+            setPhase('Entrega'); setTL(1, 'active'); moveCam('overview');
+            await speak('Atención. Un atacante acaba de enviar un correo con Ransomware disfrazado de factura. Sí, ese truco que sigue funcionando porque alguien siempre hace clic.');
+
+            document.getElementById('nAtk').classList.add('active');
+            conn('c1', true);
+            await delay(1000);
+
+            // FASE 2: La protección actúa
+            await speak('Pero aquí es donde su organización deja de ser víctima. Defender for Office trescientos sesenta y cinco intercepta el adjunto en milisegundos. Safe Attachments lo detona en una caja de arena y Safe Links reescribe cada enlace. El correo nunca llega limpio.');
+
+            setPhase('Ejecución'); moveCam('endpoint');
+            conn('c3', true);
+            hlAtk('nEp');
+
+            await speak('Para la demo, simulamos que alguien igual hizo clic. Cosas que pasan. El ransomware intenta cifrar todo.');
+            document.getElementById('nEp').classList.add('compromised');
+            AudioSys.play('glitch');
+            await delay(1500);
+
+            // FASE 3: Respuesta automática
+            setPhase('Respuesta XDR'); moveCam('sentinel');
+            conn('c4', true);
+
+            await speak('Y aquí es donde brilla su inversión. Defender for Endpoint detecta el comportamiento anómalo y en segundos, sin intervención humana, la Respuesta Automatizada aísla el equipo. El ransomware queda encerrado como en una cárcel digital.');
+
+            document.getElementById('nEp').classList.remove('compromised');
+            document.getElementById('nEp').classList.add('isolated');
+
+            if (window.OneSecAI) window.OneSecAI.explainScenario('phishing');
+
+            conn('c8', true);
+            await speak('Amenaza neutralizada. Sentinel enriquece el incidente con inteligencia global y su SOC tiene visibilidad total. De ataque a caso cerrado, en menos de lo que tarda en llegar un café.');
+
+            toast('success', '🛡️ Ransomware Bloqueado por XDR');
+            setProg(100); running = false;
+        }
+
+        /* --- ESCENARIO: SERVER EXPLOIT (Defender for Cloud + Azure Firewall) --- */
+        async function runSrv() {
+            running = true; setProg(0); resetLab(true);
+            document.getElementById('atkType').textContent = 'Server Exploit';
+
+            // FASE 1: Reconocimiento del atacante
+            setPhase('Reconocimiento'); moveCam('server');
+            await speak('Alerta. Un atacante está escaneando sus servidores buscando puertas abiertas. Esto pasa miles de veces al día en internet. La pregunta es: ¿su infraestructura está lista?');
+
+            document.getElementById('nAtk').classList.add('active');
+            conn('c1', true);
+            await delay(1000);
+
+            // FASE 2: Intento de exploit
+            setPhase('Intento de Exploit');
+            document.getElementById('nSrv').classList.add('warning');
+            await speak('Encontró una vulnerabilidad y lanza un exploit. Sin protección, esto sería game over. Control total del servidor, datos, todo.');
+
+            // FASE 3: La defensa responde
+            setPhase('Protección Cloud'); moveCam('sentinel');
+            await delay(500);
+
+            await speak('Pero con Defender for Cloud, los puertos solo se abren cuando se necesitan, con acceso Just-in-Time. Y Azure Firewall bloquea la conexión maliciosa antes de que toque el sistema operativo. Es como tener un guardia que cierra la puerta antes de que el ladrón llegue.');
+
+            document.getElementById('nSrv').classList.remove('warning');
+            document.getElementById('nFw').classList.add('blocking');
+            conn('c8', true);
+
+            if (window.OneSecAI) window.OneSecAI.explainScenario('srv');
+
+            toast('success', '🛡️ Infraestructura Protegida');
+            setProg(100); running = false;
+        }
+
+        /* --- ESCENARIO: INSIDER / DATA LOSS (Microsoft Purview) --- */
+        async function runInsider() {
+            running = true; setProg(0); resetLab(true);
+            document.getElementById('atkType').textContent = 'Insider Threat';
+
+            // FASE 1: El enemigo interno
+            setPhase('Comportamiento'); moveCam('user');
+            await speak('Este es el ataque que más duele. No viene de afuera, viene de adentro. Un empleado con acceso legítimo intenta copiar la base de datos de clientes a un USB. Ningún firewall del mundo detecta esto.');
+
+            document.getElementById('nEp').classList.add('warning');
+            conn('c4', true);
+            await delay(1500);
+
+            // FASE 2: Purview analiza
+            setPhase('Análisis Contextual');
+            await speak('Aquí es donde Microsoft Purview cambia las reglas. Analiza el comportamiento del usuario, ve las etiquetas de confidencialidad y dice: momento, eso no se va de aquí.');
+
+            // FASE 3: Bloqueo inmediato
+            setPhase('Bloqueo DLP');
+            document.getElementById('nEp').classList.remove('warning');
+            document.getElementById('nEp').classList.add('safe');
+
+            await speak('Transferencia bloqueada. Archivos cifrados automáticamente. Y lo mejor: ya se generó una alerta para Recursos Humanos y el equipo legal. Purview no solo protege datos, protege a su empresa de demandas millonarias.');
+
+            if (window.OneSecAI) window.OneSecAI.explainScenario('insider');
+
+            toast('success', '🛡️ Fuga Bloqueada por Purview');
+            setProg(100); running = false;
+        }
+
+        /* --- ESCENARIO: IDENTITY ATTACK (Entra ID Protection) --- */
+        async function runBrute() {
+            running = true; setProg(0); resetLab(true);
+            document.getElementById('atkType').textContent = 'Identity Attack';
+
+            // FASE 1: Ataque masivo
+            setPhase('Ataque de Identidad'); moveCam('exchange');
+            await speak('Un atacante lanza miles de intentos de contraseña contra sus cuentas corporativas. Es un ataque de Password Spray. Prueba contraseñas comunes como empresa dos mil veinticinco en todas las cuentas. Y sí, siempre hay alguien que la usa.');
+
+            document.getElementById('nAtk').classList.add('active');
+            conn('c1', true);
+            await delay(1000);
+
+            // FASE 2: Credencial comprometida
+            setPhase('Riesgo Detectado');
+            await speak('Peor aún, el atacante compró credenciales reales en la Dark Web e intenta entrar desde otro país. Viaje imposible: hace cinco minutos estaba en México y ahora intenta conectarse desde Rusia.');
+
+            // FASE 3: Entra ID bloquea
+            setPhase('Acceso Condicional'); moveCam('sentinel');
+            conn('c9', true);
+
+            await speak('Microsoft Entra ID Protection lo detecta en tiempo real. Acceso Condicional bloquea el intento, exige verificación adicional y alerta al SOC. La identidad es el nuevo perímetro de seguridad, y con Entra ID, ese perímetro es inquebrantable.');
+
+            if (window.OneSecAI) window.OneSecAI.explainScenario('brute');
+
+            toast('success', '🛡️ Identidad Asegurada por Entra ID');
+            setProg(100); running = false;
+        }
+
+        function returnToMap() {
+            open3DMap();
+            // Asegurar ocultar UI de Lab
+            document.querySelector('.header').style.display = 'none';
+            document.querySelector('.status-bar').style.display = 'none';
+            document.getElementById('narOvl').style.display = 'none'; // Ocultar narración
+            if (window.OneSecAI) window.OneSecAI.clear(); // Limpiar chat si es necesario
+        }
+
+        // Reset
+        function resetLab(softReset = false) {
+            synth?.cancel();
+            running = false;
+            paused = false;
+            pauseRes = null;
+            document.getElementById('pauseOvl').classList.remove('show');
+            document.getElementById('btnPause').textContent = '⏸️';
+            document.getElementById('btnPause').classList.remove('paused');
+
+            if (!softReset) {
+                document.getElementById('btnPause').style.display = 'none';
+                document.querySelectorAll('.sc-btn').forEach(c => c.classList.remove('active'));
+            }
+
+            showTL(false); resetTL(); showKpis(false);
+
+            if (!softReset) {
+                initView();
+            }
+
+            document.querySelectorAll('.node,.panel').forEach(n => n.classList.remove('hl', 'atk-hl'));
+            document.querySelectorAll('.zone').forEach(z => z.classList.remove('active'));
+            document.querySelectorAll('.conn').forEach(c => c.classList.remove('on'));
+            document.getElementById('dataPackets').innerHTML = ''; // Clear packets
+            document.querySelectorAll('.lg-step').forEach(s => s.classList.remove('active', 'done'));
+            document.querySelectorAll('.soc-svc').forEach(s => s.classList.remove('active'));
+            setSt('fwSt', 'var(--success)', '✓'); setSt('mailSt', 'var(--ms-blue)', '●'); setSt('userSt', 'var(--success)', '●');
+            setSt('epSt', 'var(--defender)', '●'); setSt('srvSt', 'var(--sentinel)', '●'); setSt('dbSt', 'var(--sentinel)', '●');
+            document.getElementById('laSt').textContent = 'OK';
+            document.getElementById('senSt').textContent = 'Active';
+            document.getElementById('lgSt').textContent = 'Ready';
+            document.getElementById('atkType').textContent = 'Externo';
+            metrics(0, 0, 0, 0); chartData = Array(20).fill(0).map(() => Math.random() * 25 + 5); initChart();
+            document.getElementById('logs').innerHTML = '<div class="log-row"><span class="log-sev info">INFO</span>Sistema listo</div>';
+            document.getElementById('cpChat').innerHTML = '<div class="cp-msg ai"><div class="cp-av">✨</div><div class="cp-bub">Listo para investigar.</div></div>';
+            setPhase('Exploración'); setProg(0);
+
+            if (!softReset) {
+                updNar('Explore la arquitectura libremente. <span class="hl">Arrastre</span> para mover, use el <span class="hl">scroll</span> para zoom, o <span class="hl">haga clic</span> en cualquier componente.');
+                toast('info', 'Reiniciado');
+            }
+        }
+
+        // Mapa activo por defecto en HTML, aquí solo gestionamos la transición
+
+        function initApp() {
+            const clientName = document.getElementById('clientInput').value.trim();
+            if (clientName) {
+                document.title = `ONESEC protect: ${clientName}`;
+                const userNode = document.getElementById('nUser');
+                if (userNode) userNode.querySelector('.node-name').textContent = 'Staff ' + clientName;
+            }
+
+            const ovl = document.getElementById('startOvl');
+            ovl.style.opacity = '0';
+            setTimeout(() => ovl.remove(), 500);
+
+            // Cerrar el mapa para mostrar el laboratorio al iniciar
+            closeMapToLab();
+
+            AudioSys.init();
+            AudioSys.play('success');
+
+            if (synth) {
+                const u = new SpeechSynthesisUtterance('Iniciando entorno de laboratorio. Bienvenido.');
+                u.lang = 'es-ES';
+                synth.speak(u);
+            }
+
+            initChart();
+            initView();
+        }
+
+        window.addEventListener('resize', initView);
+
+        // --- 3D MAP CONTROL ---
+        function open3DMap() {
+            const m = document.getElementById('cyberMap');
+            const f = document.getElementById('mapFrame');
+            const h = document.querySelector('.header');
+            const sb = document.querySelector('.status-bar'); // Status Bar
+            m.classList.add('active');
+            if (h) h.style.display = 'none'; // Ocultar header en mapa
+            if (sb) sb.style.display = 'none'; // Ocultar status bar
+            if (f.src === "" || f.src.includes("about:blank")) f.src = "./cybermap/index.html";
+        }
+
+        function closeMapToLab() {
+            const m = document.getElementById('cyberMap');
+            const h = document.querySelector('.header');
+            const sb = document.querySelector('.status-bar'); // Status Bar
+            const nar = document.getElementById('narOvl'); // Narration Overlay
+
+            m.classList.remove('active');
+            if (h) h.style.display = 'flex'; // Mostrar header en laboratorio
+            if (sb) sb.style.display = 'flex'; // Mostrar status bar
+            if (nar) nar.style.display = 'flex'; // Mostrar narración
+
+            // No reseteamos frame.src para mantenerlo cargado en background, opcional
+        }
+        // Old map logic removed
+
+        // Hacker Terminal Logic
+        async function runTerm(cmds) {
+            const t = document.getElementById('hackerTerm');
+            const b = document.getElementById('termBody');
+            t.style.display = 'flex'; b.innerHTML = '';
+
+            for (let cmd of cmds) {
+                const l = document.createElement('div');
+                l.className = 'cmd-line' + (cmd.includes('ERROR') || cmd.includes('FAIL') ? ' err' : '');
+                l.textContent = '> ' + cmd;
+                b.appendChild(l);
+                b.scrollTop = b.scrollHeight;
+                AudioSys.play('hover'); // Typing sound effect
+                await wait(150 * Math.random() + 50);
+            }
+            await wait(2000);
+            t.style.display = 'none';
+        }
+
+        // Inspector Logic
+        const inspector = document.getElementById('inspector');
+        document.querySelectorAll('.conn').forEach(c => {
+            c.addEventListener('click', (e) => {
+                const rect = labView.getBoundingClientRect();
+                const x = e.clientX;
+                const y = e.clientY;
+
+                const type = c.classList.contains('atk') ? 'MALWARE' : (c.classList.contains('def') ? 'SECURE' : 'DATA');
+                const proto = ['TCP', 'UDP', 'HTTPS', 'SSH'][Math.floor(Math.random() * 4)];
+                const src = `10.8.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`;
+                const dst = `192.168.1.${Math.floor(Math.random() * 255)}`;
+                const hex = Array(8).fill(0).map(() => Math.floor(Math.random() * 255).toString(16).padStart(2, '0')).join(' ');
+
+                inspector.style.left = (x + 15) + 'px';
+                inspector.style.top = (y + 15) + 'px';
+                inspector.style.display = 'block';
+
+                document.getElementById('piType').textContent = type;
+                document.getElementById('piType').style.color = type === 'MALWARE' ? 'var(--attack)' : 'var(--onesec-green)';
+                document.getElementById('piProto').textContent = proto;
+                document.getElementById('piSrc').textContent = src;
+                document.getElementById('piDst').textContent = dst;
+                document.getElementById('piHex').textContent = `0000  ${hex}  ....\n0010  ${hex.split('').reverse().join('')}  ....`;
+
+                AudioSys.play('scan');
+                e.stopPropagation();
+            });
+        });
+
+        // Hide inspector on click elsewhere
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.packet-inspector') && !e.target.classList.contains('conn')) {
+                inspector.style.display = 'none';
+            }
+        });
+    </script>
+
+
+    <script>
+        // === IMMERSIVE TRANSITION SYSTEM ===
+        function startImmersiveTransition() {
+            const overlay = document.getElementById('immersiveTransition');
+            const particlesContainer = document.getElementById('cyberParticles');
+
+            // Limpiar partículas anteriores
+            particlesContainer.innerHTML = '';
+
+            // Crear partículas de cyber stream
+            for (let i = 0; i < 50; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'cyber-particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 0.5 + 's';
+                particle.style.height = (10 + Math.random() * 30) + 'px';
+                particlesContainer.appendChild(particle);
+            }
+
+            // Activar transición
+            overlay.classList.add('active');
+
+            // Audio effect - warp/teleport sound
+            if (window.AudioSys) {
+                AudioSys.init();
+                AudioSys.play('transition');
+            }
+
+            // Después de la animación, redirigir al laboratorio de seguridad
+            setTimeout(() => {
+                window.location.href = 'lab.html';
+            }, 1200);
+        }
+
+        function startDemoFromMap() {
+            startImmersiveTransition();
+        }
+
+        // Volver al mapa global con transición inversa
+        function returnToMap() {
+            const overlay = document.getElementById('immersiveTransition');
+            const particlesContainer = document.getElementById('cyberParticles');
+
+            // Detener cualquier escenario activo
+            if (running) {
+                stopScenario();
+            }
+
+            overlay.classList.add('active');
+
+            if (window.AudioSys) {
+                AudioSys.play('scan');
+            }
+
+            setTimeout(() => {
+                open3DMap();
+                overlay.classList.remove('active');
+
+                if (window.synth) {
+                    synth.cancel();
+                    const u = new SpeechSynthesisUtterance("Volviendo al mapa de amenazas global.");
+                    u.lang = 'es-ES';
+                    u.rate = 0.95;
+                    window.synth.speak(u);
+                }
+
+                toast('info', '🌐 Vista global');
+            }, 800);
+        }
+
+        // Simular ataque que viaja del mapa al laboratorio
+        function simulateAttackFromMap(attackType = 'phishing') {
+            const indicator = document.getElementById('attackTravelIndicator');
+            indicator.classList.add('active');
+
+            if (window.AudioSys) {
+                AudioSys.play('alert');
+            }
+
+            // Mostrar indicador brevemente, luego transicionar
+            setTimeout(() => {
+                indicator.classList.remove('active');
+                startImmersiveTransition();
+
+                // Después de transición, iniciar escenario de ataque
+                setTimeout(() => {
+                    if (attackType === 'phishing') {
+                        startScenario('phish');
+                    }
+                }, 1500);
+            }, 1500);
+        }
+
+        // Inicializar: Ocultar header y botón de mapa si cyberMap está activo
+        (function () {
+            const cyberMap = document.getElementById('cyberMap');
+            const header = document.querySelector('.header');
+            const btnToMap = document.getElementById('btnToMap');
+
+            if (cyberMap && cyberMap.classList.contains('active')) {
+                if (header) header.style.display = 'none';
+                if (btnToMap) btnToMap.style.display = 'none';
+            }
+
+            // Observer para mostrar/ocultar botón de mapa
+            const observer = new MutationObserver(() => {
+                const isMapActive = cyberMap.classList.contains('active');
+                if (btnToMap) btnToMap.style.display = isMapActive ? 'none' : 'flex';
+            });
+
+            observer.observe(cyberMap, { attributes: true, attributeFilter: ['class'] });
+        })();
+
+        // Pro Modal Functions
+        function openProModal() {
+            const modal = document.getElementById('proModalOverlay');
+            if (modal) {
+                modal.classList.add('active');
+                if (window.AudioSys) AudioSys.play('success');
+            }
+        }
+
+        function closeProModal() {
+            const modal = document.getElementById('proModalOverlay');
+            if (modal) {
+                modal.classList.remove('active');
+            }
+        }
+
+        function activateProMode() {
+            const apiKeyInput = document.getElementById('proApiKey');
+            const statusDiv = document.getElementById('proStatus');
+            const apiKey = apiKeyInput ? apiKeyInput.value.trim() : '';
+
+            if (!apiKey) {
+                statusDiv.className = 'pro-status error';
+                statusDiv.textContent = '⚠️ Por favor ingresa tu API Key de OpenAI';
+                statusDiv.style.display = 'block';
+                return;
+            }
+
+            if (!apiKey.startsWith('sk-')) {
+                statusDiv.className = 'pro-status error';
+                statusDiv.textContent = '🚨 API Key inválida. Debe comenzar con "sk-"';
+                statusDiv.style.display = 'block';
+                return;
+            }
+
+            // Guardar API key en localStorage
+            localStorage.setItem('onesec_openai_key', apiKey);
+
+            statusDiv.className = 'pro-status success';
+            statusDiv.textContent = '✅ ONESEC IA Pro activado correctamente';
+            statusDiv.style.display = 'block';
+
+            // Actualizar UI
+            const proBtnHeader = document.getElementById('btnPro');
+            if (proBtnHeader) {
+                proBtnHeader.innerHTML = '✨ IA ACTIVA';
+                proBtnHeader.style.background = 'linear-gradient(135deg, rgba(39, 174, 96, 0.3) 0%, rgba(0, 229, 255, 0.2) 100%)';
+                proBtnHeader.style.borderColor = 'var(--success)';
+            }
+
+            toast('success', '🚀 ONESEC IA Pro activado');
+
+            setTimeout(() => {
+                closeProModal();
+            }, 1500);
+        }
+
+        // Verificar si hay API key guardada al cargar
+        // Verificar configuración de IA al cargar
+        (function checkProStatus() {
+            const configData = localStorage.getItem('onesec_ia_config');
+            const legacyKey = localStorage.getItem('onesec_openai_key');
+
+            if (configData || legacyKey) {
+                const proBtnHeader = document.getElementById('btnPro');
+                if (proBtnHeader) {
+                    proBtnHeader.innerHTML = '✨ IA ACTIVA';
+                    proBtnHeader.style.background = 'linear-gradient(135deg, rgba(39, 174, 96, 0.3) 0%, rgba(0, 229, 255, 0.2) 100%)';
+                    proBtnHeader.style.borderColor = 'var(--success)';
+                }
+            }
+        })();
+
+        // Obtener nombre del proveedor configurado
+        function getProviderName() {
+            const configData = localStorage.getItem('onesec_ia_config');
+            if (configData) {
+                const config = JSON.parse(configData);
+                return config.providerName || 'IA';
+            }
+            return 'IA';
+        }
+    </script>
+
+    <!-- Narration Overlay -->
+    <div class="nar-ovl" id="narOvl">
+        <div class="nar-avatar" id="avatar">
+            <div class="nar-avatar-img">AI</div>
+        </div>
+        <div class="nar-content">
+            <div class="nar-label">CISO VIRTUAL</div>
+            <div class="nar-txt" id="narTxt">Cargando sistema...</div>
+        </div>
+    </div>
+
+    <!-- Pro Modal - VERSION CLIENTE -->
+    <div class="pro-modal-overlay" id="proModalOverlay" onclick="if(event.target === this) closeProModal()">
+        <div class="pro-modal">
+            <div class="pro-modal-header">
+                <div class="pro-modal-title">
+                    <span>✨</span>
+                    <h2>ONESEC IA Pro</h2>
+                </div>
+                <button class="pro-modal-close" onclick="closeProModal()">×</button>
+            </div>
+            <div class="pro-modal-body">
+                <!-- Status de IA -->
+                <div id="proIaStatus"
+                    style="padding: 15px; border-radius: 12px; text-align: center; margin-bottom: 20px; background: rgba(39, 174, 96, 0.15); border: 1px solid rgba(39, 174, 96, 0.3);">
+                    <div style="font-size: 2rem; margin-bottom: 10px;">🟢</div>
+                    <div style="font-size: 0.9rem; font-weight: 600; color: var(--success);">IA Activa y Lista</div>
+                    <div style="font-size: 0.7rem; color: var(--text-muted); margin-top: 5px;" id="proProviderInfo">
+                        Analizando con inteligencia artificial</div>
+                </div>
+
+                <div class="pro-feature">
+                    <div class="pro-feature-icon">🧠</div>
+                    <div class="pro-feature-text">
+                        <h3>Análisis Inteligente</h3>
+                        <p>Copilot de seguridad con IA que analiza amenazas en tiempo real y proporciona recomendaciones
+                            contextuales.</p>
+                    </div>
+                </div>
+                <div class="pro-feature">
+                    <div class="pro-feature-icon">🎯</div>
+                    <div class="pro-feature-text">
+                        <h3>Respuestas Automatizadas</h3>
+                        <p>Playbooks inteligentes que se adaptan al tipo de ataque y contexto del incidente.</p>
+                    </div>
+                </div>
+                <div class="pro-feature">
+                    <div class="pro-feature-icon">🔊</div>
+                    <div class="pro-feature-text">
+                        <h3>Narración Premium</h3>
+                        <p>Voz de IA personalizada que explica cada paso de los escenarios de ataque y defensa.</p>
+                    </div>
+                </div>
+
+                <button class="pro-btn-primary" onclick="closeProModal()">
+                    ✓ Entendido
+                </button>
+
+                <p
+                    style="font-size: 0.6rem; color: var(--text-muted); text-align: center; margin-top: 20px; opacity: 0.5;">
+                    <a href="admin.html" style="color: inherit; text-decoration: none;">⚙️ Configuración</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Actualizar estado en modal al abrir
+        const originalOpenProModal = openProModal;
+        openProModal = function () {
+            const configData = localStorage.getItem('onesec_ia_config');
+            const statusDiv = document.getElementById('proIaStatus');
+            const providerInfo = document.getElementById('proProviderInfo');
+
+            if (configData) {
+                const config = JSON.parse(configData);
+                statusDiv.style.background = 'rgba(39, 174, 96, 0.15)';
+                statusDiv.style.borderColor = 'rgba(39, 174, 96, 0.3)';
+                statusDiv.querySelector('div:first-child').textContent = '🟢';
+                statusDiv.querySelector('div:nth-child(2)').textContent = 'IA Activa y Lista';
+                statusDiv.querySelector('div:nth-child(2)').style.color = 'var(--success)';
+                providerInfo.textContent = `Powered by ${config.providerName}`;
+            } else {
+                statusDiv.style.background = 'rgba(243, 156, 18, 0.15)';
+                statusDiv.style.borderColor = 'rgba(243, 156, 18, 0.3)';
+                statusDiv.querySelector('div:first-child').textContent = '🟡';
+                statusDiv.querySelector('div:nth-child(2)').textContent = 'IA en Modo Demo';
+                statusDiv.querySelector('div:nth-child(2)').style.color = 'var(--warning)';
+                providerInfo.textContent = 'Usando respuestas pre-configuradas';
+            }
+        }
+
+        // === ROBUST BROWSER TTS FUNCTION (Auto-Resume & Load Check) ===
+        // === ROBUST BROWSER TTS FUNCTION (Auto-Resume & Load Check) ===
+        function speak(text, cb) {
+            return new Promise((resolve) => {
+                const finish = () => {
+                    document.getElementById('avatar')?.classList.remove('speaking');
+                    if (cb) cb();
+                    resolve();
+                };
+
+                updNar(text);
+
+                // Check critical dependency
+                if (!window.speechSynthesis) {
+                    console.warn("TTS no soportado en este navegador");
+                    setTimeout(finish, 1000);
+                    return;
+                }
+
+                if (!voiceOn) {
+                    setTimeout(finish, Math.max(1500, text.length * 50));
+                    return;
+                }
+
+                document.getElementById('avatar')?.classList.add('speaking');
+
+                // 1. Cancelar cualquier audio previo (Safety check)
+                if (window.speechSynthesis.cancel) window.speechSynthesis.cancel();
+
+                // 2. Función interna para hablar
+                const doSpeak = () => {
+                    // CRÍTICO: "Despertar" la API
+                    if (window.speechSynthesis.paused) window.speechSynthesis.resume();
+
+                    // Ajustes fonéticos para pronunciación natural en español
+                    let voiceText = text
+                        .replace(/ONESEC/gi, 'Uán Sec')
+                        .replace(/Microsoft/gi, 'Máikrosoft')
+                        .replace(/Sentinel/gi, 'Séntinel')
+                        .replace(/Copilot/gi, 'Cópailot')
+                        .replace(/Log Analytics/gi, 'Log Analítics')
+                        .replace(/FortiGate/gi, 'Fórti Guéit')
+                        .replace(/Playbook/gi, 'Pléibuk')
+                        .replace(/MITRE/g, 'Máitri')
+                        .replace(/IOCs/gi, 'indicadores de compromiso')
+                        .replace(/MFA/g, 'eme efe a')
+                        .replace(/SQL/gi, 'ese cu ele')
+                        .replace(/API/gi, 'a pi i')
+                        .replace(/TTP/gi, 'tácticas, técnicas y procedimientos')
+                        .replace(/SIEM/gi, 'siem')
+                        .replace(/SOAR/gi, 'soar')
+                        .replace(/24\/7/g, 'veinticuatro siete')
+                        .replace(/XDR/gi, 'equis de erre')
+                        .replace(/DLP/gi, 'de ele pe')
+                        .replace(/SOC/gi, 'soc')
+                        .replace(/USB/gi, 'u ese be')
+                        .replace(/Zero-Day/gi, 'Zíro Déi')
+                        .replace(/Safe Attachments/gi, 'Séif Atáchments')
+                        .replace(/Safe Links/gi, 'Séif Links')
+                        .replace(/Entra ID/gi, 'Éntra Ai Dí')
+                        .replace(/Password Spray/gi, 'Pásword Spréi')
+                        .replace(/Ransomware/gi, 'Ránsom uer')
+                        .replace(/Phishing/gi, 'Físhing')
+                        .replace(/Purview/gi, 'Púrviu')
+                        .replace(/Just-in-Time/gi, 'Yost in Táim')
+                        .replace(/Defender/gi, 'Defénder')
+                        .replace(/Dark Web/gi, 'Darc Ueb')
+                        .replace(/game over/gi, 'guéim óver')
+                        .replace(/Endpoint/gi, 'Éndpoint');
+
+                    const u = new SpeechSynthesisUtterance(voiceText);
+                    u.lang = 'es-ES';
+                    u.rate = 0.95;  // Ligeramente más lento para sonar más natural
+                    u.pitch = 1.05; // Tono levemente más alto para sonar más dinámico
+                    u.volume = 1.0;
+
+                    let selectedVoice = null;
+                    const availableVoices = window.speechSynthesis.getVoices();
+
+                    if (availableVoices.length > 0) {
+                        selectedVoice = availableVoices.find(v =>
+                            (v.name.includes('Google') || v.name.includes('Microsoft')) && v.lang.includes('es')
+                        ) || availableVoices.find(v => v.lang.startsWith('es'));
+
+                        if (selectedVoice) u.voice = selectedVoice;
+                    }
+
+                    u.onend = finish;
+                    u.onerror = (e) => {
+                        console.warn("TTS Error:", e);
+                        if (e.error !== 'interrupted' && e.error !== 'canceled') finish();
+                    };
+
+                    window.speechSynthesis.speak(u);
+
+                    // Feedback visual
+                    if (selectedVoice) {
+                        const name = selectedVoice.name;
+                        if (name.includes('Google') || name.includes('Microsoft')) {
+                            toast('success', `🎙️ Voz HD: ${name.substring(0, 15)}...`);
+                        } else {
+                            toast('info', `🤖 Voz Básica: ${name.substring(0, 15)}...`);
+                        }
+                    } else {
+                        toast('warning', '🔇 Voz no detectada (Usando Default)');
+                    }
+                };
+
+                // 3. Mecanismo de reintento de carga de voces
+                if (window.speechSynthesis.getVoices().length === 0) {
+                    window.speechSynthesis.onvoiceschanged = () => {
+                        window.speechSynthesis.onvoiceschanged = null;
+                        doSpeak();
+                    };
+                    setTimeout(() => {
+                        if (window.speechSynthesis.getVoices().length === 0) doSpeak();
+                    }, 300);
+                } else {
+                    doSpeak();
+                }
+            });
+        }
+
+
+        // Fix: Eliminar auto-apertura del modal
+        const modal = document.getElementById('proModalOverlay');
+        /* if (modal) {
+             modal.classList.remove('active'); // Asegurar cerrado al inicio
+        } */
+    </script>
+    <script src="ai_core.js"></script>
+</body>
+
+</html>

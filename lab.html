@@ -1,0 +1,4384 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ONESEC - Microsoft 365 Security Experience</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=DM+Sans:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --bg: #060d18;
+      --card: rgba(10, 25, 40, 0.88);
+      --accent: #00e5c8;
+      --accent2: #00b4d8;
+      --purple: #8b5cf6;
+      --red: #ff4757;
+      --orange: #ffa502;
+      --green: #2ed573;
+      --blue: #0097e6;
+      --pink: #e84393;
+      --text: #c8e6f0;
+      --text2: #6b8a9e;
+      --border: rgba(0, 229, 200, 0.15);
+      --border2: rgba(0, 229, 200, 0.08);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
+    }
+
+    /* LANDING */
+    .landing {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--bg);
+      transition: opacity .6s, visibility .6s;
+    }
+
+    .landing.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .landing-bg {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 30% 40%, rgba(0, 229, 200, .06) 0%, transparent 60%), radial-gradient(ellipse at 70% 60%, rgba(139, 92, 246, .06) 0%, transparent 60%);
+    }
+
+    .landing-grid {
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(rgba(0, 229, 200, .03) 1px, transparent 1px), linear-gradient(90deg, rgba(0, 229, 200, .03) 1px, transparent 1px);
+      background-size: 50px 50px;
+      animation: gs 25s linear infinite;
+    }
+
+    @keyframes gs {
+      to {
+        transform: translate(50px, 50px);
+      }
+    }
+
+    .lbox {
+      position: relative;
+      text-align: center;
+      z-index: 2;
+    }
+
+    .llogo-svg {
+      margin-bottom: .5rem;
+      filter: drop-shadow(0 0 15px rgba(0,229,200,.3));
+    }
+    .llogo {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 3.8rem;
+      font-weight: 700;
+      letter-spacing: .15em;
+      background: linear-gradient(135deg, var(--accent), var(--accent2), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .lsub {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .7rem;
+      color: var(--text2);
+      letter-spacing: .3em;
+      text-transform: uppercase;
+      margin: .5rem 0 2.5rem;
+    }
+
+    .lform {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      width: 380px;
+      margin: 0 auto;
+    }
+
+    .linput label {
+      display: block;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .6rem;
+      color: var(--accent);
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      margin-bottom: .3rem;
+      text-align: left;
+    }
+
+    .linput input {
+      width: 100%;
+      padding: .75rem 1rem;
+      background: rgba(0, 229, 200, .04);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-size: .9rem;
+      outline: none;
+      transition: .3s;
+    }
+
+    .linput input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 15px rgba(0, 229, 200, .2);
+    }
+
+    .btn-go {
+      margin-top: .8rem;
+      padding: .85rem 2.5rem;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      color: #060d18;
+      border: none;
+      border-radius: 6px;
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: .08em;
+      cursor: pointer;
+      transition: .3s;
+    }
+
+    .btn-go:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 25px rgba(0, 229, 200, .3);
+    }
+
+    /* MAIN */
+    .main {
+      display: none;
+      height: 100vh;
+      flex-direction: column;
+    }
+
+    .main.active {
+      display: flex;
+    }
+
+    .topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: .5rem 1.5rem;
+      background: rgba(6, 13, 24, .95);
+      border-bottom: 1px solid var(--border2);
+      flex-shrink: 0;
+      z-index: 50;
+    }
+
+    .topbar-l {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .topbar-logo {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .topbar-u {
+      font-size: .72rem;
+      color: var(--text2);
+    }
+
+    .topbar-u b {
+      color: var(--accent);
+    }
+
+    .tabs {
+      display: flex;
+      gap: .3rem;
+      padding: .4rem 1.5rem;
+      background: rgba(6, 13, 24, .8);
+      border-bottom: 1px solid var(--border2);
+      flex-shrink: 0;
+    }
+
+    .tab {
+      padding: .45rem .9rem;
+      background: rgba(0, 229, 200, .03);
+      border: 1px solid var(--border2);
+      border-radius: 5px;
+      color: var(--text2);
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: .68rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: .3s;
+      display: flex;
+      align-items: center;
+      gap: .35rem;
+      white-space: nowrap;
+    }
+
+    .tab:hover {
+      background: rgba(0, 229, 200, .06);
+      color: var(--text);
+    }
+
+    .tab.active {
+      background: rgba(0, 229, 200, .1);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .scbar {
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+      padding: .4rem 1.5rem;
+      background: rgba(6, 13, 24, .6);
+      border-bottom: 1px solid var(--border2);
+      flex-shrink: 0;
+    }
+
+    .scbar-lbl {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .58rem;
+      color: var(--text2);
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      margin-right: .4rem;
+    }
+
+    .sc {
+      padding: .35rem .8rem;
+      background: rgba(0, 229, 200, .04);
+      border: 1px solid var(--border2);
+      border-radius: 4px;
+      color: var(--text2);
+      font-size: .68rem;
+      cursor: pointer;
+      transition: .3s;
+      display: flex;
+      align-items: center;
+      gap: .3rem;
+    }
+
+    .sc:hover {
+      background: rgba(0, 229, 200, .08);
+      color: var(--text);
+    }
+
+    .sc.active {
+      background: rgba(0, 229, 200, .12);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .sc.scp.active {
+      background: rgba(255, 71, 87, .12);
+      border-color: var(--red);
+      color: var(--red);
+    }
+
+    .sc.scr.active {
+      background: rgba(139, 92, 246, .12);
+      border-color: var(--purple);
+      color: var(--purple);
+    }
+
+    .sc.sci.active {
+      background: rgba(255, 165, 2, .12);
+      border-color: var(--orange);
+      color: var(--orange);
+    }
+
+    .sc-play {
+      padding: .35rem .7rem;
+      background: rgba(46, 213, 115, .12);
+      border: 1px solid rgba(46, 213, 115, .3);
+      border-radius: 4px;
+      color: var(--green);
+      font-size: .7rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: .3s;
+      margin-left: auto;
+      display: none;
+      align-items: center;
+      gap: .3rem;
+      font-family: 'Chakra Petch', sans-serif;
+    }
+
+    .sc-play:hover {
+      background: rgba(46, 213, 115, .2);
+      transform: scale(1.05);
+    }
+
+    .sc-play.show {
+      display: flex;
+    }
+
+    .sc-stop {
+      padding: .35rem .7rem;
+      background: rgba(255, 71, 87, .12);
+      border: 1px solid rgba(255, 71, 87, .3);
+      border-radius: 4px;
+      color: var(--red);
+      font-size: .7rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: .3s;
+      display: none;
+      align-items: center;
+      gap: .3rem;
+      font-family: 'Chakra Petch', sans-serif;
+    }
+
+    .sc-stop:hover {
+      background: rgba(255, 71, 87, .2);
+    }
+
+    .sc-stop.show {
+      display: flex;
+    }
+
+    .sc-pause {
+      padding: .35rem .7rem;
+      background: rgba(255, 165, 2, .12);
+      border: 1px solid rgba(255, 165, 2, .3);
+      border-radius: 4px;
+      color: var(--orange);
+      font-size: .7rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: .3s;
+      display: none;
+      align-items: center;
+      gap: .3rem;
+      font-family: 'Chakra Petch', sans-serif;
+    }
+    .sc-pause:hover { background: rgba(255, 165, 2, .2); }
+    .sc-pause.show { display: flex; }
+
+    .sc-nav {
+      padding: .35rem .7rem;
+      background: rgba(0, 229, 200, .08);
+      border: 1px solid rgba(0, 229, 200, .25);
+      border-radius: 4px;
+      color: var(--accent);
+      font-size: .68rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: .3s;
+      display: none;
+      align-items: center;
+      gap: .3rem;
+      font-family: 'Chakra Petch', sans-serif;
+    }
+    .sc-nav:hover {
+      background: rgba(0, 229, 200, .18);
+      transform: scale(1.05);
+    }
+    .sc-nav.show { display: flex; }
+
+    /* Step indicator */
+    .step-bar {
+      display: none;
+      padding: .35rem 1.5rem;
+      background: rgba(6, 13, 24, .5);
+      border-bottom: 1px solid var(--border2);
+      flex-shrink: 0;
+      align-items: center;
+      gap: .5rem;
+    }
+
+    .step-bar.show {
+      display: flex;
+    }
+
+    .step-ind {
+      display: flex;
+      gap: .3rem;
+      align-items: center;
+    }
+
+    .step-dot {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .55rem;
+      font-family: 'Chakra Petch', sans-serif;
+      font-weight: 700;
+      color: var(--text2);
+      transition: .4s;
+    }
+
+    .step-dot.done {
+      border-color: var(--green);
+      color: #fff;
+      background: var(--green);
+    }
+
+    .step-dot.current {
+      border-color: var(--accent);
+      color: #fff;
+      background: var(--accent);
+      animation: sdPulse 1.5s ease-in-out infinite;
+      transform: scale(1.3);
+      font-weight: 700;
+      box-shadow: 0 0 12px rgba(0, 229, 200, .5);
+    }
+
+    @keyframes sdPulse {
+
+      0%,
+      100% {
+        box-shadow: none;
+      }
+
+      50% {
+        box-shadow: 0 0 12px rgba(0, 229, 200, .4);
+      }
+    }
+
+    .step-line {
+      width: 20px;
+      height: 2px;
+      background: var(--border);
+      transition: .4s;
+    }
+
+    .step-line.done {
+      background: var(--green);
+    }
+
+    .step-desc {
+      font-size: .72rem;
+      color: var(--text);
+      margin-left: .8rem;
+      font-weight: 500;
+    }
+
+    .step-desc b {
+      color: var(--accent);
+    }
+
+    /* Narration bar */
+    .narbar {
+      display: none;
+      padding: .3rem 1.5rem;
+      background: rgba(0, 229, 200, .03);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .narbar.show {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+    }
+
+    .nar-icon {
+      font-size: 1rem;
+      animation: narPulse 1s ease-in-out infinite;
+    }
+
+    @keyframes narPulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+      }
+
+      50% {
+        transform: scale(1.2);
+      }
+    }
+
+    .nar-text {
+      font-size: .75rem;
+      color: var(--text2);
+      line-height: 1.4;
+      flex: 1;
+    }
+
+    .nar-text b {
+      color: var(--text);
+    }
+
+    .voice-btn {
+      padding: .25rem .6rem;
+      background: rgba(0, 229, 200, .1);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      color: var(--accent);
+      font-size: .6rem;
+      cursor: pointer;
+      transition: .3s;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .voice-btn:hover {
+      background: rgba(0, 229, 200, .2);
+    }
+
+    .voice-btn.speaking {
+      background: rgba(0, 229, 200, .2);
+      animation: vPulse 1s ease-in-out infinite;
+    }
+
+    @keyframes vPulse {
+
+      0%,
+      100% {
+        box-shadow: none;
+      }
+
+      50% {
+        box-shadow: 0 0 10px rgba(0, 229, 200, .3);
+      }
+    }
+
+    /* PANEL */
+    .parea {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .panel {
+      display: none;
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      inset: 0;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    /* ARCH MAP */
+    .avp {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .acanvas {
+      position: absolute;
+      width: 1600px;
+      height: 980px;
+      transform-origin: center center;
+      transition: transform .8s cubic-bezier(.4, 0, .2, 1);
+      left: 50%;
+      top: 50%;
+    }
+
+    /* SVG */
+    .svgl {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    /* Zones */
+    .zone {
+      position: absolute;
+      border-radius: 12px;
+      border: 1px solid;
+      z-index: 0;
+    }
+
+    .zlbl {
+      position: absolute;
+      top: 6px;
+      left: 12px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .52rem;
+      letter-spacing: .15em;
+      text-transform: uppercase;
+      opacity: .7;
+    }
+
+    /* Cards */
+    .card {
+      position: absolute;
+      border-radius: 10px;
+      cursor: pointer;
+      z-index: 5;
+      transition: all .4s cubic-bezier(.4, 0, .2, 1);
+      overflow: hidden;
+      backdrop-filter: blur(12px);
+    }
+
+    .card:hover {
+      transform: scale(1.04);
+      z-index: 20;
+      filter: brightness(1.15);
+    }
+
+    .card.zoomed {
+      z-index: 25;
+      filter: brightness(1.2);
+      box-shadow: 0 0 40px rgba(0, 229, 200, .3);
+    }
+
+    .ch {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: .45rem .65rem;
+      border-bottom: 1px solid rgba(255, 255, 255, .05);
+    }
+
+    .chl {
+      display: flex;
+      align-items: center;
+      gap: .45rem;
+    }
+
+    .ci {
+      width: 26px;
+      height: 26px;
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .85rem;
+      flex-shrink: 0;
+    }
+
+    .ct {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: .68rem;
+      font-weight: 600;
+      line-height: 1.1;
+    }
+
+    .cs {
+      font-size: .5rem;
+      color: var(--text2);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .cb {
+      padding: .12rem .45rem;
+      border-radius: 3px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .5rem;
+      font-weight: 600;
+    }
+
+    .cbd {
+      padding: .4rem .6rem;
+    }
+
+    /* Card types */
+    .ca {
+      background: rgba(255, 71, 87, .08);
+      border: 1px solid rgba(255, 71, 87, .3);
+    }
+
+    .ca .ci {
+      background: rgba(255, 71, 87, .2);
+    }
+
+    .ca .ct {
+      color: var(--red);
+    }
+
+    .ca .cb {
+      background: rgba(255, 71, 87, .2);
+      color: var(--red);
+    }
+
+    .cf {
+      background: rgba(255, 165, 2, .08);
+      border: 1px solid rgba(255, 165, 2, .3);
+    }
+
+    .cf .ci {
+      background: rgba(255, 165, 2, .2);
+    }
+
+    .cf .ct {
+      color: var(--orange);
+    }
+
+    .cf .cb {
+      background: rgba(255, 165, 2, .2);
+      color: var(--orange);
+    }
+
+    .cn {
+      background: rgba(0, 180, 216, .08);
+      border: 1px solid rgba(0, 180, 216, .3);
+    }
+
+    .cn .ci {
+      background: rgba(0, 180, 216, .2);
+    }
+
+    .cn .ct {
+      color: var(--accent2);
+    }
+
+    .cn .cb {
+      background: rgba(0, 180, 216, .2);
+      color: var(--accent2);
+    }
+
+    .ck {
+      background: rgba(232, 67, 147, .08);
+      border: 1px solid rgba(232, 67, 147, .3);
+    }
+
+    .ck .ci {
+      background: rgba(232, 67, 147, .2);
+    }
+
+    .ck .ct {
+      color: var(--pink);
+    }
+
+    .ck .cb {
+      background: rgba(232, 67, 147, .2);
+      color: var(--pink);
+    }
+
+    .cm {
+      background: rgba(139, 92, 246, .08);
+      border: 1px solid rgba(139, 92, 246, .3);
+    }
+
+    .cm .ci {
+      background: rgba(139, 92, 246, .2);
+    }
+
+    .cm .ct {
+      color: var(--purple);
+    }
+
+    .cm .cb {
+      background: rgba(139, 92, 246, .2);
+      color: var(--purple);
+    }
+
+    .cc {
+      background: linear-gradient(135deg, rgba(0, 229, 200, .08), rgba(139, 92, 246, .08));
+      border: 1px solid rgba(0, 229, 200, .3);
+    }
+
+    .cc .ci {
+      background: linear-gradient(135deg, rgba(0, 229, 200, .3), rgba(139, 92, 246, .3));
+    }
+
+    .cc .ct {
+      color: var(--accent);
+    }
+
+    .cc .cb {
+      background: rgba(0, 229, 200, .2);
+      color: var(--accent);
+    }
+
+    .cg {
+      background: rgba(46, 213, 115, .08);
+      border: 1px solid rgba(46, 213, 115, .3);
+    }
+
+    .cg .ci {
+      background: rgba(46, 213, 115, .2);
+    }
+
+    .cg .ct {
+      color: var(--green);
+    }
+
+    .cg .cb {
+      background: rgba(46, 213, 115, .2);
+      color: var(--green);
+    }
+
+    /* Mini elements */
+    .mst {
+      display: flex;
+      gap: .25rem;
+      flex-wrap: wrap;
+    }
+
+    .msi {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: .25rem .35rem;
+      background: rgba(255, 255, 255, .03);
+      border-radius: 4px;
+      border: 1px solid rgba(255, 255, 255, .05);
+      min-width: 36px;
+    }
+
+    .msi .v {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: .6rem;
+      font-weight: 700;
+    }
+
+    .msi .l {
+      font-size: .4rem;
+      color: var(--text2);
+      text-transform: uppercase;
+      letter-spacing: .03em;
+    }
+
+    .mbar {
+      display: flex;
+      gap: 2px;
+      align-items: flex-end;
+      height: 16px;
+      margin-top: .25rem;
+    }
+
+    .mbar span {
+      width: 3px;
+      background: var(--accent);
+      border-radius: 1px;
+      opacity: .5;
+      animation: bp 2s ease-in-out infinite;
+    }
+
+    @keyframes bp {
+
+      0%,
+      100% {
+        opacity: .3;
+      }
+
+      50% {
+        opacity: .8;
+      }
+    }
+
+    .mcode {
+      background: rgba(0, 0, 0, .3);
+      border-radius: 4px;
+      padding: .3rem .4rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .5rem;
+      color: var(--accent);
+      line-height: 1.3;
+      margin-top: .25rem;
+      border: 1px solid rgba(255, 255, 255, .04);
+    }
+
+    .mcode .kw {
+      color: var(--purple);
+    }
+
+    .ml {
+      margin-top: .25rem;
+    }
+
+    .mli {
+      display: flex;
+      align-items: center;
+      gap: .35rem;
+      padding: .15rem 0;
+      font-size: .55rem;
+      color: var(--text2);
+    }
+
+    .mli .mn {
+      width: 15px;
+      height: 15px;
+      border-radius: 3px;
+      background: rgba(255, 255, 255, .06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .45rem;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+
+    .mt {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .2rem;
+      margin-top: .25rem;
+    }
+
+    .mtg {
+      padding: .1rem .35rem;
+      border-radius: 3px;
+      font-size: .45rem;
+      font-family: 'JetBrains Mono', monospace;
+      background: rgba(255, 255, 255, .04);
+      border: 1px solid rgba(255, 255, 255, .06);
+      color: var(--text2);
+    }
+
+    .mchat {
+      margin-top: .25rem;
+      display: flex;
+      flex-direction: column;
+      gap: .2rem;
+    }
+
+    .mcm {
+      padding: .2rem .4rem;
+      border-radius: 4px;
+      font-size: .5rem;
+      line-height: 1.2;
+      max-width: 88%;
+    }
+
+    .mcm.u {
+      background: rgba(0, 229, 200, .1);
+      color: var(--accent);
+      align-self: flex-start;
+      border: 1px solid rgba(0, 229, 200, .12);
+    }
+
+    .mcm.a {
+      background: rgba(139, 92, 246, .1);
+      color: var(--purple);
+      align-self: flex-end;
+      border: 1px solid rgba(139, 92, 246, .12);
+    }
+
+    .td {
+      display: flex;
+      gap: .5rem;
+      margin-top: .25rem;
+      justify-content: center;
+    }
+
+    .tdc {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .15rem;
+    }
+
+    .tdcc {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+    }
+
+    .tdcl {
+      font-size: .45rem;
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--text2);
+    }
+
+    .sr {
+      display: flex;
+      align-items: center;
+      gap: .25rem;
+      margin-top: .25rem;
+      font-size: .5rem;
+      color: var(--text2);
+    }
+
+    .sd {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      animation: sb 2s ease-in-out infinite;
+    }
+
+    @keyframes sb {
+
+      0%,
+      100% {
+        opacity: .4;
+      }
+
+      50% {
+        opacity: 1;
+      }
+    }
+
+    .card.under-attack {
+      animation: cta 1.2s ease-in-out infinite;
+    }
+
+    @keyframes cta {
+
+      0%,
+      100% {
+        box-shadow: none;
+      }
+
+      50% {
+        box-shadow: 0 0 25px rgba(255, 71, 87, .5);
+      }
+    }
+
+    .card.defending {
+      animation: ctd 1.5s ease-in-out infinite;
+    }
+
+    @keyframes ctd {
+
+      0%,
+      100% {
+        box-shadow: none;
+      }
+
+      50% {
+        box-shadow: 0 0 25px rgba(0, 229, 200, .5);
+      }
+    }
+
+    /* Arrow particles along path */
+    .arrow-particle {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      z-index: 3;
+      pointer-events: none;
+      filter: blur(1px);
+    }
+
+    /* DETAIL OVERLAY */
+    .ov {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .75);
+      z-index: 500;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(6px);
+    }
+
+    .ov.show {
+      display: flex;
+    }
+
+    .det {
+      background: rgba(10, 25, 40, .97);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      max-width: 550px;
+      width: 92%;
+      max-height: 80vh;
+      overflow-y: auto;
+      padding: 1.5rem;
+      animation: di .35s cubic-bezier(.4, 0, .2, 1);
+      position: relative;
+    }
+
+    @keyframes di {
+      from {
+        opacity: 0;
+        transform: translateY(30px) scale(.95);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .dx {
+      position: absolute;
+      top: .8rem;
+      right: .8rem;
+      width: 28px;
+      height: 28px;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, .05);
+      border: 1px solid var(--border2);
+      color: var(--text2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: .9rem;
+      transition: .2s;
+    }
+
+    .dx:hover {
+      background: rgba(255, 71, 87, .2);
+      color: var(--red);
+    }
+
+    .det h3 {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 1.15rem;
+      margin-bottom: .15rem;
+    }
+
+    .det .ds {
+      font-size: .72rem;
+      color: var(--text2);
+      margin-bottom: .8rem;
+    }
+
+    .det p {
+      font-size: .82rem;
+      color: var(--text2);
+      line-height: 1.6;
+      margin-bottom: .6rem;
+    }
+
+    .det h4 {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: .85rem;
+      color: var(--text);
+      margin: .6rem 0 .3rem;
+    }
+
+    .df {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .35rem;
+    }
+
+    .dfi {
+      padding: .45rem .55rem;
+      background: rgba(255, 255, 255, .03);
+      border: 1px solid var(--border2);
+      border-radius: 5px;
+      font-size: .7rem;
+      color: var(--text2);
+      display: flex;
+      align-items: center;
+      gap: .35rem;
+    }
+
+    .dd {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 1.2rem;
+      left: 50%;
+      transform: translateX(-50%) translateY(80px);
+      background: rgba(10, 25, 40, .95);
+      border: 1px solid var(--accent);
+      border-radius: 8px;
+      padding: .55rem 1.1rem;
+      font-size: .75rem;
+      color: var(--text);
+      z-index: 600;
+      transition: transform .4s cubic-bezier(.4, 0, .2, 1);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, .5);
+      max-width: 400px;
+      text-align: center;
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+
+    /* UC panels */
+    .usc {
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      padding: 1.5rem;
+    }
+
+    .uh {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+
+    .uh h2 {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 1.3rem;
+    }
+
+    .uh p {
+      color: var(--text2);
+      font-size: .82rem;
+      max-width: 600px;
+      margin: .3rem auto 0;
+    }
+
+    .ug {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .ub {
+      background: var(--card);
+      border: 1px solid var(--border2);
+      border-radius: 10px;
+      padding: 1.1rem;
+      transition: .3s;
+    }
+
+    .ub:hover {
+      border-color: var(--border);
+    }
+
+    .ub h3 {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: .9rem;
+      margin-bottom: .4rem;
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+    }
+
+    .ub p {
+      font-size: .78rem;
+      color: var(--text2);
+      line-height: 1.5;
+    }
+
+    .us {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .4rem;
+      margin-top: .7rem;
+    }
+
+    .ust {
+      background: rgba(255, 255, 255, .02);
+      border: 1px solid var(--border2);
+      border-radius: 6px;
+      padding: .5rem;
+      text-align: center;
+    }
+
+    .ust .sn {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    .ust .stl {
+      font-size: .65rem;
+      font-weight: 600;
+      margin: .1rem 0;
+    }
+
+    .ust .sds {
+      font-size: .55rem;
+      color: var(--text2);
+      line-height: 1.3;
+    }
+
+    ::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(0, 229, 200, .15);
+      border-radius: 3px;
+    }
+
+    /* ZOOM CONTROLS */
+    .zoom-controls {
+      position: absolute;
+      bottom: 1.2rem;
+      right: 1.2rem;
+      display: flex;
+      flex-direction: column;
+      gap: .4rem;
+      z-index: 30;
+    }
+    .zoom-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 8px;
+      background: rgba(10, 25, 40, 0.92);
+      border: 1px solid var(--border);
+      color: var(--accent);
+      font-size: 1.2rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: .3s;
+      backdrop-filter: blur(8px);
+      font-family: 'Chakra Petch', sans-serif;
+    }
+    .zoom-btn:hover {
+      background: rgba(0, 229, 200, .15);
+      border-color: var(--accent);
+      transform: scale(1.08);
+    }
+    .zoom-btn:active { transform: scale(0.95); }
+    .zoom-btn.guide-btn {
+      background: linear-gradient(135deg, rgba(139, 92, 246, .15), rgba(0, 229, 200, .15));
+      border-color: var(--purple);
+      color: var(--purple);
+      font-size: .9rem;
+    }
+    .zoom-btn.guide-btn:hover {
+      background: linear-gradient(135deg, rgba(139, 92, 246, .25), rgba(0, 229, 200, .25));
+    }
+
+    /* MIC BUTTON */
+    .mic-btn {
+      background: linear-gradient(135deg, rgba(255,71,87,.15), rgba(255,165,2,.15));
+      border-color: var(--red);
+      color: var(--red);
+      font-size: 1rem;
+    }
+    .mic-btn:hover {
+      background: linear-gradient(135deg, rgba(255,71,87,.3), rgba(255,165,2,.3));
+    }
+    .mic-btn.listening {
+      animation: mic-pulse 1s ease-in-out infinite;
+      border-color: var(--red);
+      color: #fff;
+      background: rgba(255,71,87,.4);
+    }
+    @keyframes mic-pulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(255,71,87,.5); }
+      50% { box-shadow: 0 0 0 10px rgba(255,71,87,0); }
+    }
+    .mic-feedback {
+      position: absolute;
+      bottom: 1.2rem;
+      right: 4.5rem;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: .5rem .8rem;
+      color: var(--text);
+      font-size: .72rem;
+      font-family: 'JetBrains Mono', monospace;
+      max-width: 280px;
+      z-index: 31;
+      display: none;
+      backdrop-filter: blur(8px);
+    }
+    .mic-feedback.show { display: block; }
+    .mic-feedback .mic-heard { color: var(--accent); font-weight: 600; }
+    .mic-feedback .mic-action { color: var(--text2); margin-top: 3px; }
+
+    /* GUIDE OVERLAY */
+    .guide-ov {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, .8);
+      z-index: 550;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(8px);
+    }
+    .guide-ov.show { display: flex; }
+    .guide-box {
+      background: rgba(10, 25, 40, 0.97);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      max-width: 700px;
+      width: 94%;
+      max-height: 85vh;
+      overflow-y: auto;
+      padding: 1.8rem;
+      animation: di .35s cubic-bezier(.4, 0, .2, 1);
+    }
+    .guide-header {
+      text-align: center;
+      margin-bottom: 1.5rem;
+    }
+    .guide-header h2 {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 1.4rem;
+      background: linear-gradient(135deg, var(--accent), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .guide-header p {
+      font-size: .78rem;
+      color: var(--text2);
+      margin-top: .3rem;
+    }
+    .guide-item {
+      display: flex;
+      gap: 1rem;
+      padding: 1rem;
+      margin-bottom: .6rem;
+      background: rgba(255, 255, 255, .02);
+      border: 1px solid var(--border2);
+      border-radius: 10px;
+      transition: .3s;
+      cursor: pointer;
+    }
+    .guide-item:hover {
+      background: rgba(0, 229, 200, .04);
+      border-color: var(--border);
+    }
+    .guide-icon {
+      font-size: 2rem;
+      flex-shrink: 0;
+      width: 50px;
+      height: 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 10px;
+    }
+    .guide-content h3 {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: .9rem;
+      margin-bottom: .25rem;
+    }
+    .guide-content .guide-fun {
+      font-size: .78rem;
+      color: var(--text);
+      line-height: 1.5;
+      margin-bottom: .3rem;
+    }
+    .guide-content .guide-tech {
+      font-size: .65rem;
+      color: var(--text2);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 1200px) {
+      .scbar { flex-wrap: wrap; gap: .3rem; padding: .3rem .5rem; }
+      .sc, .sc-play, .sc-stop, .sc-nav { font-size: .6rem; padding: .25rem .5rem; }
+    }
+    @media (max-width: 900px) {
+      .topbar { flex-wrap: wrap; padding: .4rem .6rem; }
+      .topbar-logo { font-size: .9rem; }
+      .topbar-u { font-size: .6rem; }
+      .tabs { font-size: .65rem; }
+      .narbar { flex-wrap: wrap; }
+      .llogo { font-size: 2.6rem; }
+      .lform { width: 300px; }
+      .lsub { font-size: .55rem; }
+    }
+    @media (max-width: 600px) {
+      .topbar-logo { font-size: .8rem; }
+      .scbar { gap: .2rem; }
+      .scbar-lbl { display: none; }
+      .sc { font-size: .55rem; padding: .2rem .4rem; }
+      .llogo { font-size: 2rem; }
+      .lform { width: 260px; }
+      .zoom-controls { bottom: .6rem; right: .6rem; }
+      .zoom-btn { width: 32px; height: 32px; font-size: 1rem; }
+    }
+
+    /* === LIVE METRICS PANEL === */
+    .metrics-panel {
+      position: absolute;
+      top: .6rem;
+      left: .6rem;
+      z-index: 30;
+      display: none;
+      flex-direction: column;
+      gap: .35rem;
+    }
+    .metrics-panel.show { display: flex; }
+    .metric-card {
+      background: rgba(10, 25, 40, 0.92);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: .45rem .7rem;
+      backdrop-filter: blur(8px);
+      min-width: 155px;
+    }
+    .metric-label {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .5rem;
+      color: var(--text2);
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+    .metric-value {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--accent);
+      line-height: 1.2;
+    }
+    .metric-value.red { color: var(--red); }
+    .metric-value.green { color: var(--green); }
+    .metric-value.purple { color: var(--purple); }
+    .metric-value.orange { color: var(--orange); }
+    .metric-sub {
+      font-size: .48rem;
+      color: var(--text2);
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* === AUTO-DEMO OVERLAY === */
+    .autodemo-badge {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(10, 25, 40, 0.95);
+      border: 2px solid var(--accent);
+      border-radius: 16px;
+      padding: 2rem 3rem;
+      z-index: 200;
+      text-align: center;
+      display: none;
+      backdrop-filter: blur(12px);
+      box-shadow: 0 0 60px rgba(0, 229, 200, .2);
+    }
+    .autodemo-badge.show { display: block; }
+    .autodemo-badge h2 {
+      font-family: 'Chakra Petch', sans-serif;
+      color: var(--accent);
+      font-size: 1.4rem;
+      margin-bottom: .5rem;
+    }
+    .autodemo-badge p {
+      color: var(--text2);
+      font-size: .8rem;
+    }
+    .autodemo-progress {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--accent), var(--purple));
+      z-index: 201;
+      transition: width .5s linear;
+      display: none;
+    }
+    .autodemo-progress.show { display: block; }
+
+    /* === DATA FLOW PARTICLES === */
+    .flow-particle {
+      position: absolute;
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      pointer-events: none;
+      z-index: 15;
+      opacity: 0;
+    }
+    @keyframes flowMove {
+      0% { opacity: 0; offset-distance: 0%; }
+      10% { opacity: 1; }
+      90% { opacity: 1; }
+      100% { opacity: 0; offset-distance: 100%; }
+    }
+
+    /* === VOICE CHAT PANEL === */
+    .voice-chat {
+      position: absolute;
+      bottom: 1.2rem;
+      left: 1.2rem;
+      z-index: 35;
+      background: rgba(10, 25, 40, 0.95);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      width: 300px;
+      max-height: 350px;
+      display: none;
+      flex-direction: column;
+      backdrop-filter: blur(10px);
+      overflow: hidden;
+    }
+    .voice-chat.show { display: flex; }
+    .voice-chat-header {
+      padding: .5rem .8rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .voice-chat-header span {
+      font-family: 'Chakra Petch', sans-serif;
+      font-size: .75rem;
+      font-weight: 600;
+      color: var(--accent);
+    }
+    .voice-chat-close {
+      background: none;
+      border: none;
+      color: var(--text2);
+      cursor: pointer;
+      font-size: .9rem;
+    }
+    .voice-chat-body {
+      flex: 1;
+      overflow-y: auto;
+      padding: .5rem .8rem;
+      max-height: 240px;
+    }
+    .voice-msg {
+      margin-bottom: .5rem;
+      padding: .4rem .6rem;
+      border-radius: 8px;
+      font-size: .68rem;
+      line-height: 1.4;
+      max-width: 90%;
+    }
+    .voice-msg.user {
+      background: rgba(0, 229, 200, .1);
+      border: 1px solid rgba(0, 229, 200, .2);
+      color: var(--accent);
+      margin-left: auto;
+      text-align: right;
+    }
+    .voice-msg.bot {
+      background: rgba(139, 92, 246, .1);
+      border: 1px solid rgba(139, 92, 246, .2);
+      color: var(--text);
+    }
+    .voice-chat-input {
+      display: flex;
+      gap: .4rem;
+      padding: .5rem .8rem;
+      border-top: 1px solid var(--border);
+    }
+    .voice-chat-input input {
+      flex: 1;
+      background: rgba(0, 229, 200, .04);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      padding: .4rem .6rem;
+      font-size: .7rem;
+      outline: none;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .voice-chat-input input:focus { border-color: var(--accent); }
+    .voice-chat-input button {
+      background: var(--accent);
+      border: none;
+      border-radius: 6px;
+      color: #060d18;
+      padding: .4rem .6rem;
+      cursor: pointer;
+      font-size: .75rem;
+      font-weight: 700;
+    }
+    .vc-mic-btn {
+      background: rgba(255,71,87,.15) !important;
+      color: var(--red) !important;
+      border: 1px solid rgba(255,71,87,.3) !important;
+    }
+    .vc-mic-btn.listening {
+      animation: mic-pulse 1s ease-in-out infinite;
+      background: rgba(255,71,87,.4) !important;
+      color: #fff !important;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="landing" id="landing">
+    <div class="landing-bg"></div>
+    <div class="landing-grid"></div>
+    <div class="lbox">
+      <svg class="llogo-svg" width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M32 4L8 16v16c0 14.4 10.24 27.84 24 32 13.76-4.16 24-17.6 24-32V16L32 4z" fill="url(#lgShield)" stroke="url(#lgBorder)" stroke-width="1.5"/><text x="32" y="40" text-anchor="middle" font-family="Chakra Petch" font-weight="700" font-size="20" fill="#fff">OS</text><defs><linearGradient id="lgShield" x1="8" y1="4" x2="56" y2="52"><stop stop-color="#00e5c8"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient><linearGradient id="lgBorder" x1="8" y1="4" x2="56" y2="52"><stop stop-color="#00e5c8"/><stop offset="1" stop-color="#00b4d8"/></linearGradient></defs></svg>
+      <div class="llogo">ONESEC</div>
+      <div class="lsub">Always Secure, Never at Risk.</div>
+      <div class="lform">
+        <div class="linput"><label>👤 Nombre</label><input id="inN" placeholder="Ej: Carlos Rodríguez"></div>
+        <div class="linput"><label>🏢 Empresa</label><input id="inC" placeholder="Ej: Canal de Panamá"></div>
+        <button class="btn-go" id="btnGo">INICIAR EXPERIENCIA ⚡</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="main" id="main">
+    <div class="topbar">
+      <div class="topbar-l">
+        <div class="topbar-logo"><svg width="20" height="20" viewBox="0 0 64 64" fill="none" style="vertical-align:middle;margin-right:5px;"><path d="M32 4L8 16v16c0 14.4 10.24 27.84 24 32 13.76-4.16 24-17.6 24-32V16L32 4z" fill="url(#tShield)" stroke="url(#tBorder)" stroke-width="2"/><text x="32" y="40" text-anchor="middle" font-family="Chakra Petch" font-weight="700" font-size="20" fill="#fff">OS</text><defs><linearGradient id="tShield" x1="8" y1="4" x2="56" y2="52"><stop stop-color="#00e5c8"/><stop offset="1" stop-color="#8b5cf6"/></linearGradient><linearGradient id="tBorder" x1="8" y1="4" x2="56" y2="52"><stop stop-color="#00e5c8"/><stop offset="1" stop-color="#00b4d8"/></linearGradient></defs></svg><span style="color:#61ba7c; font-weight:700;">ONESEC</span></div>
+        <div class="topbar-u">Bienvenido, <b id="dN">-</b> · <b id="dC">-</b></div>
+      </div>
+      <div style="display:flex; gap:8px; margin-left:auto;">
+        <button onclick="openProModal()"
+          style="background:rgba(0,229,200,0.1); border:1px solid var(--accent); color:var(--accent); padding:5px 12px; border-radius:4px; font-size:0.7rem; cursor:pointer; font-family:'Chakra Petch';">✨
+          AI Config</button>
+        <button onclick="window.location.href='index.html'"
+          style="background:rgba(0,229,200,0.1); border:1px solid var(--accent); color:var(--accent); padding:5px 12px; border-radius:4px; font-size:0.7rem; cursor:pointer; font-family:'Chakra Petch';">🌐
+          Mapa Global</button>
+        <button onclick="toggleFullscreen()" id="btnFS"
+          style="background:rgba(0,229,200,0.1); border:1px solid var(--accent); color:var(--accent); padding:5px 12px; border-radius:4px; font-size:0.7rem; cursor:pointer; font-family:'Chakra Petch';">⛶
+          Pantalla Completa</button>
+        <button onclick="startAutoDemo()" id="btnAutoDemo"
+          style="background:linear-gradient(135deg,rgba(0,229,200,0.15),rgba(139,92,246,0.15)); border:1px solid var(--purple); color:var(--purple); padding:5px 12px; border-radius:4px; font-size:0.7rem; cursor:pointer; font-family:'Chakra Petch'; font-weight:600;">🎬
+          Auto Demo</button>
+      </div>
+    </div>
+    <div class="tabs" id="tabsBar">
+      <div class="tab active" data-t="uc1">🛡️ Arquitectura de Seguridad</div>
+    </div>
+    <div class="scbar" id="scbar">
+      <span class="scbar-lbl">Escenario:</span>
+      <button class="sc active" data-sc="idle" onclick="pickSc('idle')">🟢 Conocer Ecosistema</button>
+      <button class="sc scp" data-sc="phishing" onclick="pickSc('phishing')">🎣 Phishing</button>
+      <button class="sc scr" data-sc="ransomware" onclick="pickSc('ransomware')">💀 Ransomware</button>
+      <button class="sc sci" data-sc="insider" onclick="pickSc('insider')">🕵️ Insider</button>
+      <button class="sc-play" id="btnPlay" onclick="playScenario()">▶ INICIAR RECORRIDO</button>
+      <button class="sc-play" id="btnCloud" onclick="playEcosystemTour(9)" style="display:none;background:rgba(139,92,246,.12);border-color:rgba(139,92,246,.3);color:var(--purple);">☁️ IR A LA NUBE</button>
+      <button class="sc-nav" id="btnPrev" onclick="stepManual(-1)">⏮ ANTERIOR</button>
+      <button class="sc-nav" id="btnNext" onclick="stepManual(1)">SIGUIENTE ⏭</button>
+      <button class="sc-pause" id="btnPause" onclick="togglePause()">⏸ PAUSAR</button>
+      <button class="sc-stop" id="btnStop" onclick="stopScenario()">⏹ DETENER</button>
+    </div>
+    <div class="step-bar" id="stepBar">
+      <div class="step-ind" id="stepInd"></div>
+      <div class="step-desc" id="stepDesc"></div>
+    </div>
+    <div class="narbar" id="narbar">
+      <span class="nar-icon">🔊</span>
+      <span class="nar-text" id="narText"></span>
+      <button class="voice-btn" id="voiceBtn" onclick="toggleVoice()">🔇 VOZ OFF</button>
+    </div>
+
+    <div class="parea">
+      <div class="panel active" id="uc1">
+        <div class="avp" id="avp">
+          <div class="acanvas" id="acanvas">
+            <svg class="svgl" id="svgl" viewBox="0 0 1600 980" preserveAspectRatio="xMidYMid meet">
+              <defs>
+                <marker id="aR" viewBox="0 0 10 7" refX="9" refY="3.5" markerWidth="7" markerHeight="5" orient="auto">
+                  <polygon points="0 0,10 3.5,0 7" fill="rgba(255,71,87,.6)" />
+                </marker>
+                <marker id="aP" viewBox="0 0 10 7" refX="9" refY="3.5" markerWidth="7" markerHeight="5" orient="auto">
+                  <polygon points="0 0,10 3.5,0 7" fill="rgba(139,92,246,.5)" />
+                </marker>
+                <marker id="aK" viewBox="0 0 10 7" refX="9" refY="3.5" markerWidth="7" markerHeight="5" orient="auto">
+                  <polygon points="0 0,10 3.5,0 7" fill="rgba(232,67,147,.5)" />
+                </marker>
+                <marker id="aG" viewBox="0 0 10 7" refX="9" refY="3.5" markerWidth="7" markerHeight="5" orient="auto">
+                  <polygon points="0 0,10 3.5,0 7" fill="rgba(46,213,115,.5)" />
+                </marker>
+                <marker id="aC" viewBox="0 0 10 7" refX="9" refY="3.5" markerWidth="7" markerHeight="5" orient="auto">
+                  <polygon points="0 0,10 3.5,0 7" fill="rgba(0,229,200,.5)" />
+                </marker>
+                <filter id="glow">
+                  <feGaussianBlur stdDeviation="3" result="g" />
+                  <feMerge>
+                    <feMergeNode in="g" />
+                    <feMergeNode in="SourceGraphic" />
+                  </feMerge>
+                </filter>
+              </defs>
+              <!-- Static connections -->
+              <path d="M 185,130 L 185,195" stroke="rgba(255,71,87,.25)" stroke-width="1.5" fill="none"
+                stroke-dasharray="5 3">
+                <animate attributeName="stroke-dashoffset" from="0" to="-16" dur="1.5s" repeatCount="indefinite" />
+              </path>
+              <path d="M 185,290 L 185,340" stroke="rgba(255,165,2,.2)" stroke-width="1.5" fill="none"
+                stroke-dasharray="5 3">
+                <animate attributeName="stroke-dashoffset" from="0" to="-16" dur="2s" repeatCount="indefinite" />
+              </path>
+              <path d="M 280,525 L 350,580 L 425,580" stroke="rgba(232,67,147,.12)" stroke-width="1" fill="none"
+                stroke-dasharray="4 2">
+                <animate attributeName="stroke-dashoffset" from="0" to="-12" dur="2s" repeatCount="indefinite" />
+              </path>
+              <path d="M 460,525 L 460,580 L 430,580" stroke="rgba(232,67,147,.12)" stroke-width="1" fill="none"
+                stroke-dasharray="4 2">
+                <animate attributeName="stroke-dashoffset" from="0" to="-12" dur="2s" repeatCount="indefinite" />
+              </path>
+              <path d="M 640,525 L 570,580 L 530,580" stroke="rgba(232,67,147,.12)" stroke-width="1" fill="none"
+                stroke-dasharray="4 2">
+                <animate attributeName="stroke-dashoffset" from="0" to="-12" dur="2s" repeatCount="indefinite" />
+              </path>
+              <path d="M 530,580 L 690,580 L 690,330 L 800,230" stroke="rgba(232,67,147,.22)" stroke-width="1.5"
+                fill="none" stroke-dasharray="6 3" marker-end="url(#aK)">
+                <animate attributeName="stroke-dashoffset" from="0" to="-18" dur="1.8s" repeatCount="indefinite" />
+              </path>
+              <path d="M 985,200 L 1060,200 L 1060,155 L 1100,155" stroke="rgba(139,92,246,.3)" stroke-width="2"
+                fill="none" stroke-dasharray="6 3" marker-end="url(#aP)">
+                <animate attributeName="stroke-dashoffset" from="0" to="-18" dur="1.5s" repeatCount="indefinite" />
+              </path>
+              <path d="M 1150,255 L 1100,310 L 870,310" stroke="rgba(139,92,246,.18)" stroke-width="1.5" fill="none"
+                stroke-dasharray="5 3" marker-end="url(#aP)">
+                <animate attributeName="stroke-dashoffset" from="0" to="-16" dur="2s" repeatCount="indefinite" />
+              </path>
+              <path d="M 1250,255 L 1250,415" stroke="rgba(139,92,246,.2)" stroke-width="1.5" fill="none"
+                stroke-dasharray="5 3" marker-end="url(#aP)">
+                <animate attributeName="stroke-dashoffset" from="0" to="-16" dur="2s" repeatCount="indefinite" />
+              </path>
+              <path d="M 1350,255 L 1430,305 L 1430,415" stroke="rgba(139,92,246,.18)" stroke-width="1.5" fill="none"
+                stroke-dasharray="5 3" marker-end="url(#aP)">
+                <animate attributeName="stroke-dashoffset" from="0" to="-16" dur="2s" repeatCount="indefinite" />
+              </path>
+              <path d="M 1250,550 L 1250,625" stroke="rgba(139,92,246,.18)" stroke-width="1.5" fill="none"
+                stroke-dasharray="5 3" marker-end="url(#aP)">
+                <animate attributeName="stroke-dashoffset" from="0" to="-16" dur="2s" repeatCount="indefinite" />
+              </path>
+              <path d="M 1100,255 L 1020,390 L 920,470" stroke="rgba(0,229,200,.25)" stroke-width="2" fill="none"
+                stroke-dasharray="6 3" marker-end="url(#aC)">
+                <animate attributeName="stroke-dashoffset" from="0" to="-18" dur="1.5s" repeatCount="indefinite" />
+              </path>
+              <path d="M 920,610 L 920,860 L 1100,860" stroke="rgba(46,213,115,.25)" stroke-width="2" fill="none"
+                stroke-dasharray="6 3" marker-end="url(#aG)">
+                <animate attributeName="stroke-dashoffset" from="0" to="-18" dur="1.8s" repeatCount="indefinite" />
+              </path>
+              <path d="M 1200,255 L 1200,830 L 1200,860" stroke="rgba(46,213,115,.15)" stroke-width="1.5" fill="none"
+                stroke-dasharray="5 3" marker-end="url(#aG)">
+                <animate attributeName="stroke-dashoffset" from="0" to="-16" dur="2s" repeatCount="indefinite" />
+              </path>
+              <!-- SCENARIO ATTACK PATH -->
+              <path id="atkLine" d="" stroke="rgba(255,71,87,0)" stroke-width="3" fill="none" filter="url(#glow)"
+                stroke-dasharray="8 4">
+                <animate attributeName="stroke-dashoffset" from="0" to="-24" dur=".7s" repeatCount="indefinite" />
+              </path>
+            </svg>
+
+            <!-- ZONES -->
+            <div class="zone"
+              style="left:70px;top:40px;width:260px;height:110px;border-color:rgba(255,71,87,.18);background:rgba(255,71,87,.012);">
+              <span class="zlbl" style="color:var(--red);">🌐 ZONA EXTERNA</span>
+            </div>
+            <div class="zone"
+              style="left:70px;top:170px;width:260px;height:140px;border-color:rgba(255,165,2,.18);background:rgba(255,165,2,.012);">
+              <span class="zlbl" style="color:var(--orange);">🔥 PERÍMETRO</span>
+            </div>
+            <div class="zone"
+              style="left:50px;top:325px;width:700px;height:280px;border-color:rgba(0,180,216,.12);background:rgba(0,180,216,.008);">
+              <span class="zlbl" style="color:var(--accent2);">🏢 RED INTERNA</span>
+            </div>
+            <div class="zone"
+              style="left:770px;top:40px;width:790px;height:610px;border-color:rgba(139,92,246,.18);background:rgba(139,92,246,.008);">
+              <span class="zlbl" style="color:var(--purple);">☁️ MICROSOFT AZURE</span>
+            </div>
+            <div class="zone"
+              style="left:1070px;top:670px;width:280px;height:310px;border-color:rgba(46,213,115,.18);background:rgba(46,213,115,.008);">
+              <span class="zlbl" style="color:var(--green);">⚙️ ONESEC SOC</span>
+            </div>
+
+            <!-- CARDS -->
+            <div class="card ca" id="c-attacker" style="left:95px;top:55px;width:210px;" onclick="openDet('attacker')">
+              <div class="ch">
+                <div class="chl">
+                  <div class="ci">💀</div>
+                  <div>
+                    <div class="ct">Atacante</div>
+                    <div class="cs">THREAT ACTOR</div>
+                  </div>
+                </div><span class="cb">ACTIVO</span>
+              </div>
+              <div class="cbd">
+                <div class="mt"><span class="mtg" style="color:var(--red)">Phishing</span><span class="mtg"
+                    style="color:var(--red)">Brute Force</span><span class="mtg"
+                    style="color:var(--red)">Exploit</span><span class="mtg" style="color:var(--red)">Social Eng.</span>
+                </div>
+              </div>
+            </div>
+            <div class="card cf" id="c-firewall" style="left:80px;top:190px;width:235px;" onclick="openDet('firewall')">
+              <div class="ch">
+                <div class="chl">
+                  <div class="ci">🔥</div>
+                  <div>
+                    <div class="ct">Firewall Perimetral</div>
+                    <div class="cs">IPS / IDS / VPN</div>
+                  </div>
+                </div><span class="cb">OK</span>
+              </div>
+              <div class="cbd">
+                <div class="mst">
+                  <div class="msi"><span class="v" style="color:var(--orange)">2.4K</span><span class="l">Blocked</span>
+                  </div>
+                  <div class="msi"><span class="v" style="color:var(--green)">99.8%</span><span class="l">Uptime</span>
+                  </div>
+                  <div class="msi"><span class="v" style="color:var(--orange)">12</span><span class="l">Rules</span>
+                  </div>
+                </div>
+                <div class="sr"><span class="sd" style="background:var(--green)"></span>Filtrado en tiempo real</div>
+              </div>
+            </div>
+            <div class="card cn" id="c-desktop" style="left:70px;top:355px;width:190px;" onclick="openDet('desktop')">
+              <div class="ch">
+                <div class="chl">
+                  <div class="ci">🖥️</div>
+                  <div>
+                    <div class="ct">Desktop</div>
+                    <div class="cs">ENDPOINT</div>
+                  </div>
+                </div>
+              </div>
+              <div class="cbd">
+                <div class="mt"><span class="mtg" style="color:var(--accent2)">EDR</span><span class="mtg"
+                    style="color:var(--accent2)">Anti-malware</span><span class="mtg"
+                    style="color:var(--accent2)">Isolation</span></div>
+                <div class="sr"><span class="sd" style="background:var(--green)"></span>Defender for Endpoint</div>
+              </div>
+            </div>
+            <div class="card cn" id="c-exchange" style="left:330px;top:355px;width:190px;"
+              onclick="openDet('exchange')">
+              <div class="ch">
+                <div class="chl">
+                  <div class="ci">📧</div>
+                  <div>
+                    <div class="ct">Exchange Online</div>
+                    <div class="cs">CORREO</div>
+                  </div>
+                </div>
+              </div>
+              <div class="cbd">
+                <div class="mt"><span class="mtg" style="color:var(--accent2)">Safe Links</span><span class="mtg"
+                    style="color:var(--accent2)">Safe Attach</span><span class="mtg"
+                    style="color:var(--accent2)">Anti-phish</span></div>
+                <div class="sr"><span class="sd" style="background:var(--green)"></span>Defender O365</div>
+              </div>
+            </div>
+            <div class="card cn" id="c-dbserver" style="left:545px;top:355px;width:175px;"
+              onclick="openDet('dbserver')">
+              <div class="ch">
+                <div class="chl">
+                  <div class="ci">🗄️</div>
+                  <div>
+                    <div class="ct">BD Server</div>
+                    <div class="cs">DATABASE</div>
+                  </div>
+                </div>
+              </div>
+              <div class="cbd">
+                <div class="mt"><span class="mtg" style="color:var(--accent2)">Audit</span><span class="mtg"
+                    style="color:var(--accent2)">TDE</span><span class="mtg" style="color:var(--accent2)">Alerts</span>
+                </div>
+              </div>
+            </div>
+            <div class="card cn" id="c-user" style="left:90px;top:490px;width:165px;" onclick="openDet('user')">
+              <div class="ch">
+                <div class="chl">
+                  <div class="ci">👤</div>
+                  <div>
+                    <div class="ct">Usuario</div>
+                    <div class="cs">EMPLEADO</div>
+                  </div>
+                </div>
+              </div>
+              <div class="cbd">
+                <div class="mt"><span class="mtg" style="color:var(--accent2)">MFA</span><span class="mtg"
+                    style="color:var(--accent2)">Conditional</span><span class="mtg"
+                    style="color:var(--accent2)">Risk</span></div>
+              </div>
+            </div>
+            <div class="card cn" id="c-appserver" style="left:345px;top:490px;width:175px;"
+              onclick="openDet('appserver')">
+              <div class="ch">
+                <div class="chl">
+                  <div class="ci">⚙️</div>
+                  <div>
+                    <div class="ct">App Server</div>
+                    <div class="cs">APPS</div>
+                  </div>
+                </div>
+              </div>
+              <div class="cbd">
+                <div class="mt"><span class="mtg" style="color:var(--accent2)">WAF</span><span class="mtg"
+                    style="color:var(--accent2)">Logs</span><span class="mtg" style="color:var(--accent2)">Health</span>
+                </div>
+              </div>
+            </div>
+            <div class="card ck" id="c-connectors" style="left:400px;top:560px;width:210px;"
+              onclick="openDet('connectors')">
+              <div class="ch">
+                <div class="chl">
+                  <div class="ci">🔌</div>
+                  <div>
+                    <div class="ct">Conectores</div>
+                    <div class="cs">ON-PREMISES → CLOUD</div>
+                  </div>
+                </div><span class="cb">6</span>
+              </div>
+              <div class="cbd">
+                <div class="ml">
+                  <div class="mli"><span class="mn">1</span>📡 Syslog / CEF</div>
+                  <div class="mli"><span class="mn">2</span>🪟 Windows Events</div>
+                  <div class="mli"><span class="mn">3</span>☁️ Azure Arc / AMA</div>
+                </div>
+              </div>
+            </div>
+            <div class="card cm" id="c-loganalytics" style="left:800px;top:95px;width:245px;"
+              onclick="openDet('loganalytics')">
+              <div class="ch">
+                <div class="chl">
+                  <div class="ci">📊</div>
+                  <div>
+                    <div class="ct">Log Analytics</div>
+                    <div class="cs">WORKSPACE</div>
+                  </div>
+                </div><span class="cb">OK</span>
+              </div>
+              <div class="cbd">
+                <div class="mcode">// Query KQL<br>SecurityEvent<br>| <span class="kw">where</span> TimeGenerated >
+                  ago(1h)<br>| <span class="kw">summarize</span> count() by EventID</div>
+                <div class="sr"><span class="sd" style="background:var(--green)"></span><span
+                    style="color:var(--green);font-weight:600;font-size:.5rem;">INFO</span> Sistema Listo</div>
+              </div>
+            </div>
+            <div class="card cm" id="c-sentinel" style="left:1100px;top:75px;width:265px;"
+              onclick="openDet('sentinel')">
+              <div class="ch">
+                <div class="chl">
+                  <div class="ci">🛡️</div>
+                  <div>
+                    <div class="ct">Microsoft Sentinel</div>
+                    <div class="cs">SIEM + SOAR</div>
+                  </div>
+                </div><span class="cb" style="background:rgba(46,213,115,.2);color:var(--green);">ACTIVE</span>
+              </div>
+              <div class="cbd">
+                <div class="mst">
+                  <div class="msi"><span class="v" style="color:var(--purple)">1.2M</span><span class="l">Eventos</span>
+                  </div>
+                  <div class="msi"><span class="v" style="color:var(--red)" id="alertCount">47</span><span
+                      class="l">Alertas</span></div>
+                  <div class="msi"><span class="v" style="color:var(--orange)">8</span><span class="l">Amenazas</span>
+                  </div>
+                  <div class="msi"><span class="v" style="color:var(--green)">12</span><span class="l">Bloqueados</span>
+                  </div>
+                </div>
+                <div class="mbar"><span style="height:5px"></span><span
+                    style="height:9px;animation-delay:.1s"></span><span
+                    style="height:13px;animation-delay:.2s"></span><span
+                    style="height:7px;animation-delay:.3s"></span><span
+                    style="height:15px;animation-delay:.4s"></span><span
+                    style="height:11px;animation-delay:.5s"></span><span
+                    style="height:17px;animation-delay:.6s"></span><span
+                    style="height:9px;animation-delay:.7s"></span><span
+                    style="height:6px;animation-delay:.8s"></span><span
+                    style="height:12px;animation-delay:.9s"></span><span
+                    style="height:8px;animation-delay:1s"></span><span
+                    style="height:14px;animation-delay:1.1s"></span><span
+                    style="height:10px;animation-delay:1.2s"></span><span
+                    style="height:16px;animation-delay:1.3s"></span></div>
+              </div>
+            </div>
+            <div class="card cm" id="c-mitre" style="left:790px;top:280px;width:200px;" onclick="openDet('mitre')">
+              <div class="ch">
+                <div class="chl">
+                  <div class="ci">🎯</div>
+                  <div>
+                    <div class="ct">MITRE ATT&CK</div>
+                    <div class="cs">REGLAS · KQL · HUNTING</div>
+                  </div>
+                </div>
+              </div>
+              <div class="cbd">
+                <div class="mst">
+                  <div class="msi"><span class="v" style="color:var(--purple)">200+</span><span
+                      class="l">Técnicas</span></div>
+                  <div class="msi"><span class="v" style="color:var(--purple)">85</span><span class="l">Reglas</span>
+                  </div>
+                  <div class="msi"><span class="v" style="color:var(--purple)">24</span><span class="l">Hunting</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="card cm" id="c-playbooks" style="left:1140px;top:415px;width:215px;"
+              onclick="openDet('playbooks')">
+              <div class="ch">
+                <div class="chl">
+                  <div class="ci">📋</div>
+                  <div>
+                    <div class="ct">Playbooks</div>
+                    <div class="cs">AUTO-RESPONSE</div>
+                  </div>
+                </div><span class="cb">15</span>
+              </div>
+              <div class="cbd">
+                <div class="ml">
+                  <div class="mli"><span class="mn">1</span>🚫 Block IP/User</div>
+                  <div class="mli"><span class="mn">2</span>📩 Notify SOC</div>
+                  <div class="mli"><span class="mn">3</span>🔒 Isolate Endpoint</div>
+                </div>
+              </div>
+            </div>
+            <div class="card cm" id="c-workbooks" style="left:1380px;top:415px;width:160px;"
+              onclick="openDet('workbooks')">
+              <div class="ch">
+                <div class="chl">
+                  <div class="ci">📈</div>
+                  <div>
+                    <div class="ct">Workbooks</div>
+                    <div class="cs">DASHBOARDS</div>
+                  </div>
+                </div>
+              </div>
+              <div class="cbd">
+                <div class="mt"><span class="mtg" style="color:var(--purple)">KPI</span><span class="mtg"
+                    style="color:var(--purple)">Drill-down</span><span class="mtg"
+                    style="color:var(--purple)">Ejecutivo</span><span class="mtg" style="color:var(--purple)">PDF</span>
+                </div>
+              </div>
+            </div>
+            <div class="card cm" id="c-logicapps" style="left:1130px;top:625px;width:225px;"
+              onclick="openDet('logicapps')">
+              <div class="ch">
+                <div class="chl">
+                  <div class="ci">⚡</div>
+                  <div>
+                    <div class="ct">Logic Apps</div>
+                    <div class="cs">PLAYBOOKS · SOAR</div>
+                  </div>
+                </div><span class="cb" style="background:rgba(46,213,115,.15);color:var(--green);">READY</span>
+              </div>
+              <div class="cbd">
+                <div class="ml">
+                  <div class="mli"><span class="mn">1</span>🎯 Trigger</div>
+                  <div class="mli"><span class="mn">2</span>🔍 Enrich</div>
+                  <div class="mli"><span class="mn">3</span>🛡️ Contain</div>
+                </div>
+              </div>
+            </div>
+            <div class="card cc" id="c-copilot" style="left:810px;top:460px;width:240px;" onclick="openDet('copilot')">
+              <div class="ch">
+                <div class="chl">
+                  <div class="ci">🤖</div>
+                  <div>
+                    <div class="ct">Security Copilot</div>
+                    <div class="cs">AI ANALYSIS</div>
+                  </div>
+                </div><span class="cb">6 SCU</span>
+              </div>
+              <div class="cbd">
+                <div class="mchat">
+                  <div class="mcm u">¿Quién fue afectado?</div>
+                  <div class="mcm a">3 usuarios. Recomiendo aislar.</div>
+                </div>
+                <div class="mt" style="margin-top:.3rem;"><span class="mtg"
+                    style="color:var(--accent)">Agentes</span><span class="mtg"
+                    style="color:var(--accent)">Promptbooks</span><span class="mtg"
+                    style="color:var(--accent)">Chat</span></div>
+              </div>
+            </div>
+            <div class="card cg" id="c-soc" style="left:1095px;top:830px;width:225px;" onclick="openDet('soc')">
+              <div class="ch">
+                <div class="chl">
+                  <div class="ci">🏢</div>
+                  <div>
+                    <div class="ct">ONESEC SOC</div>
+                    <div class="cs">24/7 MONITORING</div>
+                  </div>
+                </div>
+              </div>
+              <div class="cbd">
+                <div class="td">
+                  <div class="tdc">
+                    <div class="tdcc" style="background:var(--red);"></div>
+                    <div class="tdcl">Red Team</div>
+                  </div>
+                  <div class="tdc">
+                    <div class="tdcc" style="background:var(--blue);"></div>
+                    <div class="tdcl">Blue Team</div>
+                  </div>
+                  <div class="tdc">
+                    <div class="tdcc" style="background:var(--green);"></div>
+                    <div class="tdcl">Green Team</div>
+                  </div>
+                </div>
+                <div class="mbar" style="justify-content:center;"><span
+                    style="height:5px;background:var(--red)"></span><span
+                    style="height:9px;background:var(--red);animation-delay:.1s"></span><span
+                    style="height:12px;background:var(--blue);animation-delay:.2s"></span><span
+                    style="height:7px;background:var(--blue);animation-delay:.3s"></span><span
+                    style="height:14px;background:var(--green);animation-delay:.4s"></span><span
+                    style="height:10px;background:var(--green);animation-delay:.5s"></span></div>
+              </div>
+            </div>
+          </div>
+          <!-- ZOOM CONTROLS -->
+          <div class="zoom-controls">
+            <button class="zoom-btn" onclick="manualZoom(1)" title="Acercar">+</button>
+            <button class="zoom-btn" onclick="manualZoom(-1)" title="Alejar">−</button>
+            <button class="zoom-btn" onclick="resetZoom();manualScale=1;" title="Restablecer">⟲</button>
+            <button class="zoom-btn guide-btn" onclick="openGuide()" title="Guía interactiva">?</button>
+            <button class="zoom-btn mic-btn" id="micBtn" onclick="toggleVoiceChat()" title="Chat con ONESEC">💬</button>
+          </div>
+          <div class="mic-feedback" id="micFeedback">
+            <div class="mic-heard" id="micHeard"></div>
+            <div class="mic-action" id="micAction"></div>
+          </div>
+
+          <!-- LIVE METRICS PANEL -->
+          <div class="metrics-panel" id="metricsPanel">
+            <div class="metric-card">
+              <div class="metric-label">Ataques Bloqueados</div>
+              <div class="metric-value red" id="mBlocked">0</div>
+              <div class="metric-sub">Hoy</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Eventos Procesados</div>
+              <div class="metric-value purple" id="mEvents">0</div>
+              <div class="metric-sub">Tiempo real</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Tiempo Respuesta</div>
+              <div class="metric-value green" id="mResponse">0ms</div>
+              <div class="metric-sub">Promedio SOC</div>
+            </div>
+            <div class="metric-card">
+              <div class="metric-label">Endpoints Protegidos</div>
+              <div class="metric-value" id="mEndpoints">0</div>
+              <div class="metric-sub">Activos</div>
+            </div>
+          </div>
+
+          <!-- VOICE CHAT PANEL -->
+          <div class="voice-chat" id="voiceChat">
+            <div class="voice-chat-header">
+              <span>🎙 ONESEC Assistant</span>
+              <button class="voice-chat-close" onclick="toggleVoiceChat()">✕</button>
+            </div>
+            <div class="voice-chat-body" id="vcBody"></div>
+            <div class="voice-chat-input">
+              <input type="text" id="vcInput" placeholder="Escribe o habla..." onkeydown="if(event.key==='Enter')sendVoiceChat()">
+              <button onclick="sendVoiceChat()">↑</button>
+              <button class="vc-mic-btn" id="vcMicBtn" onclick="toggleVcMic()">🎙</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="panel" id="uc2">
+        <div class="usc">
+          <div class="uh">
+            <h2>🎯 Simulación de Ataque</h2>
+            <p>Selecciona un escenario en la pestaña Implementación y presiona ▶ INICIAR RECORRIDO</p>
+          </div>
+          <div class="ug">
+            <div class="ub">
+              <h3>🎣 Phishing Dirigido</h3>
+              <p>Email fraudulento simula ser del CEO.</p>
+              <div class="us">
+                <div class="ust">
+                  <div class="sn">01</div>
+                  <div class="stl">📧 Llegada</div>
+                  <div class="sds">Defender analiza</div>
+                </div>
+                <div class="ust">
+                  <div class="sn">02</div>
+                  <div class="stl">🚨 Alerta</div>
+                  <div class="sds">Sentinel detecta</div>
+                </div>
+                <div class="ust">
+                  <div class="sn">03</div>
+                  <div class="stl">🤖 Copilot</div>
+                  <div class="sds">Investiga alcance</div>
+                </div>
+                <div class="ust">
+                  <div class="sn">04</div>
+                  <div class="stl">⚡ Respuesta</div>
+                  <div class="sds">Playbook bloquea</div>
+                </div>
+              </div>
+            </div>
+            <div class="ub">
+              <h3>💀 Ransomware</h3>
+              <p>RDP expuesto es explotado por bot.</p>
+              <div class="us">
+                <div class="ust">
+                  <div class="sn">01</div>
+                  <div class="stl">🔓 Acceso</div>
+                  <div class="sds">Brute force RDP</div>
+                </div>
+                <div class="ust">
+                  <div class="sn">02</div>
+                  <div class="stl">🔀 Lateral</div>
+                  <div class="sds">PsExec + LDAP</div>
+                </div>
+                <div class="ust">
+                  <div class="sn">03</div>
+                  <div class="stl">🛑 Contención</div>
+                  <div class="sds">Logic App aísla</div>
+                </div>
+                <div class="ust">
+                  <div class="sn">04</div>
+                  <div class="stl">🏢 SOC</div>
+                  <div class="sds">Blue+Red validan</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="panel" id="uc3">
+        <div class="usc">
+          <div class="uh">
+            <h2>🔍 Threat Hunting</h2>
+            <p>Cacería proactiva con KQL y MITRE ATT&CK</p>
+          </div>
+          <div class="ug">
+            <div class="ub">
+              <h3>📝 KQL en Acción</h3>
+              <div
+                style="background:rgba(0,0,0,.3);border-radius:6px;padding:.8rem;margin-top:.6rem;font-family:'JetBrains Mono',monospace;font-size:.68rem;color:var(--green);line-height:1.4;">
+                SigninLogs<br>| <span style="color:var(--purple)">where</span> TimeGenerated > ago(24h)<br>| <span
+                  style="color:var(--purple)">where</span> ResultType != 0<br>| <span
+                  style="color:var(--purple)">summarize</span> Fails=count() <span style="color:var(--purple)">by</span>
+                UPN, IP<br>| <span style="color:var(--purple)">where</span> Fails > 10</div>
+            </div>
+            <div class="ub">
+              <h3>🎯 MITRE ATT&CK</h3>
+              <div class="us">
+                <div class="ust">
+                  <div class="sn">🔐</div>
+                  <div class="stl">Initial Access</div>
+                  <div class="sds">Phishing, exploits</div>
+                </div>
+                <div class="ust">
+                  <div class="sn">⏫</div>
+                  <div class="stl">Priv. Escalation</div>
+                  <div class="sds">Tokens, bypass</div>
+                </div>
+                <div class="ust">
+                  <div class="sn">🔀</div>
+                  <div class="stl">Lateral Movement</div>
+                  <div class="sds">RDP, SMB</div>
+                </div>
+                <div class="ust">
+                  <div class="sn">📤</div>
+                  <div class="stl">Exfiltration</div>
+                  <div class="sds">DNS tunnel</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="panel" id="uc4">
+        <div class="usc">
+          <div class="uh">
+            <h2>🤖 Security Copilot</h2>
+            <p>IA generativa para investigar y responder</p>
+          </div>
+          <div class="ug">
+            <div class="ub">
+
+              <div
+                style="background:rgba(0,0,0,.3);border-radius:8px;padding:.8rem;margin-top:.6rem; display:flex; flex-direction:column; height:300px;">
+                <div id="copilotOutput"
+                  style="flex:1; overflow-y:auto; margin-bottom:10px; padding-right:5px; font-family:'JetBrains Mono'; color:#ccc;">
+                  <div style="color:var(--accent);">🤖 <b>ONESEC AI:</b> Hola. Soy tu asistente de ciberseguridad.
+                    Selecciona un escenario o pregúntame algo.</div>
+                </div>
+                <div id="pCopilot" style="display:flex;">
+                  <input type="text" placeholder="Escribe tu pregunta..."
+                    style="flex:1; padding:10px; border-radius:4px; border:1px solid var(--accent); background:rgba(0,0,0,0.5); color:white; font-family:'JetBrains Mono'; outline:none;">
+                </div>
+              </div>
+            </div>
+            <div class="ub">
+              <h3>🤝 Agentes</h3>
+              <div class="us">
+                <div class="ust">
+                  <div class="sn">🛡️</div>
+                  <div class="stl">Sentinel</div>
+                  <div class="sds">Incidentes</div>
+                </div>
+                <div class="ust">
+                  <div class="sn">🔒</div>
+                  <div class="stl">Entra ID</div>
+                  <div class="sds">Identidades</div>
+                </div>
+                <div class="ust">
+                  <div class="sn">💻</div>
+                  <div class="stl">Defender</div>
+                  <div class="sds">Endpoints</div>
+                </div>
+                <div class="ust">
+                  <div class="sn">📋</div>
+                  <div class="stl">Purview</div>
+                  <div class="sds">Cumplimiento</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="panel" id="uc5">
+        <div class="usc">
+          <div class="uh">
+            <h2>📊 SOC ONESEC 24/7</h2>
+            <p>Centro de Operaciones con Red, Blue y Green Team</p>
+          </div>
+          <div class="ug">
+            <div class="ub">
+              <h3>🔴🔵🟢 Equipos</h3>
+              <div class="us" style="grid-template-columns:1fr 1fr 1fr;">
+                <div class="ust" style="border-color:rgba(255,71,87,.3);">
+                  <div class="sn" style="color:var(--red);">🔴</div>
+                  <div class="stl" style="color:var(--red);">Red Team</div>
+                  <div class="sds">Ataque simulado</div>
+                </div>
+                <div class="ust" style="border-color:rgba(0,151,230,.3);">
+                  <div class="sn" style="color:var(--blue);">🔵</div>
+                  <div class="stl" style="color:var(--blue);">Blue Team</div>
+                  <div class="sds">Defensa activa</div>
+                </div>
+                <div class="ust" style="border-color:rgba(46,213,115,.3);">
+                  <div class="sn" style="color:var(--green);">🟢</div>
+                  <div class="stl" style="color:var(--green);">Green Team</div>
+                  <div class="sds">Mejora continua</div>
+                </div>
+              </div>
+            </div>
+            <div class="ub">
+              <h3>📊 Métricas</h3>
+              <div class="us">
+                <div class="ust">
+                  <div class="sn">~4m</div>
+                  <div class="stl">MTTD</div>
+                  <div class="sds">Detección</div>
+                </div>
+                <div class="ust">
+                  <div class="sn">~12m</div>
+                  <div class="stl">MTTR</div>
+                  <div class="sds">Respuesta</div>
+                </div>
+                <div class="ust">
+                  <div class="sn">99.8%</div>
+                  <div class="stl">MITRE</div>
+                  <div class="sds">Cobertura</div>
+                </div>
+                <div class="ust">
+                  <div class="sn">24/7</div>
+                  <div class="stl">Monitoreo</div>
+                  <div class="sds">Sin parar</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ov" id="ov" onclick="if(event.target===this)closeDet()">
+    <div class="det" id="detBox"></div>
+  </div>
+  <div class="toast" id="toast"></div>
+
+  <!-- AUTO-DEMO OVERLAY -->
+  <div class="autodemo-badge" id="ademoBadge">
+    <h2 id="ademoTitle">🎬 AUTO DEMO</h2>
+    <p id="ademoDesc">Iniciando presentación automática...</p>
+  </div>
+  <div class="autodemo-progress" id="ademoProgress" style="width:0%"></div>
+
+  <!-- GUIDE OVERLAY -->
+  <div class="guide-ov" id="guideOv" onclick="if(event.target===this)closeGuide()">
+    <div class="guide-box">
+      <button class="dx" onclick="closeGuide()">✕</button>
+      <div class="guide-header">
+        <h2>Tu Equipo de Seguridad Explicado</h2>
+        <p>Sin tecnicismos, con humor y la verdad. Haz clic en cualquiera para ir al componente.</p>
+      </div>
+
+      <div class="guide-item" onclick="closeGuide();zoomToCard('c-attacker',1.8)">
+        <div class="guide-icon" style="background:rgba(255,71,87,.15);">💀</div>
+        <div class="guide-content">
+          <h3 style="color:var(--red);">El Atacante</h3>
+          <div class="guide-fun">Es el "villano de la pelicula". Puede ser un hacker aburrido en pijama, un grupo criminal organizado, o incluso un empleado enojado. Su meta: robar tus datos, pedirte rescate, o simplemente causar caos porque puede.</div>
+          <div class="guide-tech">Threat Actor / APT / Script Kiddie</div>
+        </div>
+      </div>
+
+      <div class="guide-item" onclick="closeGuide();zoomToCard('c-firewall',1.8)">
+        <div class="guide-icon" style="background:rgba(255,165,2,.15);">🔥</div>
+        <div class="guide-content">
+          <h3 style="color:var(--orange);">Firewall Perimetral</h3>
+          <div class="guide-fun">El "bouncer" del club. Se para en la puerta y decide quien entra y quien no. Si tu cara (IP) no le gusta, no pasas. Revisa cada paquete de datos como un agente de aduanas revisando maletas.</div>
+          <div class="guide-tech">IPS / IDS / VPN Gateway / Filtrado de paquetes</div>
+        </div>
+      </div>
+
+      <div class="guide-item" onclick="closeGuide();zoomToCard('c-exchange',1.8)">
+        <div class="guide-icon" style="background:rgba(0,180,216,.15);">📧</div>
+        <div class="guide-content">
+          <h3 style="color:var(--accent2);">Exchange Online</h3>
+          <div class="guide-fun">Tu correo corporativo, pero con superpoderes. El 91% de los ataques empiezan por un email, asi que Exchange tiene un guardaespaldas llamado Defender for O365 que revisa cada link, cada adjunto y dice: "Este PDF huele raro... BLOQUEADO".</div>
+          <div class="guide-tech">Safe Links / Safe Attachments / Anti-phishing AI / ZAP</div>
+        </div>
+      </div>
+
+      <div class="guide-item" onclick="closeGuide();zoomToCard('c-desktop',1.8)">
+        <div class="guide-icon" style="background:rgba(0,180,216,.15);">🖥️</div>
+        <div class="guide-content">
+          <h3 style="color:var(--accent2);">Desktop / Endpoint</h3>
+          <div class="guide-fun">Tu computadora de trabajo. Tiene un guardaespaldas invisible llamado Defender for Endpoint que vigila TODO lo que pasa. Si un programa empieza a comportarse raro (como cifrar archivos a lo loco), lo detiene y grita: "ALERTA!".</div>
+          <div class="guide-tech">EDR / Anti-malware / Aislamiento / Live Response</div>
+        </div>
+      </div>
+
+      <div class="guide-item" onclick="closeGuide();zoomToCard('c-user',1.8)">
+        <div class="guide-icon" style="background:rgba(0,180,216,.15);">👤</div>
+        <div class="guide-content">
+          <h3 style="color:var(--accent2);">Usuario / Empleado</h3>
+          <div class="guide-fun">Tu. Si, tu eres el eslabon mas importante (y a veces el mas debil, sin ofender). Por eso te ponemos MFA: ademas de tu contraseña, necesitas aprobar en tu celular. Es como tener doble cerradura en la puerta... molesto, pero nadie entra sin tu permiso.</div>
+          <div class="guide-tech">MFA / Acceso Condicional / Entra ID Protection</div>
+        </div>
+      </div>
+
+      <div class="guide-item" onclick="closeGuide();zoomToCard('c-dbserver',1.8)">
+        <div class="guide-icon" style="background:rgba(0,180,216,.15);">🗄️</div>
+        <div class="guide-content">
+          <h3 style="color:var(--accent2);">BD Server</h3>
+          <div class="guide-fun">Aqui viven los datos mas valiosos de tu empresa: clientes, finanzas, secretos. Es como la boveda del banco. Tiene encriptacion (los datos son ilegibles sin la llave), auditoria (sabemos QUIEN toco QUE) y alertas si alguien hace algo sospechoso.</div>
+          <div class="guide-tech">TDE / Auditoría / Defender for SQL / Alertas anómalas</div>
+        </div>
+      </div>
+
+      <div class="guide-item" onclick="closeGuide();zoomToCard('c-connectors',1.6)">
+        <div class="guide-icon" style="background:rgba(232,67,147,.15);">🔌</div>
+        <div class="guide-content">
+          <h3 style="color:var(--pink);">Conectores</h3>
+          <div class="guide-fun">Los "carteros" que llevan la informacion de tu oficina (on-premises) a la nube. Recogen los logs de todo: firewall, servidores Windows, Linux... y los envian a Log Analytics. Sin ellos, seria como tener camaras de seguridad que nadie mira.</div>
+          <div class="guide-tech">Syslog/CEF / Windows Events / Azure Arc / AMA Agent</div>
+        </div>
+      </div>
+
+      <div class="guide-item" onclick="closeGuide();zoomToCard('c-loganalytics',1.6)">
+        <div class="guide-icon" style="background:rgba(139,92,246,.15);">📊</div>
+        <div class="guide-content">
+          <h3 style="color:var(--purple);">Log Analytics</h3>
+          <div class="guide-fun">El "lago de datos" donde llega TODA la informacion de seguridad. Imagina un detective que guarda cada pista en una mega-carpeta organizada. Luego puedes buscar cosas como: "muestrame todos los logins fallidos de las ultimas 24 horas" usando un lenguaje llamado KQL.</div>
+          <div class="guide-tech">Workspace / KQL Queries / Tablas / Retención</div>
+        </div>
+      </div>
+
+      <div class="guide-item" onclick="closeGuide();zoomToCard('c-sentinel',1.6)">
+        <div class="guide-icon" style="background:rgba(139,92,246,.15);">🛡️</div>
+        <div class="guide-content">
+          <h3 style="color:var(--purple);">Microsoft Sentinel</h3>
+          <div class="guide-fun">EL CEREBRO de toda la operacion. Recibe millones de eventos, los correlaciona con inteligencia artificial y dice: "Oigan, este patron de fuerza bruta + movimiento lateral + cifrado = RANSOMWARE". Es como tener un Sherlock Holmes digital trabajando 24/7 sin dormir ni quejarse.</div>
+          <div class="guide-tech">SIEM + SOAR / Analytics Rules / UEBA / Threat Intel</div>
+        </div>
+      </div>
+
+      <div class="guide-item" onclick="closeGuide();zoomToCard('c-mitre',1.6)">
+        <div class="guide-icon" style="background:rgba(139,92,246,.15);">🎯</div>
+        <div class="guide-content">
+          <h3 style="color:var(--purple);">MITRE ATT&CK</h3>
+          <div class="guide-fun">El "diccionario universal de maldades hackers". Cataloga mas de 200 tecnicas que usan los atacantes. Es como tener un manual que dice: "Si ves ESTO, probablemente estan intentando ESTO OTRO". Sentinel usa este diccionario para crear reglas de deteccion automaticas.</div>
+          <div class="guide-tech">200+ Técnicas / Reglas Analíticas / Hunting Queries</div>
+        </div>
+      </div>
+
+      <div class="guide-item" onclick="closeGuide();zoomToCard('c-copilot',1.6)">
+        <div class="guide-icon" style="background:linear-gradient(135deg,rgba(0,229,200,.15),rgba(139,92,246,.15));">🤖</div>
+        <div class="guide-content">
+          <h3 style="color:var(--accent);">Security Copilot</h3>
+          <div class="guide-fun">Tu asistente de IA que habla "humano". Le preguntas: "Quien fue afectado por este ataque?" y en 30 segundos te da un resumen ejecutivo que puedes enviarle al jefe sin que te mire confundido. Convierte horas de investigacion en segundos. Es como ChatGPT, pero para seguridad y con acceso a TODOS tus datos.</div>
+          <div class="guide-tech">IA Generativa / Agentes / Promptbooks / 6 SCU</div>
+        </div>
+      </div>
+
+      <div class="guide-item" onclick="closeGuide();zoomToCard('c-playbooks',1.6)">
+        <div class="guide-icon" style="background:rgba(139,92,246,.15);">📋</div>
+        <div class="guide-content">
+          <h3 style="color:var(--purple);">Playbooks</h3>
+          <div class="guide-fun">Las "recetas automaticas" de defensa. Cuando Sentinel detecta algo malo, el Playbook se ejecuta solito: bloquea al atacante, aisla la computadora infectada, notifica al equipo por Teams y crea un ticket. Todo en segundos, sin que nadie tenga que mover un dedo.</div>
+          <div class="guide-tech">Auto-Response / Block IP / Isolate Endpoint / Notify</div>
+        </div>
+      </div>
+
+      <div class="guide-item" onclick="closeGuide();zoomToCard('c-logicapps',1.5)">
+        <div class="guide-icon" style="background:rgba(139,92,246,.15);">⚡</div>
+        <div class="guide-content">
+          <h3 style="color:var(--purple);">Logic Apps</h3>
+          <div class="guide-fun">El "director de orquesta" de la automatizacion. Conecta mas de 400 servicios: Teams, Slack, Jira, ServiceNow... Cuando pasa algo, Logic Apps coordina la respuesta como un director de orquesta: "Tu bloqueas, tu notificas, tu creas el reporte". Todo visual, arrastra y suelta.</div>
+          <div class="guide-tech">SOAR / 400+ Conectores / Drag & Drop / Webhooks</div>
+        </div>
+      </div>
+
+      <div class="guide-item" onclick="closeGuide();zoomToCard('c-soc',1.5)">
+        <div class="guide-icon" style="background:rgba(46,213,115,.15);">🏢</div>
+        <div class="guide-content">
+          <h3 style="color:var(--green);">SOC ONESEC</h3>
+          <div class="guide-fun">Nuestro Centro de Operaciones de Seguridad. Funciona 24/7/365, como una sala de emergencias pero para ciberataques. Tiene 3 equipos: el Red Team (los que atacan para probar defensas), el Blue Team (los que defienden) y el Green Team (los que mejoran todo). Si algo pasa a las 3am de un domingo, ellos estan ahi.</div>
+          <div class="guide-tech">24/7 Monitoring / Red + Blue + Green Team / MTTD ~4min</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pro Modal (Adapted for V3 Design) -->
+  <style>
+    .pro-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(8px);
+    }
+
+    .pro-modal-overlay.active {
+      display: flex;
+    }
+
+    .pro-modal {
+      background: var(--card);
+      border: 1px solid var(--accent);
+      border-radius: 12px;
+      width: 90%;
+      max-width: 450px;
+      padding: 1.5rem;
+      position: relative;
+      box-shadow: 0 0 50px rgba(0, 229, 200, 0.15);
+    }
+
+    .pro-modal h2 {
+      font-family: 'Chakra Petch';
+      color: var(--accent);
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+      gap: .5rem;
+    }
+
+    .pro-status {
+      padding: 1rem;
+      border-radius: 8px;
+      text-align: center;
+      margin-bottom: 1rem;
+      background: rgba(0, 229, 200, 0.05);
+      border: 1px solid var(--border);
+    }
+
+    .pro-status.success {
+      border-color: var(--green);
+      background: rgba(46, 213, 115, 0.1);
+    }
+
+    .pro-status.error {
+      border-color: var(--red);
+      background: rgba(255, 71, 87, 0.1);
+    }
+
+    .pro-input-group {
+      margin-bottom: 1.2rem;
+    }
+
+    .pro-input-group label {
+      display: block;
+      font-size: 0.8rem;
+      color: var(--text2);
+      margin-bottom: 0.5rem;
+    }
+
+    .pro-input {
+      width: 100%;
+      padding: 0.8rem;
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      color: var(--text);
+      font-family: 'JetBrains Mono';
+    }
+
+    .pro-btn {
+      width: 100%;
+      padding: 0.8rem;
+      background: var(--accent);
+      color: #000;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-family: 'Chakra Petch';
+    }
+
+    .pro-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      background: none;
+      border: none;
+      color: var(--text2);
+      cursor: pointer;
+      font-size: 1.2rem;
+    }
+  </style>
+
+  <div class="pro-modal-overlay" id="proModalOverlay">
+    <div class="pro-modal">
+      <button class="pro-close" onclick="closeProModal()">×</button>
+      <h2>✨ ONESEC AI Pro</h2>
+
+      <div id="proIaStatus" class="pro-status">
+        <div style="font-size: 1.5rem; margin-bottom: 5px;">🟡</div>
+        <div style="font-weight: 600; color: var(--text);">Modo Demo</div>
+        <div style="font-size: 0.7rem; color: var(--text2);" id="proProviderInfo">Usando respuestas predefinidas</div>
+      </div>
+
+      <div class="pro-input-group">
+        <label>API KEY (OpenAI)</label>
+        <input type="password" id="proApiKey" class="pro-input" placeholder="sk-...">
+      </div>
+
+      <button class="pro-btn" onclick="activateProMode()">ACTIVAR IA</button>
+    </div>
+  </div>
+
+  <script>
+    function openProModal() { document.getElementById('proModalOverlay').classList.add('active'); checkProStatusUI(); }
+    function closeProModal() { document.getElementById('proModalOverlay').classList.remove('active'); }
+    function checkProStatusUI() {
+      const key = localStorage.getItem('onesec_openai_key');
+      const st = document.getElementById('proIaStatus');
+      if (key) {
+        st.classList.add('success');
+        st.innerHTML = '<div style="font-size: 1.5rem; margin-bottom: 5px;">🟢</div><div style="font-weight: 600; color: var(--green);">IA Activa</div><div style="font-size: 0.7rem; color: var(--text2);">Sistema conectado</div>';
+      }
+    }
+    function activateProMode() {
+      const k = document.getElementById('proApiKey').value.trim();
+      if (k.startsWith('sk-')) {
+        localStorage.setItem('onesec_openai_key', k);
+        toast('🚀 IA Activada');
+        closeProModal();
+        setTimeout(() => location.reload(), 1000); // Reload to init AI
+      } else {
+        toast('⚠️ API Key inválida');
+      }
+    }
+  </script>
+
+
+
+
+  <script>
+    // === V2 TECHNOLOGY INJECTION: AudioSys, Robust TTS, AI Core ===
+
+    // 1. AUDIO SYSTEM (Sound Effects)
+    const AudioSys = {
+      ctx: null,
+      on: true,
+      init: function () {
+        if (!this.ctx) {
+          this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (this.ctx.state === 'suspended') this.ctx.resume();
+      },
+      play: function (type) {
+        if (!this.on || !this.ctx) return;
+        const o = this.ctx.createOscillator();
+        const g = this.ctx.createGain();
+        o.connect(g); g.connect(this.ctx.destination);
+
+        const now = this.ctx.currentTime;
+        if (type === 'click') {
+          o.type = 'sine'; o.frequency.setValueAtTime(800, now); o.frequency.exponentialRampToValueAtTime(1200, now + 0.1);
+          g.gain.setValueAtTime(0.1, now); g.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+          o.start(now); o.stop(now + 0.1);
+        } else if (type === 'hover') {
+          o.type = 'triangle'; o.frequency.setValueAtTime(400, now);
+          g.gain.setValueAtTime(0.02, now); g.gain.linearRampToValueAtTime(0, now + 0.05);
+          o.start(now); o.stop(now + 0.05);
+        } else if (type === 'alert') {
+          o.type = 'sawtooth'; o.frequency.setValueAtTime(200, now); o.frequency.linearRampToValueAtTime(150, now + 0.3);
+          g.gain.setValueAtTime(0.1, now); g.gain.linearRampToValueAtTime(0, now + 0.3);
+          o.start(now); o.stop(now + 0.3);
+        } else if (type === 'scan') {
+          o.type = 'square'; o.frequency.setValueAtTime(800, now); o.frequency.exponentialRampToValueAtTime(200, now + 0.2);
+          g.gain.setValueAtTime(0.05, now); g.gain.exponentialRampToValueAtTime(0.01, now + 0.2);
+          o.start(now); o.stop(now + 0.2);
+        } else if (type === 'success') {
+          o.type = 'sine'; o.frequency.setValueAtTime(400, now); o.frequency.linearRampToValueAtTime(800, now + 0.3);
+          g.gain.setValueAtTime(0.1, now); g.gain.linearRampToValueAtTime(0, now + 0.4);
+          o.start(now); o.stop(now + 0.4);
+        } else if (type === 'transition') {
+          o.type = 'sine'; o.frequency.setValueAtTime(300, now); o.frequency.exponentialRampToValueAtTime(600, now + 0.15); o.frequency.exponentialRampToValueAtTime(900, now + 0.3);
+          g.gain.setValueAtTime(0.08, now); g.gain.linearRampToValueAtTime(0.12, now + 0.15); g.gain.linearRampToValueAtTime(0, now + 0.4);
+          o.start(now); o.stop(now + 0.4);
+        } else if (type === 'step') {
+          o.type = 'sine'; o.frequency.setValueAtTime(600, now); o.frequency.exponentialRampToValueAtTime(900, now + 0.08);
+          g.gain.setValueAtTime(0.06, now); g.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+          o.start(now); o.stop(now + 0.12);
+        } else if (type === 'warning') {
+          o.type = 'sawtooth'; o.frequency.setValueAtTime(300, now); o.frequency.linearRampToValueAtTime(200, now + 0.15); o.frequency.linearRampToValueAtTime(400, now + 0.3); o.frequency.linearRampToValueAtTime(150, now + 0.5);
+          g.gain.setValueAtTime(0.08, now); g.gain.linearRampToValueAtTime(0.1, now + 0.2); g.gain.linearRampToValueAtTime(0, now + 0.5);
+          o.start(now); o.stop(now + 0.5);
+        }
+      }
+    };
+
+    // 2. ROBUST TTS (From V2)
+    async function speak(text) {
+      if (!voiceOn) return Promise.resolve();
+
+      // Phonetic replacements for Spanish TTS
+      text = text.replace(/ONESEC/gi, 'Uan Sek');
+      text = text.replace(/KQL/gi, 'K Q L');
+      text = text.replace(/SIEM/gi, 'Siem');
+      text = text.replace(/SOAR/gi, 'Soar');
+      text = text.replace(/UEBA/gi, 'U E B A');
+      text = text.replace(/MFA/gi, 'eme efe a');
+      text = text.replace(/EDR/gi, 'E D R');
+      text = text.replace(/SOC/gi, 'Soc');
+      text = text.replace(/MITRE\s*ATT&CK/gi, 'Máiter Aták');
+      text = text.replace(/MITRE/gi, 'Máiter');
+      text = text.replace(/ATT&CK/gi, 'Aták');
+      text = text.replace(/Security Copilot/gi, 'Sequiúriti Cópailot');
+      text = text.replace(/Microsoft Sentinel/gi, 'Máicrosoft Séntinel');
+      text = text.replace(/Copilot/gi, 'Cópailot');
+      text = text.replace(/ZAP/gi, 'Sap');
+      text = text.replace(/Defender/gi, 'Defénder');
+      text = text.replace(/Endpoint/gi, 'Éndpoint');
+      text = text.replace(/Playbook/gi, 'Pléibuk');
+      text = text.replace(/Workbook/gi, 'Wórkbuk');
+      text = text.replace(/Logic Apps/gi, 'Lóyic Aps');
+      text = text.replace(/Threat/gi, 'Zret');
+      text = text.replace(/Hunting/gi, 'Jánting');
+      text = text.replace(/Exchange/gi, 'Exchéinch');
+      text = text.replace(/Dashboard/gi, 'Dáshbord');
+
+      return new Promise((resolve) => {
+        // Init Audio Context if needed
+        if (AudioSys.ctx && AudioSys.ctx.state === 'suspended') AudioSys.ctx.resume();
+
+        // Cancel previous
+        if (window.speechSynthesis) window.speechSynthesis.cancel();
+
+        // Resume if paused
+        if (window.speechSynthesis.paused) window.speechSynthesis.resume();
+
+        const u = new SpeechSynthesisUtterance(text);
+        u.lang = 'es-ES';
+        u.rate = 1.0;
+        u.pitch = 1.0;
+        u.volume = 1.0;
+
+        let selectedVoice = null;
+        const availableVoices = window.speechSynthesis.getVoices();
+
+        if (availableVoices.length > 0) {
+          // Priority: Microsoft Online > Google > Microsoft > System
+          selectedVoice = availableVoices.find(v =>
+            (v.name.includes('Google') || v.name.includes('Microsoft')) && v.lang.includes('es')
+          ) || availableVoices.find(v => v.lang.startsWith('es'));
+
+          if (selectedVoice) u.voice = selectedVoice;
+        }
+
+        u.onend = () => {
+          speaking = false;
+          document.getElementById('voiceBtn').classList.remove('speaking');
+          resolve();
+        };
+        u.onerror = (e) => {
+          console.warn("TTS Error:", e);
+          speaking = false;
+          resolve(); // Resolve anyway to not block
+        };
+
+        speaking = true;
+        document.getElementById('voiceBtn').classList.add('speaking');
+        window.speechSynthesis.speak(u);
+
+        // Voice Loading Retry Logic
+        if (availableVoices.length === 0) {
+          window.speechSynthesis.onvoiceschanged = () => {
+            window.speechSynthesis.onvoiceschanged = null;
+            const v = window.speechSynthesis.getVoices().find(x => x.lang.startsWith('es'));
+            if (v) u.voice = v;
+            window.speechSynthesis.speak(u);
+          };
+        }
+      });
+    }
+
+
+    let uN = '', uC = '', voiceOn = true, speaking = false, scenarioPlaying = false, currentStep = 0, stepTimer = null;
+    let manualMode = false, manualResolve = null, activeSteps = null, activeSkipTo = 0;
+    const synth = window.speechSynthesis;
+
+    // ... (Existing variables kept, but 'speak' replacd above)
+
+    // Detail data
+    const DT = {
+      attacker: {
+        i: '💀', t: 'Atacante / Threat Actor', s: 'El villano de la historia', c: 'var(--red)', b: 'Puede ser un hacker, grupo APT o empleado descontento. Su objetivo: datos, rescate o caos.', f: [{ l: 'Phishing', c: 'var(--red)' }, { l: 'Fuerza bruta', c: 'var(--red)' }, { l: 'Exploits', c: 'var(--red)' }, { l: 'Social Eng.', c: 'var(--red)' }, { l: 'Supply chain', c: 'var(--orange)' }, { l: 'Zero-day', c: 'var(--orange)' }]
+      },
+      firewall: {
+        i: '🔥', t: 'Firewall Perimetral', s: 'Primera línea de defensa', c: 'var(--orange)', b: 'Filtra tráfico de entrada y salida. Logs se envían a Log Analytics para Sentinel.', f: [{ l: 'Filtrado de paquetes', c: 'var(--orange)' }, { l: 'IPS/IDS', c: 'var(--orange)' }, { l: 'VPN Gateway', c: 'var(--orange)' }, { l: 'Geo-blocking', c: 'var(--orange)' }]
+      },
+      desktop: {
+        i: '🖥️', t: 'Estación de Trabajo', s: 'Endpoint protegido', c: 'var(--accent2)', b: 'Microsoft Defender for Endpoint: EDR, anti-malware, aislamiento y Live Response.', f: [{ l: 'EDR completo', c: 'var(--accent2)' }, { l: 'Aislamiento', c: 'var(--accent2)' }, { l: 'Anti-malware', c: 'var(--accent2)' }, { l: 'Live Response', c: 'var(--accent2)' }]
+      },
+      exchange: {
+        i: '📧', t: 'Exchange Online', s: 'Correo corporativo', c: 'var(--accent2)', b: '91% de ataques inician por email. Defender for O365 analiza cada correo.', f: [{ l: 'Safe Links', c: 'var(--accent2)' }, { l: 'Safe Attachments', c: 'var(--accent2)' }, { l: 'Anti-phishing AI', c: 'var(--accent2)' }, { l: 'ZAP automático', c: 'var(--accent2)' }]
+      },
+      dbserver: {
+        i: '🗄️', t: 'BD Server', s: 'Datos críticos', c: 'var(--accent2)', b: 'Defender for SQL + monitoreo de acceso anómalo + encriptación TDE.', f: [{ l: 'Auditoría', c: 'var(--accent2)' }, { l: 'Encriptación TDE', c: 'var(--accent2)' }, { l: 'Alertas anómalas', c: 'var(--accent2)' }, { l: 'Backup auto', c: 'var(--accent2)' }]
+      },
+      user: {
+        i: '👤', t: 'Usuario / Empleado', s: 'Identidad protegida', c: 'var(--accent2)', b: 'Entra ID Protection: MFA, acceso condicional, detección de credenciales comprometidas.', f: [{ l: 'MFA', c: 'var(--accent2)' }, { l: 'Acceso condicional', c: 'var(--accent2)' }, { l: 'Risk-based', c: 'var(--accent2)' }, { l: 'Session control', c: 'var(--accent2)' }]
+      },
+      appserver: {
+        i: '⚙️', t: 'App Server', s: 'Aplicaciones del negocio', c: 'var(--accent2)', b: 'ERP, CRM, portales. Cada interacción genera logs para Sentinel.', f: [{ l: 'App Insights', c: 'var(--accent2)' }, { l: 'WAF', c: 'var(--accent2)' }, { l: 'Logs centralizados', c: 'var(--accent2)' }, { l: 'Health checks', c: 'var(--accent2)' }]
+      },
+      connectors: {
+        i: '🔌', t: 'Conectores On-Premises', s: 'Puente infra → nube', c: 'var(--pink)', b: 'Envían logs locales a Log Analytics: firewalls, Windows, Linux, AD, apps legacy.', f: [{ l: 'Syslog/CEF', c: 'var(--pink)' }, { l: 'Windows Events', c: 'var(--pink)' }, { l: 'Azure Arc', c: 'var(--pink)' }, { l: 'API REST', c: 'var(--pink)' }, { l: 'Log Forwarder', c: 'var(--pink)' }, { l: 'AMA Agent', c: 'var(--pink)' }]
+      },
+      loganalytics: {
+        i: '📊', t: 'Log Analytics Workspace', s: 'Lago de datos de seguridad', c: 'var(--purple)', b: 'Todos los logs llegan aquí. Sentinel usa este data lake para correlación y detección.', f: [{ l: 'Retención config.', c: 'var(--purple)' }, { l: 'KQL queries', c: 'var(--purple)' }, { l: 'Tablas custom', c: 'var(--purple)' }, { l: 'Costos optimizados', c: 'var(--purple)' }]
+      },
+      sentinel: {
+        i: '🛡️', t: 'Microsoft Sentinel', s: 'SIEM + SOAR nativo de nube', c: 'var(--purple)', b: 'El cerebro. IA y reglas personalizadas para encontrar amenazas en tiempo real.', f: [{ l: 'Analytics Rules', c: 'var(--purple)' }, { l: 'MITRE ATT&CK', c: 'var(--purple)' }, { l: 'Threat Hunting', c: 'var(--purple)' }, { l: 'UEBA', c: 'var(--purple)' }, { l: 'Threat Intel', c: 'var(--purple)' }, { l: 'Auto Response', c: 'var(--purple)' }]
+      },
+      mitre: {
+        i: '🎯', t: 'MITRE ATT&CK + KQL', s: 'Reglas, consultas y cacería', c: 'var(--purple)', b: 'Diccionario de técnicas de ataque. Usamos MITRE para crear reglas de detección y hunting.', f: [{ l: '200+ técnicas', c: 'var(--purple)' }, { l: 'Reglas analíticas', c: 'var(--purple)' }, { l: 'Hunting queries', c: 'var(--purple)' }, { l: 'Bookmarks', c: 'var(--purple)' }]
+      },
+      playbooks: {
+        i: '📋', t: 'Playbooks', s: 'Respuesta automática', c: 'var(--purple)', b: 'Recetas automáticas: cuando Sentinel detecta amenaza, ejecuta acciones en segundos.', f: [{ l: 'Block IP/User', c: 'var(--purple)' }, { l: 'Notify Teams', c: 'var(--purple)' }, { l: 'Enrich data', c: 'var(--purple)' }, { l: 'Create ticket', c: 'var(--purple)' }, { l: 'Isolate endpoint', c: 'var(--purple)' }, { l: 'Reset password', c: 'var(--purple)' }]
+      },
+      workbooks: {
+        i: '📈', t: 'Workbooks', s: 'Dashboards de seguridad', c: 'var(--purple)', b: 'Datos complejos en dashboards visuales para CISO, analista y gerencia.', f: [{ l: 'Interactivos', c: 'var(--purple)' }, { l: 'Reportes', c: 'var(--purple)' }, { l: 'KPI', c: 'var(--purple)' }, { l: 'Drill-down', c: 'var(--purple)' }, { l: 'Filtros', c: 'var(--purple)' }, { l: 'Export PDF', c: 'var(--purple)' }]
+      },
+      logicapps: {
+        i: '⚡', t: 'Logic Apps', s: 'Orquestación', c: 'var(--purple)', b: 'Motor de automatización visual con 400+ conectores: Teams, Slack, ServiceNow, Jira.', f: [{ l: 'Drag & drop', c: 'var(--purple)' }, { l: '400+ conectores', c: 'var(--purple)' }, { l: 'Condiciones', c: 'var(--purple)' }, { l: 'Webhooks', c: 'var(--purple)' }]
+      },
+      copilot: {
+        i: '🤖', t: 'Security Copilot', s: 'IA generativa de seguridad', c: 'var(--accent)', b: 'Convierte horas de investigación en segundos. El multiplicador de fuerza definitivo.', f: [{ l: 'Chat natural', c: 'var(--accent)' }, { l: 'Agentes', c: 'var(--accent)' }, { l: 'Análisis incidentes', c: 'var(--accent)' }, { l: 'Reportes auto', c: 'var(--accent)' }, { l: 'Reverse eng.', c: 'var(--purple)' }, { l: 'Promptbooks', c: 'var(--purple)' }]
+      },
+      soc: {
+        i: '🏢', t: 'SOC ONESEC', s: 'Centro de Operaciones 24/7', c: 'var(--green)', b: 'Monitoreo, defensa y mejora continua de seguridad 24/7/365.', f: [{ l: '🔴 Red Team', c: 'var(--red)' }, { l: '🔵 Blue Team', c: 'var(--blue)' }, { l: '🟢 Green Team', c: 'var(--green)' }, { l: '24/7/365', c: 'var(--green)' }, { l: 'SLA garantizado', c: 'var(--green)' }, { l: 'Reportes mensuales', c: 'var(--green)' }]
+      }
+    };
+
+    // Scenario definitions with steps
+    const SCENARIOS = {
+      phishing: {
+        path: 'M 200,120 L 200,250 L 430,420',
+        steps: [
+          {
+            card: 'c-attacker', zoom: 1.8, x: 150, y: 90, text: 'El atacante envía un correo de phishing dirigido simulando ser el CEO.', voice: 'El atacante lanza una campaña de phishing. El correo parece venir del CEO y dice Urgente revisar presupuesto.'
+          },
+          {
+            card: 'c-firewall', zoom: 1.8, x: 180, y: 230, text: 'El correo pasa por el firewall. El filtrado de paquetes permite el tráfico SMTP.', voice: 'El correo pasa por el firewall perimetral. El tráfico SMTP está permitido, así que el firewall lo deja pasar.'
+          },
+          {
+            card: 'c-exchange', zoom: 1.8, x: 420, y: 400, text: 'Exchange recibe el correo. <b>Defender for O365</b> analiza URLs y adjuntos.', voice: 'Exchange recibe el correo. Defender for Office 365 analiza las URLs, los adjuntos y el remitente en milisegundos.'
+          },
+          {
+            card: 'c-connectors', zoom: 1.5, x: 500, y: 580, text: 'Los conectores envían los logs del evento a Log Analytics.', voice: 'Los conectores recopilan los logs del evento de correo y los envían a Log Analytics en la nube.'
+          },
+          {
+            card: 'c-loganalytics', zoom: 1.6, x: 920, y: 170, text: 'Log Analytics recibe los eventos. Las tablas de seguridad se actualizan.', voice: 'Log Analytics recibe los eventos. Las tablas de correo electrónico se actualizan con la actividad sospechosa.'
+          },
+          {
+            card: 'c-sentinel', zoom: 1.6, x: 1230, y: 160, text: '<b>Sentinel detecta la amenaza</b> con reglas analíticas y MITRE ATT&CK. ¡Alerta generada!', voice: 'Microsoft Sentinel detecta la amenaza. Las reglas analíticas y el mapeo MITRE ATT&CK generan un incidente automáticamente. La alerta sube de 47 a 48.'
+          },
+          {
+            card: 'c-copilot', zoom: 1.6, x: 930, y: 530, text: '<b>Security Copilot</b> investiga: ¿Quién más recibió el correo? ¿Alguien hizo clic?', voice: 'Security Copilot entra en acción. Investiga automáticamente: quién más recibió el correo, si alguien hizo clic, y genera un resumen ejecutivo en 30 segundos.'
+          },
+          {
+            card: 'c-playbooks', zoom: 1.6, x: 1250, y: 480, text: 'El <b>Playbook</b> se ejecuta: bloquea remitente, aísla endpoints, notifica al SOC.', voice: 'El Playbook se ejecuta automáticamente: bloquea al remitente, aísla los endpoints afectados y notifica al SOC de ONESEC.'
+          },
+          {
+            card: 'c-soc', zoom: 1.5, x: 1200, y: 780, text: 'El <b>SOC de ONESEC</b> valida la contención. Blue Team confirma. ¡Amenaza neutralizada! ✅', voice: 'El SOC de ONESEC recibe la notificación. El Blue Team valida la contención y confirma que la amenaza fue neutralizada. Todo bajo control.'
+          }
+        ]
+      },
+      ransomware: {
+        path: 'M 200,120 L 200,250 L 165,420',
+        steps: [
+          {
+            card: 'c-attacker', zoom: 1.8, x: 150, y: 90, text: 'El atacante encuentra un puerto RDP expuesto y lanza un ataque de fuerza bruta.', voice: 'Un atacante encuentra un puerto RDP expuesto a internet. Comienza un ataque de fuerza bruta para obtener credenciales.'
+          },
+          {
+            card: 'c-firewall', zoom: 1.8, x: 180, y: 230, text: 'El firewall detecta múltiples intentos. IPS genera alerta pero el atacante logra pasar.', voice: 'El firewall detecta múltiples intentos de conexión. El sistema IPS genera alertas, pero el atacante logra autenticarse con credenciales válidas.'
+          },
+          {
+            card: 'c-desktop', zoom: 1.8, x: 165, y: 420, text: 'El atacante accede al Desktop. <b>Defender for Endpoint</b> detecta comportamiento anómalo.', voice: 'El atacante accede a la estación de trabajo. Defender for Endpoint detecta inmediatamente un comportamiento anómalo: ejecución de scripts y herramientas de reconocimiento.'
+          },
+          {
+            card: 'c-dbserver', zoom: 1.6, x: 630, y: 420, text: 'Intento de movimiento lateral hacia el servidor de BD. Consultas LDAP anómalas detectadas.', voice: 'El atacante intenta moverse lateralmente hacia el servidor de base de datos. Se detectan consultas LDAP anómalas y uso de PsExec.'
+          },
+          {
+            card: 'c-sentinel', zoom: 1.6, x: 1230, y: 160, text: '<b>Sentinel correlaciona todo</b>: fuerza bruta + movimiento lateral + cifrado = ¡RANSOMWARE!', voice: 'Microsoft Sentinel correlaciona todos los eventos: fuerza bruta, acceso anómalo, movimiento lateral y cifrado de archivos. Conclusión: ransomware. Incidente crítico generado.'
+          },
+          {
+            card: 'c-mitre', zoom: 1.6, x: 890, y: 340, text: 'MITRE ATT&CK mapea: T1078 Valid Accounts → T1021 Remote Services → T1486 Data Encrypted.', voice: 'MITRE ATT&CK mapea las técnicas: cuentas válidas, servicios remotos y cifrado de datos. Las reglas KQL confirman el patrón de ransomware.'
+          },
+          {
+            card: 'c-logicapps', zoom: 1.5, x: 1240, y: 700, text: '<b>Logic Apps</b> ejecuta aislamiento de red automático en los endpoints afectados.', voice: 'Logic Apps ejecuta el flujo de automatización: aislamiento de red automático en todos los endpoints afectados, revocación de sesiones y bloqueo de cuentas comprometidas.'
+          },
+          {
+            card: 'c-copilot', zoom: 1.6, x: 930, y: 530, text: '<b>Security Copilot</b> genera reporte ejecutivo del incidente en 30 segundos.', voice: 'Security Copilot genera un reporte ejecutivo completo del incidente en 30 segundos: alcance del daño, sistemas afectados y recomendaciones de remediación.'
+          },
+          {
+            card: 'c-soc', zoom: 1.5, x: 1200, y: 780, text: '<b>SOC ONESEC</b>: Blue Team valida contención, Red Team verifica que no hay puertas traseras. ✅', voice: 'El SOC de ONESEC toma el control. El Blue Team valida la contención, el Red Team verifica que no queden puertas traseras. Amenaza eliminada.'
+          }
+        ]
+      },
+      insider: {
+        path: '',
+        steps: [
+          {
+            card: 'c-user', zoom: 1.8, x: 170, y: 540, text: 'Un empleado con acceso privilegiado inicia sesión fuera de horario laboral.', voice: 'Un empleado con acceso privilegiado inicia sesión a las 3 de la mañana. Un comportamiento fuera de lo normal.'
+          },
+          {
+            card: 'c-dbserver', zoom: 1.8, x: 630, y: 420, text: 'Accede al servidor de BD y ejecuta consultas masivas de datos sensibles.', voice: 'El empleado accede al servidor de base de datos y ejecuta consultas masivas para extraer datos sensibles de clientes y financieros.'
+          },
+          {
+            card: 'c-appserver', zoom: 1.6, x: 430, y: 540, text: 'Intenta copiar datos a un servicio externo de almacenamiento cloud.', voice: 'El usuario intenta copiar los datos extraídos a un servicio externo de almacenamiento en la nube, fuera del perímetro corporativo.'
+          },
+          {
+            card: 'c-sentinel', zoom: 1.6, x: 1230, y: 160, text: '<b>Sentinel UEBA</b> detecta: inicio de sesión anómalo + consultas masivas + exfiltración.', voice: 'Sentinel con UEBA detecta el patrón completo: inicio de sesión en horario inusual, consultas masivas a la base de datos y tentativa de exfiltración de datos.'
+          },
+          {
+            card: 'c-mitre', zoom: 1.6, x: 890, y: 340, text: 'MITRE mapea: T1078 Valid Accounts → T1530 Data from Cloud Storage → T1041 Exfiltration.', voice: 'MITRE ATT&CK mapea las técnicas: uso de cuentas válidas, acceso a datos en almacenamiento y exfiltración por canal alternativo.'
+          },
+          {
+            card: 'c-copilot', zoom: 1.6, x: 930, y: 530, text: '<b>Security Copilot</b> identifica exactamente qué datos fueron accedidos y por quién.', voice: 'Security Copilot identifica exactamente qué tablas fueron consultadas, cuántos registros se extrajeron y confirma la identidad del usuario.'
+          },
+          {
+            card: 'c-playbooks', zoom: 1.6, x: 1250, y: 480, text: 'El <b>Playbook</b> revoca accesos del usuario y bloquea la cuenta automáticamente.', voice: 'El Playbook se ejecuta: revoca todos los accesos del usuario, bloquea la cuenta, cierra las sesiones activas y genera un ticket de incidente.'
+          },
+          {
+            card: 'c-soc', zoom: 1.5, x: 1200, y: 780, text: '<b>SOC ONESEC</b> escala a área legal. Green Team implementa controles adicionales. ✅', voice: 'El SOC de ONESEC escala el caso al área legal y recursos humanos. El Green Team implementa controles adicionales para prevenir futuros incidentes.'
+          }
+        ]
+      }
+    };
+
+    // Utils
+    function toast(m, d = 3000) {
+      const
+        t = document.getElementById('toast'); t.innerHTML = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), d);
+    }
+
+    // Original speak function replaced by Robust TTS above.
+    function toggleVoice() {
+      AudioSys.play('click');
+      voiceOn = !voiceOn;
+      const btn = document.getElementById('voiceBtn');
+      btn.textContent = voiceOn ? '🔊 VOZ ON' : '🔇 VOZ OFF';
+      if (!voiceOn) synth.cancel();
+    }
+
+    // === LIVE METRICS SYSTEM ===
+    let metricsInterval = null, metricsData = { blocked: 2417, events: 1200000, response: 340, endpoints: 856 };
+    function startMetrics() {
+      document.getElementById('metricsPanel').classList.add('show');
+      updateMetricsDisplay();
+      metricsInterval = setInterval(function() {
+        metricsData.blocked += Math.floor(Math.random() * 3);
+        metricsData.events += Math.floor(Math.random() * 500) + 100;
+        metricsData.response = 280 + Math.floor(Math.random() * 120);
+        metricsData.endpoints = 850 + Math.floor(Math.random() * 20);
+        updateMetricsDisplay();
+      }, 2000);
+    }
+    function stopMetrics() {
+      document.getElementById('metricsPanel').classList.remove('show');
+      if (metricsInterval) { clearInterval(metricsInterval); metricsInterval = null; }
+    }
+    function updateMetricsDisplay() {
+      animateCounter('mBlocked', metricsData.blocked);
+      animateCounter('mEvents', metricsData.events);
+      document.getElementById('mResponse').textContent = metricsData.response + 'ms';
+      animateCounter('mEndpoints', metricsData.endpoints);
+    }
+    function animateCounter(id, target) {
+      var el = document.getElementById(id);
+      var current = parseInt(el.textContent.replace(/,/g, '')) || 0;
+      if (current === target) return;
+      var diff = target - current;
+      var steps = 20;
+      var step = 0;
+      var timer = setInterval(function() {
+        step++;
+        var val = Math.round(current + (diff * step / steps));
+        el.textContent = val.toLocaleString();
+        if (step >= steps) clearInterval(timer);
+      }, 40);
+    }
+
+    // === DATA FLOW PARTICLES ===
+    let flowInterval = null;
+    var flowPaths = [
+      { from: [185, 290], to: [185, 340], color: 'rgba(255,165,2,.8)' },
+      { from: [530, 580], to: [800, 230], color: 'rgba(232,67,147,.8)' },
+      { from: [800, 230], to: [1100, 155], color: 'rgba(139,92,246,.8)' },
+      { from: [1150, 255], to: [870, 310], color: 'rgba(139,92,246,.7)' },
+      { from: [1100, 255], to: [920, 470], color: 'rgba(0,229,200,.8)' },
+      { from: [920, 610], to: [1100, 860], color: 'rgba(46,213,115,.8)' },
+      { from: [1250, 255], to: [1250, 415], color: 'rgba(139,92,246,.7)' },
+      { from: [1250, 550], to: [1250, 625], color: 'rgba(139,92,246,.6)' }
+    ];
+    function startFlowParticles() {
+      var canvas = document.getElementById('acanvas');
+      flowInterval = setInterval(function() {
+        var fp = flowPaths[Math.floor(Math.random() * flowPaths.length)];
+        spawnParticle(canvas, fp);
+      }, 400);
+    }
+    function spawnParticle(canvas, fp) {
+      var p = document.createElement('div');
+      p.className = 'flow-particle';
+      p.style.background = fp.color;
+      p.style.boxShadow = '0 0 6px ' + fp.color;
+      p.style.left = fp.from[0] + 'px';
+      p.style.top = fp.from[1] + 'px';
+      canvas.appendChild(p);
+      var dx = fp.to[0] - fp.from[0];
+      var dy = fp.to[1] - fp.from[1];
+      var dur = 1500 + Math.random() * 1000;
+      var start = performance.now();
+      function move(now) {
+        var t = (now - start) / dur;
+        if (t >= 1) { p.remove(); return; }
+        p.style.opacity = t < 0.1 ? t * 10 : (t > 0.9 ? (1 - t) * 10 : 1);
+        p.style.left = (fp.from[0] + dx * t) + 'px';
+        p.style.top = (fp.from[1] + dy * t) + 'px';
+        requestAnimationFrame(move);
+      }
+      requestAnimationFrame(move);
+    }
+    function stopFlowParticles() {
+      if (flowInterval) { clearInterval(flowInterval); flowInterval = null; }
+      document.querySelectorAll('.flow-particle').forEach(function(p) { p.remove(); });
+    }
+
+    // === AUTO-DEMO MODE ===
+    let autoDemoRunning = false;
+    async function startAutoDemo() {
+      if (scenarioPlaying || autoDemoRunning) return;
+      autoDemoRunning = true;
+      AudioSys.init();
+      AudioSys.play('transition');
+
+      // Show badge
+      var badge = document.getElementById('ademoBadge');
+      var prog = document.getElementById('ademoProgress');
+      badge.classList.add('show');
+      prog.classList.add('show');
+      prog.style.width = '0%';
+
+      // Start metrics + flow
+      startMetrics();
+      startFlowParticles();
+
+      // Auto-demo sequence: ecosystem tour, then 3 attacks
+      var phases = [
+        { sc: 'idle', label: 'Tour del Ecosistema', desc: 'Conociendo cada componente de seguridad...' },
+        { sc: 'phishing', label: 'Ataque Phishing', desc: 'Simulando un ataque de phishing...' },
+        { sc: 'ransomware', label: 'Ataque Ransomware', desc: 'Simulando un ataque de ransomware...' },
+        { sc: 'insider', label: 'Amenaza Insider', desc: 'Simulando una amenaza interna...' }
+      ];
+
+      for (var pi = 0; pi < phases.length; pi++) {
+        if (!autoDemoRunning) break;
+        var phase = phases[pi];
+
+        // Update badge
+        document.getElementById('ademoTitle').textContent = '🎬 ' + (pi + 1) + '/' + phases.length + ' — ' + phase.label;
+        document.getElementById('ademoDesc').textContent = phase.desc;
+        badge.classList.add('show');
+
+        // Update progress
+        prog.style.width = ((pi / phases.length) * 100) + '%';
+
+        // Select scenario
+        pickSc(phase.sc);
+        await new Promise(function(r) { setTimeout(r, 1500); });
+        badge.classList.remove('show');
+
+        if (!autoDemoRunning) break;
+
+        // Play the scenario
+        await playScenario();
+
+        if (!autoDemoRunning) break;
+        await new Promise(function(r) { setTimeout(r, 2000); });
+      }
+
+      // Finished
+      prog.style.width = '100%';
+      if (autoDemoRunning) {
+        document.getElementById('ademoTitle').textContent = '✅ Demo Completado';
+        document.getElementById('ademoDesc').textContent = 'Presentación automática finalizada. ONESEC - Always Secure, Never at Risk.';
+        badge.classList.add('show');
+        AudioSys.play('success');
+        if (voiceOn) await speak('Demo completado. La presentación automática de ONESEC ha finalizado exitosamente. Always Secure, Never at Risk.');
+        setTimeout(function() { badge.classList.remove('show'); }, 5000);
+      }
+
+      autoDemoRunning = false;
+      setTimeout(function() { prog.classList.remove('show'); prog.style.width = '0%'; }, 2000);
+      stopMetrics();
+      stopFlowParticles();
+      pickSc('idle');
+    }
+    function stopAutoDemo() {
+      autoDemoRunning = false;
+      stopScenario();
+      document.getElementById('ademoBadge').classList.remove('show');
+      document.getElementById('ademoProgress').classList.remove('show');
+      stopMetrics();
+      stopFlowParticles();
+    }
+
+    // === VOICE CHAT (Bidirectional) ===
+    let vcListening = false, vcRecognition = null;
+    function toggleVoiceChat() {
+      var panel = document.getElementById('voiceChat');
+      panel.classList.toggle('show');
+      if (panel.classList.contains('show') && document.getElementById('vcBody').children.length === 0) {
+        var nombre = uN.split(' ')[0] || 'amigo';
+        addVcMessage('bot', 'Hola ' + nombre + ', soy el asistente de ONESEC. Puedes preguntarme sobre cualquier componente de seguridad, pedirme que inicie un escenario, o simplemente conversar sobre ciberseguridad. Escribe o usa el micrófono.');
+      }
+    }
+    function addVcMessage(type, text) {
+      var body = document.getElementById('vcBody');
+      var msg = document.createElement('div');
+      msg.className = 'voice-msg ' + type;
+      msg.textContent = text;
+      body.appendChild(msg);
+      body.scrollTop = body.scrollHeight;
+    }
+    function sendVoiceChat() {
+      var input = document.getElementById('vcInput');
+      var text = input.value.trim();
+      if (!text) return;
+      input.value = '';
+      addVcMessage('user', text);
+      processVcMessage(text.toLowerCase());
+    }
+    // === NLP ENGINE v2 — Normalización + Intención + Fonético + Levenshtein + Bigrams ===
+
+    // 1. Normalizar texto: quitar acentos, puntuación, artículos
+    function nlpNormalize(text) {
+      var t = text.toLowerCase();
+      t = t.replace(/[áà]/g,'a').replace(/[éè]/g,'e').replace(/[íì]/g,'i').replace(/[óò]/g,'o').replace(/[úù]/g,'u').replace(/ñ/g,'n').replace(/ü/g,'u');
+      t = t.replace(/[.,;:!?¿¡"'()\-_]/g, ' ');
+      t = t.replace(/\b(el|la|los|las|un|una|unos|unas|de|del|al|en|con|por|para|sobre|acerca|que|es|son|como|este|esta|esto|ese|esa|eso|me|mi|te|tu|su|nos|se|lo|le|y|o|a)\b/g, ' ');
+      t = t.replace(/\s+/g, ' ').trim();
+      return t;
+    }
+
+    // 2. Detección de intención — extraer el tema de frases como "qué es X", "háblame de X"
+    function nlpExtractIntent(text) {
+      var patterns = [
+        /(?:que es|que son|que hace|que hacen|como funciona|como funcionan|para que sirve|para que sirven|explicame|explica|hablame de|hablame sobre|cuentame sobre|cuentame de|dime sobre|dime de|informacion de|informacion sobre|describeme|describe|muestrame|muestra|como es|como son|como se usa|como se usan)\s+(.+)/,
+        /(.+?)(?:\s+que es|\s+que hace|\s+como funciona|\s+para que sirve)$/
+      ];
+      for (var i = 0; i < patterns.length; i++) {
+        var m = text.match(patterns[i]);
+        if (m && m[1]) return m[1].trim();
+      }
+      return text;
+    }
+
+    // 3. Reducción fonética para español
+    function phoneticES(word) {
+      var w = word.toLowerCase();
+      w = w.replace(/[áà]/g,'a').replace(/[éè]/g,'e').replace(/[íì]/g,'i').replace(/[óò]/g,'o').replace(/[úù]/g,'u').replace(/ñ/g,'ni').replace(/ü/g,'u');
+      w = w.replace(/^h/,'').replace(/h/g,'');
+      w = w.replace(/ce/g,'se').replace(/ci/g,'si');
+      w = w.replace(/ge/g,'je').replace(/gi/g,'ji');
+      w = w.replace(/gue/g,'ge').replace(/gui/g,'gi');
+      w = w.replace(/que/g,'ke').replace(/qui/g,'ki').replace(/qu/g,'k');
+      w = w.replace(/v/g,'b').replace(/ll/g,'y').replace(/rr/g,'r');
+      w = w.replace(/z/g,'s').replace(/x/g,'ks');
+      w = w.replace(/ph/g,'f').replace(/th/g,'t').replace(/sh/g,'ch');
+      w = w.replace(/([a-z])\1+/g,'$1');
+      return w;
+    }
+
+    // 4. Distancia de Levenshtein
+    function levenshtein(a, b) {
+      if (a === b) return 0;
+      if (!a.length) return b.length;
+      if (!b.length) return a.length;
+      var m = [];
+      for (var i = 0; i <= b.length; i++) m[i] = [i];
+      for (var j = 0; j <= a.length; j++) m[0][j] = j;
+      for (var i2 = 1; i2 <= b.length; i2++) {
+        for (var j2 = 1; j2 <= a.length; j2++) {
+          if (b[i2 - 1] === a[j2 - 1]) { m[i2][j2] = m[i2 - 1][j2 - 1]; }
+          else { m[i2][j2] = Math.min(m[i2 - 1][j2 - 1] + 1, m[i2][j2 - 1] + 1, m[i2 - 1][j2] + 1); }
+        }
+      }
+      return m[b.length][a.length];
+    }
+
+    // 5. Bigram score (mantenido del v1)
+    function fuzzyScore(a, b) {
+      if (a === b) return 1;
+      if (a.length < 2 || b.length < 2) return a === b ? 1 : 0;
+      var aGrams = {}, bGrams = {};
+      for (var i = 0; i < a.length - 1; i++) aGrams[a.substr(i, 2)] = (aGrams[a.substr(i, 2)] || 0) + 1;
+      for (var j = 0; j < b.length - 1; j++) bGrams[b.substr(j, 2)] = (bGrams[b.substr(j, 2)] || 0) + 1;
+      var matches = 0, total = 0;
+      for (var g in aGrams) { total += aGrams[g]; if (bGrams[g]) matches += Math.min(aGrams[g], bGrams[g]); }
+      for (var h in bGrams) { total += bGrams[h]; }
+      return total > 0 ? (2 * matches) / total : 0;
+    }
+
+    // 6. Diccionario ampliado con variaciones fonéticas de Web Speech API
+    var fuzzyDict = {
+      'sentinel': ['sentinel', 'centinel', 'sentinal', 'centinela', 'sentinela', 'sentimel', 'centinels', 'sentine', 'microsoft sentinel', 'sentynel', 'zentinel', 'centinella', 'sentinella', 'centinel a', 'centi nel', 'sentí nel', 'el centinela', 'centin', 'sentin', 'sentai', 'sentil'],
+      'defender': ['defender', 'defensor', 'difender', 'defende', 'defendes', 'difensor', 'microsoft defender', 'defander', 'defende r', 'difende', 'difen', 'defen', 'defendr', 'defensor de', 'the defender'],
+      'copilot': ['copilot', 'copiloto', 'copailot', 'security copilot', 'coopilot', 'copiloc', 'copilo', 'copayot', 'copailo', 'copai', 'copail', 'copiloto de seguridad', 'el copiloto', 'copailoto', 'kopilot', 'co pilot'],
+      'entra': ['entra', 'entra id', 'entre', 'entraid', 'azure ad', 'identidad', 'identidades', 'identity', 'mfa', 'multifactor', 'acceso condicional', 'active directory', 'directorio activo', 'entra aidi', 'entre id', 'entre aid', 'azure active directory', 'entre aid', 'autenticacion'],
+      'purview': ['purview', 'purvin', 'purviu', 'dlp', 'datos sensibles', 'proteccion de datos', 'clasificacion', 'compliance', 'cumplimiento', 'fuga de datos', 'purbie', 'perviu', 'perview', 'purvie', 'purvew', 'purvi', 'por view', 'microsoft purview', 'prevencion de perdida'],
+      'intune': ['intune', 'intiun', 'in tune', 'intun', 'dispositivo', 'dispositivos', 'mdm', 'celular', 'tablet', 'movil', 'administrar dispositivos', 'intuny', 'intiun', 'intuné', 'in tun', 'microsoft intune', 'gestion de dispositivos', 'administracion movil'],
+      'firewall': ['firewall', 'faierguol', 'cortafuegos', 'cortafuego', 'perimetro', 'ips', 'ids', 'vpn', 'firebal', 'fairwall', 'faigual', 'fire wall', 'faierwol', 'faier', 'fierwall', 'fayerwol', 'fayerguol', 'muro de fuego', 'el firewall', 'farwall', 'firewol', 'fireguol'],
+      'soc': ['soc', 'centro de operaciones', 'monitoreo', 'blue team', 'red team', 'equipo de seguridad', 'operaciones de seguridad', 'vigilancia', 'security operations', 'es oc', 'centro operaciones', 'equipo soc', 'el soc'],
+      'loganalytics': ['log analytics', 'log analitics', 'lago de datos', 'analytics', 'analitica', 'logs', 'analitics', 'log analitic', 'log analisis', 'analisis de logs', 'lago datos', 'el lago', 'loganalytics', 'login alitics'],
+      'playbook': ['playbook', 'playbooks', 'pleibuk', 'plaibuc', 'libro de jugadas', 'automatizacion', 'receta automatica', 'recetas', 'automatizar', 'respuesta automatica', 'playbuk', 'plei buk', 'play book', 'play buk', 'pley buk', 'pleibuc', 'los playbooks'],
+      'workbook': ['workbook', 'workbooks', 'worbuk', 'worcbuc', 'dashboard', 'dashboards', 'tablero', 'tableros', 'reporte', 'reportes', 'informe', 'informes', 'kpi', 'grafica', 'graficas', 'worbuc', 'wokbuk', 'work book', 'work buk', 'wor buk', 'guorkbuk', 'los workbooks', 'worcbuk', 'guorbuk'],
+      'logicapps': ['logic apps', 'logic app', 'logicaps', 'orquestacion', 'orquestador', 'conector de servicios', 'logicap', 'loyic', 'loyic aps', 'logik aps', 'logic aps', 'logi caps', 'aplicaciones logicas'],
+      'exchange': ['exchange', 'excheng', 'correo', 'correos', 'email', 'mail', 'outlook', 'office 365', 'o365', 'correo electronico', 'bandeja', 'exchein', 'exchein', 'exchenye', 'exchang', 'excheins', 'el correo', 'microsoft exchange'],
+      'desktop': ['desktop', 'computadora', 'computadoras', 'laptop', 'laptops', 'pc', 'endpoint', 'endpoints', 'maquina', 'desctop', 'escritorio', 'la computadora', 'las maquinas', 'los endpoints', 'estacion de trabajo', 'equipo de computo', 'equipos de computo'],
+      'mitre': ['mitre', 'maiter', 'mitre attack', 'mitre attck', 'attck', 'attack', 'atak', 'tactica', 'tacticas', 'tecnica', 'tecnicas', 'framework', 'miter', 'maitre', 'mai ter', 'mi tre', 'framework mitre', 'marco mitre', 'matriz de ataque'],
+      'database': ['base de datos', 'bases de datos', 'database', 'servidor', 'servidores', 'sql', 'datos', 'boveda', 'almacenamiento', 'data base', 'la base de datos', 'servidor de datos', 'servidor sql', 'bd'],
+      'appserver': ['app server', 'servidor de aplicaciones', 'aplicacion', 'aplicaciones', 'erp', 'crm', 'portal', 'portales', 'apps', 'servidor aplicaciones', 'servidor de apps', 'el servidor', 'aplicativo'],
+      'connectors': ['conector', 'conectores', 'connector', 'connectors', 'cartero', 'recolector', 'recolectar logs', 'enviar logs', 'los conectores', 'el conector', 'data connectors', 'conector de datos'],
+      'kql': ['kql', 'query', 'queries', 'consulta', 'consultas', 'buscar logs', 'lenguaje', 'kusto', 'lenguaje de consulta', 'kiu kiu el', 'ke cu ele', 'ka cu ele', 'language'],
+      'zerotrust': ['zero trust', 'confianza cero', 'cero confianza', 'nunca confiar', 'siempre verificar', 'siro trost', 'sero trust', 'zero trost', 'modelo zero trust', 'arquitectura zero trust', 'sin confianza'],
+      'greenteam': ['green team', 'equipo verde', 'mejora continua', 'grin tim', 'green tim', 'el equipo verde']
+    };
+
+    // 7. Precalcular versiones fonéticas del diccionario
+    var fuzzyDictPhonetic = {};
+    for (var fk in fuzzyDict) {
+      fuzzyDictPhonetic[fk] = fuzzyDict[fk].map(function(v) { return phoneticES(v); });
+    }
+
+    // 8. fuzzyMatch v2 — matching combinado multi-estrategia
+    function fuzzyMatch(rawInput) {
+      var input = nlpNormalize(rawInput);
+      var extracted = nlpExtractIntent(input);
+      var targets = [input];
+      if (extracted !== input) targets.push(extracted);
+
+      var bestKey = null, bestScore = 0;
+
+      for (var t = 0; t < targets.length; t++) {
+        var text = targets[t];
+
+        // Paso A: Substring match exacto (normalizado)
+        for (var key in fuzzyDict) {
+          var variants = fuzzyDict[key];
+          for (var v = 0; v < variants.length; v++) {
+            var nv = nlpNormalize(variants[v]);
+            if (text.indexOf(nv) !== -1 && nv.length >= 2) return key;
+          }
+        }
+
+        // Paso B: Matching fonético exacto
+        var textPhonetic = phoneticES(text);
+        var textWordsPhonetic = textPhonetic.split(/\s+/);
+        for (var key2 in fuzzyDictPhonetic) {
+          var pvariants = fuzzyDictPhonetic[key2];
+          for (var v2 = 0; v2 < pvariants.length; v2++) {
+            if (textPhonetic.indexOf(pvariants[v2]) !== -1 && pvariants[v2].length >= 2) return key2;
+          }
+        }
+
+        // Paso C: Por palabra — Levenshtein + Bigrams + Fonético
+        var words = text.split(/\s+/);
+        for (var key3 in fuzzyDict) {
+          var variants3 = fuzzyDict[key3];
+          for (var v3 = 0; v3 < variants3.length; v3++) {
+            var variant = nlpNormalize(variants3[v3]);
+            if (variant.indexOf(' ') !== -1) continue; // solo palabras simples aquí
+
+            for (var w = 0; w < words.length; w++) {
+              var word = words[w];
+              if (word.length < 2) continue;
+
+              // Levenshtein para palabras cortas (<=6 chars)
+              var maxDist = word.length <= 4 ? 1 : (word.length <= 7 ? 2 : 3);
+              var dist = levenshtein(word, variant);
+              if (dist <= maxDist) {
+                var lScore = 1 - (dist / Math.max(word.length, variant.length));
+                if (lScore > bestScore) { bestScore = lScore; bestKey = key3; }
+              }
+
+              // Bigrams
+              var bScore = fuzzyScore(word, variant);
+              if (bScore > bestScore && bScore >= 0.35) { bestScore = bScore; bestKey = key3; }
+
+              // Fonético + Levenshtein
+              var wp = phoneticES(word);
+              var vp = phoneticES(variant);
+              var pDist = levenshtein(wp, vp);
+              var pMaxDist = wp.length <= 4 ? 1 : 2;
+              if (pDist <= pMaxDist) {
+                var pScore = 1 - (pDist / Math.max(wp.length, vp.length, 1));
+                if (pScore > bestScore) { bestScore = pScore; bestKey = key3; }
+              }
+            }
+
+            // También pares de palabras para frases de 2 palabras
+            for (var w2 = 0; w2 < words.length - 1; w2++) {
+              var pair = words[w2] + ' ' + words[w2 + 1];
+              var bScore2 = fuzzyScore(pair, variant);
+              if (bScore2 > bestScore && bScore2 >= 0.35) { bestScore = bScore2; bestKey = key3; }
+            }
+          }
+
+          // Frases multi-palabra del diccionario
+          for (var v4 = 0; v4 < variants3.length; v4++) {
+            var mv = nlpNormalize(variants3[v4]);
+            if (mv.indexOf(' ') === -1) continue;
+            var mvScore = fuzzyScore(text, mv);
+            if (mvScore > bestScore && mvScore >= 0.35) { bestScore = mvScore; bestKey = key3; }
+            // Fonético para frases
+            var mvp = phoneticES(mv);
+            if (textPhonetic.indexOf(mvp) !== -1 && mvp.length >= 3) return key3;
+          }
+        }
+      }
+
+      return bestScore >= 0.4 ? bestKey : null;
+    }
+
+    // Map fuzzy keys to response generators
+    var fuzzyResponses = {
+      'sentinel': function(n, e) { return n + ', Microsoft Sentinel es el cerebro del SOC. Es un SIEM y SOAR nativo de nube que recopila logs de toda la infraestructura de ' + e + ', los correlaciona con IA y genera alertas priorizadas. ONESEC lo opera 24/7 con más de 85 reglas analíticas.'; },
+      'defender': function(n, e) { return 'Microsoft Defender protege endpoints, correo, identidades y apps en la nube. Para ' + e + ', ONESEC configura Defender for Endpoint, Defender for Office 365 y Defender for Identity.'; },
+      'copilot': function(n, e) { return 'Security Copilot es la IA de Microsoft para seguridad. ' + n + ', le preguntas "quién fue afectado" y en 30 segundos te da un resumen ejecutivo. ONESEC lo tiene integrado con Sentinel para ' + e + '.'; },
+      'entra': function(n, e) { return 'Microsoft Entra ID protege las identidades de ' + e + '. Con MFA y acceso condicional, nadie entra sin verificación doble. El atacante puede tener tu contraseña, pero sin tu celular no pasa.'; },
+      'purview': function(n, e) { return 'Microsoft Purview clasifica y protege los datos sensibles de ' + e + '. Detecta si alguien intenta enviar un archivo confidencial por correo y lo bloquea automáticamente.'; },
+      'intune': function(n, e) { return 'Intune administra todos los dispositivos de ' + e + ': laptops, celulares, tablets. Asegura encriptación activa, antivirus actualizado y cumplimiento de políticas.'; },
+      'firewall': function(n, e) { return 'El firewall perimetral revisa cada paquete que entra y sale de la red de ' + e + '. Con IPS, IDS y VPN integrados, bloquea conexiones maliciosas antes de que lleguen a los servidores.'; },
+      'soc': function(n, e) { return 'El SOC de ONESEC opera 24/7/365. Red Team ataca para encontrar vulnerabilidades. Blue Team defiende en tiempo real. Green Team mejora continuamente. ' + n + ', si algo pasa a las 3am, ya estamos trabajando.'; },
+      'loganalytics': function(n, e) { return 'Log Analytics es el lago de datos donde llegan todos los logs de seguridad de ' + e + '. Con KQL puedes consultar: muéstrame los logins fallidos de las últimas 24 horas.'; },
+      'playbook': function(n, e) { return 'Los Playbooks son recetas automáticas de ONESEC. Cuando Sentinel detecta una amenaza, el Playbook bloquea al atacante, aísla la máquina, notifica por Teams y crea un ticket. Todo en segundos.'; },
+      'workbook': function(n, e) { return 'Los Workbooks son dashboards ejecutivos de Sentinel. Convierten millones de logs en gráficas claras y KPIs. ONESEC los diseña a medida para ' + e + '. Se exportan a PDF para reuniones.'; },
+      'logicapps': function(n, e) { return 'Logic Apps conecta más de 400 servicios: Teams, Slack, Jira, ServiceNow. Coordina respuestas automáticas cuando se detecta una amenaza. ONESEC las configura a medida de ' + e + '.'; },
+      'exchange': function(n, e) { return 'Exchange Online es el correo de ' + e + '. El 91% de ataques empiezan por email. Defender for Office 365 revisa cada link y adjunto. Si algo huele raro, bloqueado.'; },
+      'desktop': function(n, e) { return 'Cada computadora de ' + e + ' tiene Defender for Endpoint, un guardaespaldas invisible. Si un programa cifra archivos sospechosamente, lo detiene y alerta al SOC.'; },
+      'mitre': function(n, e) { return 'MITRE ATT&CK cataloga más de 200 técnicas de ataque. ONESEC usa este framework para crear 85 reglas analíticas y 24 queries de cacería personalizadas para ' + e + '.'; },
+      'database': function(n, e) { return 'El servidor de base de datos guarda lo más valioso de ' + e + ': clientes, finanzas, secretos. Tiene encriptación, auditoría y alertas ante actividad sospechosa.'; },
+      'appserver': function(n, e) { return 'El App Server ejecuta las aplicaciones de ' + e + ': ERP, CRM, portales. Cada transacción genera un log enviado a Sentinel.'; },
+      'connectors': function(n, e) { return 'Los conectores recogen logs del firewall, servidores y endpoints de ' + e + ' y los envían a Log Analytics. Sin ellos, sería como tener cámaras que nadie mira.'; },
+      'kql': function(n, e) { return 'KQL es el lenguaje de consulta de Sentinel. Es como Google pero para eventos de seguridad. ONESEC crea queries personalizadas para ' + e + '.'; },
+      'zerotrust': function(n, e) { return 'Zero Trust significa nunca confiar, siempre verificar. No importa si estás dentro o fuera de la red de ' + e + ', cada acceso se valida. ONESEC implementa este modelo.'; },
+      'greenteam': function(n, e) { return 'El Green Team de ONESEC mejora continuamente: revisa procesos, actualiza reglas, optimiza playbooks y asegura que la seguridad de ' + e + ' evolucione ante nuevas amenazas.'; }
+    };
+
+    // Map component keys to card IDs for auto-zoom
+    var componentCardMap = {
+      'sentinel': 'c-sentinel', 'defender': 'c-desktop', 'copilot': 'c-copilot',
+      'entra': 'c-user', 'purview': 'c-sentinel', 'intune': 'c-desktop',
+      'firewall': 'c-firewall', 'soc': 'c-soc', 'loganalytics': 'c-loganalytics',
+      'playbook': 'c-playbooks', 'workbook': 'c-workbooks', 'logicapps': 'c-logicapps',
+      'exchange': 'c-exchange', 'desktop': 'c-desktop', 'mitre': 'c-mitre',
+      'database': 'c-dbserver', 'appserver': 'c-appserver', 'connectors': 'c-connectors',
+      'kql': 'c-loganalytics', 'zerotrust': 'c-user', 'greenteam': 'c-soc'
+    };
+
+    function respondWithZoom(key, response) {
+      addVcMessage('bot', response);
+      var cardId = componentCardMap[key];
+      if (cardId && !scenarioPlaying) {
+        zoomToCard(cardId, 1.5);
+        var el = document.getElementById(cardId);
+        if (el) { el.classList.add('defending', 'zoomed'); }
+      }
+      if (voiceOn) {
+        speak(response).then(function() {
+          if (!scenarioPlaying) {
+            resetZoom();
+            document.querySelectorAll('.card').forEach(function(c) { c.classList.remove('zoomed', 'defending'); });
+          }
+        });
+      }
+    }
+
+    function processVcMessage(text) {
+      var nombre = uN.split(' ')[0] || 'amigo';
+      var empresa = uC || 'tu empresa';
+      var response = '';
+      var norm = nlpNormalize(text);
+
+      // PASO 1: Comandos de navegación (prioridad máxima, no dependen de NLP)
+      if (/iniciar|empezar|comenzar|recorrido/.test(norm) && !/playbook|pleibuk|plaibuc/.test(norm)) {
+        response = 'Iniciando el recorrido, ' + nombre + '. Disfruta la presentación.';
+        addVcMessage('bot', response); if (voiceOn) speak(response);
+        setTimeout(function() { playScenario(); }, 800); return;
+      }
+      if (/\bplay\b/.test(text) && !/playbook|play book/.test(text)) {
+        response = 'Iniciando el recorrido, ' + nombre + '. Disfruta la presentación.';
+        addVcMessage('bot', response); if (voiceOn) speak(response);
+        setTimeout(function() { playScenario(); }, 800); return;
+      }
+      if (/auto.?demo|modo.?auto/.test(norm) || (norm === 'presentacion' || /\bpresentacion\b/.test(norm) && /auto|completa|entera/.test(norm))) {
+        response = 'Iniciando el modo de presentación automática, ' + nombre + '. Siéntate y disfruta.';
+        addVcMessage('bot', response); if (voiceOn) speak(response);
+        setTimeout(function() { startAutoDemo(); }, 800); return;
+      }
+      if (/siguiente|next|avanzar|adelante/.test(norm)) {
+        response = 'Avanzando al siguiente paso.';
+        addVcMessage('bot', response); if (voiceOn) speak(response);
+        stepManual(1); return;
+      }
+      if (/anterior|atras|retroceder|regresar/.test(norm)) {
+        response = 'Retrocediendo al paso anterior.';
+        addVcMessage('bot', response); if (voiceOn) speak(response);
+        stepManual(-1); return;
+      }
+      if (/detener|parar|stop|terminar|finalizar/.test(norm) && !/hablame|explicame|dime/.test(norm)) {
+        response = 'Deteniendo el recorrido.';
+        addVcMessage('bot', response); if (voiceOn) speak(response);
+        stopScenario(); return;
+      }
+      if (/pausar|pausa|\bpause\b/.test(norm)) {
+        response = paused ? 'Reanudando el asistente.' : 'Pausando el asistente. Puedes mover el mapa libremente.';
+        addVcMessage('bot', response); if (voiceOn) speak(response);
+        togglePause(); return;
+      }
+
+      // PASO 2: Selección de escenarios
+      if (/phishing|fishing|fishin|suplantacion/.test(norm)) {
+        response = 'Seleccionando el escenario de Phishing. Es el vector de ataque más común, responsable del 91% de los ciberataques. Dale a Iniciar para verlo en acción.';
+        addVcMessage('bot', response); if (voiceOn) speak(response);
+        pickSc('phishing'); return;
+      }
+      if (/ransomware|ransom|secuestro de datos|cifrado malicioso/.test(norm)) {
+        response = 'Seleccionando Ransomware. Este tipo de ataque cifra los archivos y pide un rescate. ONESEC lo detecta y responde en segundos.';
+        addVcMessage('bot', response); if (voiceOn) speak(response);
+        pickSc('ransomware'); return;
+      }
+      if (/insider|amenaza interna|usuario malicioso/.test(norm)) {
+        response = 'Seleccionando amenaza Insider. A veces el peligro viene de dentro. ONESEC usa UEBA para detectar comportamientos anómalos de usuarios.';
+        addVcMessage('bot', response); if (voiceOn) speak(response);
+        pickSc('insider'); return;
+      }
+      if (/metricas|estadisticas|numeros|indicadores/.test(norm)) {
+        response = 'Activando el panel de métricas en vivo. Ahí puedes ver los ataques bloqueados, eventos procesados y tiempo de respuesta del SOC de ONESEC en tiempo real.';
+        addVcMessage('bot', response); if (voiceOn) speak(response);
+        startMetrics(); return;
+      }
+
+      // PASO 3: Conversación general
+      if (/^(hola|buenos|buenas|hi|hey|saludos|que tal)(\s|$)/.test(norm)) {
+        response = '¡Hola ' + nombre + '! ¿En qué puedo ayudarte? Puedo explicarte cualquier componente de seguridad, iniciar una demostración, o responder tus preguntas sobre cómo ONESEC protege a ' + empresa + '.';
+        addVcMessage('bot', response); if (voiceOn) speak(response); return;
+      }
+      if (/gracias|thank|agradez/.test(norm)) {
+        response = '¡De nada, ' + nombre + '! Estoy aquí para ayudarte. Si tienes más preguntas sobre la seguridad de ' + empresa + ', no dudes en preguntar.';
+        addVcMessage('bot', response); if (voiceOn) speak(response); return;
+      }
+      if (/cuanto|precio|costo|contratar|valor|tarifa/.test(norm)) {
+        response = nombre + ', para información sobre planes y precios de ONESEC, te recomiendo hablar directamente con nuestro equipo comercial. Cada solución se personaliza según las necesidades de ' + empresa + '. ¿Te gustaría que te conecte con un asesor?';
+        addVcMessage('bot', response); if (voiceOn) speak(response); return;
+      }
+      if (/que puedo|ayuda|\bhelp\b|comandos|opciones/.test(norm)) {
+        response = nombre + ', puedes preguntarme sobre: Sentinel, Defender, Copilot, Entra ID, Purview, Intune, Firewall, SOC, Playbooks, Workbooks, Logic Apps, Log Analytics, MITRE, Zero Trust, KQL, conectores, Exchange o el equipo Green Team. También puedes decir: iniciar recorrido, phishing, ransomware, insider, auto demo, métricas, siguiente, anterior, pausar o detener.';
+        addVcMessage('bot', response); if (voiceOn) speak(response); return;
+      }
+
+      // PASO 4: NLP v2 — Fuzzy matching multi-estrategia (normalizado + intención + fonético + levenshtein + bigrams)
+      var fuzzyKey = fuzzyMatch(text);
+      if (fuzzyKey && fuzzyResponses[fuzzyKey]) {
+        respondWithZoom(fuzzyKey, fuzzyResponses[fuzzyKey](nombre, empresa));
+        return;
+      }
+
+      // PASO 5: No encontró nada local — buscar en la web
+      addVcMessage('bot', 'Déjame buscar información sobre eso...');
+      searchWeb(text, nombre, empresa);
+    }
+
+    function searchWeb(query, nombre, empresa) {
+      var searchQuery = query + ' ciberseguridad Microsoft';
+      var url = 'https://api.duckduckgo.com/?q=' + encodeURIComponent(searchQuery) + '&format=json&no_html=1&skip_disambig=1';
+      fetch(url).then(function(r) { return r.json(); }).then(function(data) {
+        var answer = '';
+        if (data.AbstractText && data.AbstractText.length > 20) {
+          answer = data.AbstractText;
+          if (answer.length > 300) answer = answer.substring(0, 297) + '...';
+        } else if (data.RelatedTopics && data.RelatedTopics.length > 0) {
+          var topics = data.RelatedTopics.slice(0, 2);
+          answer = topics.map(function(t) { return t.Text || ''; }).filter(function(t) { return t.length > 0; }).join(' | ');
+          if (answer.length > 300) answer = answer.substring(0, 297) + '...';
+        }
+        // Remove the "Buscando..." message
+        var body = document.getElementById('vcBody');
+        if (body.lastChild) body.removeChild(body.lastChild);
+        if (answer) {
+          var response = nombre + ', esto encontré: ' + answer;
+          addVcMessage('bot', response);
+          if (voiceOn) speak(response);
+        } else {
+          // Fallback: direct Google search link
+          fallbackWebSearch(query, nombre, empresa);
+        }
+      }).catch(function() {
+        var body = document.getElementById('vcBody');
+        if (body.lastChild) body.removeChild(body.lastChild);
+        fallbackWebSearch(query, nombre, empresa);
+      });
+    }
+
+    function fallbackWebSearch(query, nombre, empresa) {
+      // Try Wikipedia API as second source
+      var wikiUrl = 'https://es.wikipedia.org/api/rest_v1/page/summary/' + encodeURIComponent(query);
+      fetch(wikiUrl).then(function(r) { if (!r.ok) throw new Error(); return r.json(); }).then(function(data) {
+        if (data.extract && data.extract.length > 20) {
+          var extract = data.extract;
+          if (extract.length > 250) extract = extract.substring(0, 247) + '...';
+          var response = nombre + ', según Wikipedia: ' + extract;
+          addVcMessage('bot', response);
+          if (voiceOn) speak(response);
+        } else {
+          throw new Error('no data');
+        }
+      }).catch(function() {
+        var response = nombre + ', no encontré información específica sobre eso. Puedo ayudarte con los componentes del ecosistema de seguridad: Sentinel, Defender, Copilot, Entra ID, Purview, Intune, Firewall, SOC, Workbooks, Playbooks, Logic Apps, MITRE ATT&CK, o Log Analytics. También puedes preguntar sobre Zero Trust, KQL, o cualquier escenario de ataque.';
+        addVcMessage('bot', response);
+        if (voiceOn) speak(response);
+      });
+    }
+    function toggleVcMic() {
+      if (vcListening) { stopVcMic(); return; }
+      var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SR) { addVcMessage('bot', 'Tu navegador no soporta reconocimiento de voz.'); return; }
+      if (!vcRecognition) {
+        vcRecognition = new SR();
+        vcRecognition.lang = 'es-ES';
+        vcRecognition.continuous = false;
+        vcRecognition.interimResults = false;
+        vcRecognition.onresult = function(e) {
+          var text = e.results[0][0].transcript.trim();
+          addVcMessage('user', text);
+          processVcMessage(text.toLowerCase());
+          stopVcMic();
+        };
+        vcRecognition.onerror = function() { stopVcMic(); };
+        vcRecognition.onend = function() { stopVcMic(); };
+      }
+      vcListening = true;
+      document.getElementById('vcMicBtn').classList.add('listening');
+      if (synth) synth.cancel();
+      vcRecognition.start();
+    }
+    function stopVcMic() {
+      vcListening = false;
+      document.getElementById('vcMicBtn').classList.remove('listening');
+      try { if (vcRecognition) vcRecognition.stop(); } catch(e) {}
+    }
+
+    // === FULLSCREEN ===
+    function toggleFullscreen() {
+      if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(function() {});
+        document.getElementById('btnFS').innerHTML = '⛶ Salir Fullscreen';
+      } else {
+        document.exitFullscreen();
+        document.getElementById('btnFS').innerHTML = '⛶ Pantalla Completa';
+      }
+    }
+    document.addEventListener('fullscreenchange', function() {
+      if (!document.fullscreenElement) {
+        document.getElementById('btnFS').innerHTML = '⛶ Pantalla Completa';
+      }
+    });
+
+    // === SPEECH RECOGNITION (Voz a Voz) ===
+    let micListening = false, recognition = null;
+    function initRecognition() {
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SR) { toast('Tu navegador no soporta reconocimiento de voz'); return null; }
+      const r = new SR();
+      r.lang = 'es-ES';
+      r.continuous = false;
+      r.interimResults = false;
+      r.maxAlternatives = 1;
+      r.onresult = function(e) {
+        const transcript = e.results[0][0].transcript.toLowerCase().trim();
+        processMicCommand(transcript);
+      };
+      r.onerror = function() { setMicOff(); };
+      r.onend = function() { setMicOff(); };
+      return r;
+    }
+    function toggleMic() {
+      if (micListening) { setMicOff(); return; }
+      if (!recognition) recognition = initRecognition();
+      if (!recognition) return;
+      AudioSys.play('click');
+      micListening = true;
+      document.getElementById('micBtn').classList.add('listening');
+      document.getElementById('micHeard').textContent = 'Escuchando...';
+      document.getElementById('micAction').textContent = 'Di un comando o pregunta';
+      document.getElementById('micFeedback').classList.add('show');
+      if (synth) synth.cancel();
+      recognition.start();
+    }
+    function setMicOff() {
+      micListening = false;
+      document.getElementById('micBtn').classList.remove('listening');
+      try { if (recognition) recognition.stop(); } catch(e) {}
+      setTimeout(function() { document.getElementById('micFeedback').classList.remove('show'); }, 3000);
+    }
+    function processMicCommand(text) {
+      document.getElementById('micHeard').textContent = '"' + text + '"';
+      var action = '';
+      // Navigation commands
+      if (/iniciar|empezar|comenzar|recorrido|\bplay\b/.test(text)) {
+        action = 'Iniciando recorrido...';
+        setMicOff();
+        setTimeout(function() { playScenario(); }, 500);
+      } else if (/siguiente|next|avanzar|adelante/.test(text)) {
+        action = 'Paso siguiente';
+        stepManual(1);
+        setMicOff();
+      } else if (/anterior|atr[aá]s|prev|regresar/.test(text)) {
+        action = 'Paso anterior';
+        stepManual(-1);
+        setMicOff();
+      } else if (/detener|parar|stop|alto/.test(text)) {
+        action = 'Deteniendo recorrido';
+        stopScenario();
+        setMicOff();
+      } else if (/phishing/.test(text)) {
+        action = 'Seleccionando Phishing';
+        pickSc('phishing');
+        setMicOff();
+      } else if (/ransomware/.test(text)) {
+        action = 'Seleccionando Ransomware';
+        pickSc('ransomware');
+        setMicOff();
+      } else if (/insider/.test(text)) {
+        action = 'Seleccionando Insider';
+        pickSc('insider');
+        setMicOff();
+      } else if (/ecosistema|normal|conocer/.test(text)) {
+        action = 'Seleccionando Ecosistema';
+        pickSc('idle');
+        setMicOff();
+      } else if (/nube|cloud/.test(text)) {
+        action = 'Ir a la nube';
+        setMicOff();
+        setTimeout(function() { playEcosystemTour(9); }, 500);
+      } else if (/gu[ií]a|ayuda|help|componentes/.test(text)) {
+        action = 'Abriendo guía';
+        openGuide();
+        setMicOff();
+      } else if (/zoom|acercar|alejar/.test(text)) {
+        if (/alejar|menos/.test(text)) { manualZoom(-1); action = 'Alejando'; }
+        else { manualZoom(1); action = 'Acercando'; }
+        setMicOff();
+      } else if (/mapa|global|volver/.test(text)) {
+        action = 'Volviendo al mapa';
+        setMicOff();
+        setTimeout(function() { window.location.href = 'index.html'; }, 800);
+      } else {
+        // General question - respond with voice about what the user asked
+        action = 'Respondiendo...';
+        setMicOff();
+        var response = answerQuestion(text);
+        speak(response);
+      }
+      document.getElementById('micAction').textContent = action;
+    }
+    function answerQuestion(q) {
+      var nombre = uN.split(' ')[0] || 'amigo';
+      if (/sentinel/.test(q)) return nombre + ', Microsoft Sentinel es nuestro cerebro de seguridad. Es el SIEM que recopila y analiza todos los logs del ecosistema para detectar amenazas en tiempo real.';
+      if (/defender/.test(q)) return nombre + ', Microsoft Defender protege los endpoints, el correo, las identidades y las aplicaciones en la nube. Es la primera línea de defensa.';
+      if (/copilot/.test(q)) return nombre + ', Security Copilot es la inteligencia artificial de Microsoft que nos ayuda a investigar amenazas, generar reportes y responder más rápido ante incidentes.';
+      if (/entra|identidad|identity|mfa/.test(q)) return nombre + ', Entra ID gestiona identidades y accesos con MFA y acceso condicional. Nadie entra sin verificación doble.';
+      if (/purview|dlp|datos|compliance/.test(q)) return nombre + ', Microsoft Purview protege los datos sensibles. Clasifica documentos, previene fugas y asegura cumplimiento normativo.';
+      if (/intune|dispositivo/.test(q)) return nombre + ', Intune administra y protege todos los dispositivos asegurando que cumplan las políticas de seguridad.';
+      if (/soc|monitoreo|blue.?team|red.?team/.test(q)) return nombre + ', el SOC de ONESEC opera 24/7 con Red Team, Blue Team y Green Team trabajando juntos para protegerte.';
+      if (/firewall/.test(q)) return nombre + ', el firewall perimetral filtra todo el tráfico, bloqueando conexiones maliciosas antes de que lleguen a tu red.';
+      if (/logic.?app|orquest/.test(q)) return nombre + ', Logic Apps conecta más de 400 servicios y coordina respuestas automáticas cuando se detecta una amenaza.';
+      if (/workbook|dashboard|reporte|kpi/.test(q)) return nombre + ', los Workbooks son dashboards ejecutivos que convierten millones de logs en gráficas claras y KPIs para reportes.';
+      if (/playbook/.test(q)) return nombre + ', los Playbooks son recetas automáticas: bloquean atacantes, aíslan máquinas y notifican al equipo en segundos.';
+      if (/exchange|correo|email/.test(q)) return nombre + ', Exchange Online tiene Defender for Office 365 que revisa cada link y adjunto. El 91% de ataques empiezan por correo.';
+      if (/mitre|att.?ck/.test(q)) return nombre + ', MITRE ATT&CK cataloga más de 200 técnicas de ataque. ONESEC usa este framework para crear reglas de detección personalizadas.';
+      if (/conector|connector/.test(q)) return nombre + ', los conectores recogen logs de tu infraestructura y los envían a la nube para análisis centralizado.';
+      if (/desktop|laptop|pc/.test(q)) return nombre + ', cada computadora tiene Defender for Endpoint vigilando. Si algo raro pasa, lo detiene y alerta al SOC.';
+      if (/kql|query|consulta/.test(q)) return nombre + ', KQL es el lenguaje para consultar eventos de seguridad en Sentinel. Como Google pero para logs.';
+      if (/zero.?trust/.test(q)) return nombre + ', Zero Trust significa nunca confiar, siempre verificar. Cada acceso se valida sin importar desde dónde.';
+      if (/base.?de.?datos|database|sql/.test(q)) return nombre + ', el servidor de base de datos tiene encriptación, auditoría y alertas ante actividad sospechosa.';
+      if (/app.?server|erp|crm/.test(q)) return nombre + ', el App Server ejecuta las aplicaciones del negocio. Cada transacción genera un log enviado a Sentinel.';
+      if (/qu[eé] (puedo|puede|hac)/.test(q)) return nombre + ', puedes preguntarme sobre cualquier componente de seguridad o decirme: iniciar, siguiente, anterior, detener, phishing, ransomware, insider, o auto demo.';
+      return nombre + ', no tengo esa información localmente. Abre el chat para buscar en la web. Pregúntame sobre Sentinel, Defender, Copilot, Workbooks, Playbooks, SOC, Firewall, o cualquier componente del mapa.';
+    }
+
+    // Map zoom
+    let baseScale = 0.75;
+    function fitMap() {
+      const vp = document.getElementById('avp'); if (!vp) return;
+      baseScale = Math.min(vp.clientWidth / 1600, vp.clientHeight / 980, 1);
+      resetZoom();
+    }
+    function resetZoom() {
+      panX = 0; panY = 0; manualScale = 1;
+      const c = document.getElementById('acanvas');
+      c.style.transform = `translate(-50%,-50%) scale(${baseScale})`;
+    }
+    function zoomTo(x, y, scale) {
+      const s = baseScale * scale;
+      // Canvas is 1600x980, transform-origin at center (800, 490), positioned at left:50% top:50%
+      const tx = -s * (x - 800) - 800;
+      const ty = -s * (y - 490) - 490;
+      document.getElementById('acanvas').style.transform = `translate(${tx}px,${ty}px) scale(${s})`;
+    }
+
+    function zoomToCard(cardId, scale) {
+      const card = document.getElementById(cardId);
+      if (!card) return;
+      const x = card.offsetLeft + card.offsetWidth / 2;
+      const y = card.offsetTop + card.offsetHeight / 2;
+      zoomTo(x, y, scale);
+    }
+
+    // Manual zoom controls
+    let manualScale = 1, panX = 0, panY = 0;
+    function manualZoom(dir) {
+      manualScale = Math.max(0.5, Math.min(3, manualScale + dir * 0.3));
+      applyManualTransform();
+    }
+    function applyManualTransform() {
+      const c = document.getElementById('acanvas');
+      const s = baseScale * manualScale;
+      c.style.transform = `translate(calc(-50% + ${panX}px), calc(-50% + ${panY}px)) scale(${s})`;
+    }
+
+    // === PAUSE SYSTEM ===
+    let paused = false;
+    function togglePause() {
+      paused = !paused;
+      var btn = document.getElementById('btnPause');
+      if (paused) {
+        btn.textContent = '▶ REANUDAR';
+        btn.style.borderColor = 'rgba(46,213,115,.4)';
+        btn.style.color = 'var(--green)';
+        if (synth) synth.pause();
+        toast('⏸ Asistente pausado — Puedes mover el mapa con el mouse', 3000);
+      } else {
+        btn.textContent = '⏸ PAUSAR';
+        btn.style.borderColor = 'rgba(255,165,2,.3)';
+        btn.style.color = 'var(--orange)';
+        if (synth) synth.resume();
+        toast('▶ Asistente reanudado', 2000);
+      }
+    }
+
+    // === MOUSE DRAG + WHEEL ZOOM ===
+    (function() {
+      var avp = document.getElementById('avp');
+      if (!avp) return;
+      var dragging = false, startX = 0, startY = 0, startPanX = 0, startPanY = 0;
+
+      avp.addEventListener('mousedown', function(e) {
+        if (e.target.closest('.card') || e.target.closest('.zoom-controls') || e.target.closest('.metrics-panel') || e.target.closest('.voice-chat') || e.target.closest('button')) return;
+        dragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        startPanX = panX;
+        startPanY = panY;
+        avp.style.cursor = 'grabbing';
+        e.preventDefault();
+      });
+      document.addEventListener('mousemove', function(e) {
+        if (!dragging) return;
+        panX = startPanX + (e.clientX - startX);
+        panY = startPanY + (e.clientY - startY);
+        applyManualTransform();
+      });
+      document.addEventListener('mouseup', function() {
+        if (dragging) { dragging = false; avp.style.cursor = 'grab'; }
+      });
+
+      // Wheel zoom
+      avp.addEventListener('wheel', function(e) {
+        e.preventDefault();
+        var dir = e.deltaY < 0 ? 1 : -1;
+        manualScale = Math.max(0.5, Math.min(3, manualScale + dir * 0.15));
+        applyManualTransform();
+      }, { passive: false });
+
+      avp.style.cursor = 'grab';
+    })();
+
+    // Guide overlay
+    function openGuide() {
+      document.getElementById('guideOv').classList.add('show');
+    }
+    function closeGuide() {
+      document.getElementById('guideOv').classList.remove('show');
+    }
+
+    // Manual step control
+    function stepManual(dir) {
+      if (!scenarioPlaying || !activeSteps) return;
+      if (window.speechSynthesis) window.speechSynthesis.cancel();
+      speaking = false;
+      const newStep = currentStep + dir;
+      if (newStep < activeSkipTo || newStep >= activeSteps.length) return;
+      AudioSys.play('step');
+      currentStep = newStep;
+      manualMode = true;
+      if (manualResolve) { manualResolve(); manualResolve = null; }
+    }
+
+    function showNavButtons(show) {
+      document.getElementById('btnPrev').classList.toggle('show', show);
+      document.getElementById('btnNext').classList.toggle('show', show);
+      document.getElementById('btnPause').classList.toggle('show', show);
+      if (!show) { paused = false; document.getElementById('btnPause').textContent = '⏸ PAUSAR'; }
+    }
+
+    // Pre-fill from localStorage if available
+    (function() {
+      var savedN = localStorage.getItem('onesec_nombre');
+      var savedC = localStorage.getItem('onesec_empresa');
+      if (savedN) document.getElementById('inN').value = savedN;
+      if (savedC) document.getElementById('inC').value = savedC;
+    })();
+
+    // Start app
+    document.getElementById('btnGo').addEventListener('click', () => {
+      AudioSys.init();
+      uN = document.getElementById('inN').value.trim(); uC = document.getElementById('inC').value.trim();
+      if (!uN || !uC) { toast('⚠️ Ingresa nombre y empresa'); return; }
+      // Save to localStorage for persistence
+      localStorage.setItem('onesec_nombre', uN);
+      localStorage.setItem('onesec_empresa', uC);
+      document.getElementById('dN').textContent = uN; document.getElementById('dC').textContent = uC;
+      if (window.OneSecAI) window.OneSecAI.welcome();
+      document.getElementById('landing').classList.add('hidden'); document.getElementById('main').classList.add('active');
+      setTimeout(() => toast('🎉 ¡Bienvenido ' + uN.split(' ')[0] + '! Presiona ▶ CONOCER ECOSISTEMA para empezar', 4000), 500);
+      fitMap();
+      // Load voices
+      synth.getVoices();
+    });
+    document.querySelectorAll('.lform input').forEach(function(inp) {
+      inp.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') document.getElementById('btnGo').click();
+      });
+    });
+
+    // Tabs
+    document.querySelectorAll('.tab').forEach(t => {
+      t.addEventListener('click', () => {
+        if (scenarioPlaying) return;
+        document.querySelectorAll('.tab').forEach(x => x.classList.remove('active')); t.classList.add('active');
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        document.getElementById(t.dataset.t).classList.add('active');
+        const isUC1 = t.dataset.t === 'uc1';
+        document.getElementById('scbar').style.display = isUC1 ? 'flex' : 'none';
+        document.getElementById('stepBar').classList.toggle('show', false);
+        document.getElementById('narbar').classList.toggle('show', false);
+      });
+    });
+
+    // Pick scenario
+    let curSc = 'idle';
+    function pickSc(name) {
+      if (scenarioPlaying) return;
+      AudioSys.play('click');
+      curSc = name;
+      document.querySelectorAll('.sc').forEach(b => b.classList.toggle('active', b.dataset.sc === name));
+      document.querySelectorAll('.card').forEach(c => { c.classList.remove('under-attack', 'defending', 'zoomed'); });
+      resetZoom();
+      // Show/hide play button — always show it now
+      const bp = document.getElementById('btnPlay');
+      bp.classList.add('show');
+      bp.textContent = name === 'idle' ? '▶ CONOCER ECOSISTEMA' : '▶ INICIAR RECORRIDO';
+      document.getElementById('btnCloud').style.display = name === 'idle' ? 'flex' : 'none';
+      document.getElementById('btnStop').classList.remove('show');
+      document.getElementById('stepBar').classList.remove('show');
+      document.getElementById('narbar').classList.remove('show');
+      // Attack line
+      const al = document.getElementById('atkLine');
+      if (name !== 'idle' && SCENARIOS[name]) {
+        al.setAttribute('d', SCENARIOS[name].path);
+        al.setAttribute('stroke', SCENARIOS[name].path ? 'rgba(255,71,87,.5)' : 'rgba(255,71,87,0)');
+      } else {
+        al.setAttribute('d', ''); al.setAttribute('stroke', 'rgba(255,71,87,0)');
+      }
+      if (name === 'idle') toast('🟢 Presiona ▶ para conocer tu ecosistema de seguridad', 3000);
+      else toast({ phishing: '🎣 Phishing seleccionado — Presiona ▶ INICIAR', ransomware: '💀 Ransomware seleccionado — Presiona ▶ INICIAR', insider: '🕵️ Insider seleccionado — Presiona ▶ INICIAR' }[name], 3000);
+  }
+
+  // ====== ECOSYSTEM CONVERSATIONAL TOUR ======
+  async function playEcosystemTour(startFrom) {
+    if (scenarioPlaying) return;
+    scenarioPlaying = true;
+    AudioSys.play('transition');
+
+    const nombre = uN.split(' ')[0] || 'amigo';
+    const empresa = uC || 'tu empresa';
+    const skipTo = startFrom || 0;
+
+    const tour = [
+      { // 0
+        card: null, zoom: null,
+        text: `${nombre}, bienvenido al ecosistema de seguridad que <b>ONESEC</b> implementa y opera para proteger a <b>${empresa}</b>. Vamos a conocer cada pieza, sin tecnicismos, con la verdad... y algun chiste.`,
+        voice: `${nombre}, bienvenido al ecosistema de seguridad que ONESEC implementa y opera para proteger a ${empresa}. Vamos a conocer cada pieza, sin tecnicismos, con la verdad, y algún chiste.`
+      },
+      { // 1
+        card: 'c-attacker', zoom: 1.6,
+        text: `Empecemos por el villano: <b>El Atacante</b>. Puede ser un hacker en pijama, un grupo criminal, o hasta un empleado enojado. Su meta: robar datos de <b>${empresa}</b>, pedir rescate, o causar caos. La buena noticia? <b>ONESEC</b> tiene todo un equipo esperandolo.`,
+        voice: `Empecemos por el villano. El atacante puede ser un hacker en pijama, un grupo criminal organizado, o hasta un empleado enojado. Su objetivo es robar datos de ${empresa}, pedir rescate, o causar caos. Pero la buena noticia es que ONESEC tiene todo un equipo esperándolo.`
+      },
+      { // 2
+        card: 'c-firewall', zoom: 1.6,
+        text: `Este es el <b>Firewall</b>, el bouncer del club. Se para en la puerta y decide quien entra. Si tu IP no le gusta, no pasas. Revisa cada paquete de datos como un agente de aduanas revisando maletas. Ya bloqueo mas de <b>2,400 intentos</b> hoy.`,
+        voice: `Este es el Firewall. Imagínalo como el bouncer del club. Se para en la puerta y decide quién entra y quién no. Si tu IP no le gusta, no pasas. Revisa cada paquete de datos como un agente de aduanas revisando maletas. Y hoy ya bloqueó más de 2,400 intentos.`
+      },
+      { // 3
+        card: 'c-exchange', zoom: 1.6,
+        text: `<b>Exchange Online</b>: el correo de ${empresa}. Dato importante: el <b>91% de los ataques</b> empiezan por email. Por eso tiene un guardaespaldas llamado Defender que revisa cada link y adjunto. Si un PDF huele raro... BLOQUEADO. No importa si dice que es del CEO.`,
+        voice: `Exchange Online, el correo de ${empresa}. Un dato importante: el 91 por ciento de los ataques empiezan por un correo electrónico. Por eso tiene un guardaespaldas llamado Defender for Office 365 que revisa cada link, cada adjunto. Si un PDF huele raro, bloqueado. No importa si dice que es del CEO.`
+      },
+      { // 4
+        card: 'c-desktop', zoom: 1.6,
+        text: `<b>El Desktop</b>, la computadora de cada empleado de ${empresa}. Tiene un guardaespaldas invisible: <b>Defender for Endpoint</b>. Vigila TODO. Si un programa empieza a cifrar archivos como loco, lo detiene y grita ALERTA. Es como tener un policia dentro de cada maquina.`,
+        voice: `El Desktop, la computadora de cada empleado de ${empresa}. Tiene un guardaespaldas invisible llamado Defender for Endpoint. Vigila absolutamente todo. Si un programa empieza a cifrar archivos como loco, lo detiene y grita alerta. Es como tener un policía dentro de cada máquina.`
+      },
+      { // 5
+        card: 'c-user', zoom: 1.6,
+        text: `<b>El Usuario</b>. ${nombre}, sin ofender, pero el usuario es el eslabon mas importante... y a veces el mas debil. Por eso usamos <b>MFA</b>: ademas de tu contraseña, apruebas en tu celular. Es como doble cerradura. Molesto? Si. Pero nadie entra sin tu permiso.`,
+        voice: `El usuario. ${nombre}, sin ofender, pero el usuario es el eslabón más importante y a veces el más débil. Por eso usamos MFA: además de tu contraseña, necesitas aprobar en tu celular. Es como tener doble cerradura en la puerta. ¿Molesto? Sí. ¿Pero nadie entra sin tu permiso? También sí.`
+      },
+      { // 6
+        card: 'c-dbserver', zoom: 1.6,
+        text: `<b>El Servidor de Base de Datos</b>: aqui viven los datos mas valiosos de ${empresa}. Clientes, finanzas, secretos. Es la boveda del banco. Tiene encriptacion, auditoria y alertas si alguien hace algo sospechoso.`,
+        voice: `El servidor de base de datos. Aquí viven los datos más valiosos de ${empresa}: clientes, finanzas, secretos. Es como la bóveda del banco. Tiene encriptación para que los datos sean ilegibles sin la llave, auditoría para saber quién tocó qué, y alertas si alguien hace algo sospechoso.`
+      },
+      { // 7
+        card: 'c-appserver', zoom: 1.6,
+        text: `<b>App Server</b>: las aplicaciones del negocio. ERP, CRM, portales. Cada clic genera un log. Nada se pierde, todo se registra. Es como tener camaras de seguridad en cada pasillo digital de ${empresa}.`,
+        voice: `El App Server, las aplicaciones del negocio. ERP, CRM, portales. Cada clic y cada transacción genera un registro. Nada se pierde, todo se registra. Es como tener cámaras de seguridad en cada pasillo digital de ${empresa}.`
+      },
+      { // 8
+        card: 'c-connectors', zoom: 1.5,
+        text: `Los <b>Conectores</b>: los carteros digitales. Recogen los logs de tu oficina y los envian a la nube. Sin ellos, seria como tener camaras de seguridad que <b>nadie mira</b>. ONESEC configura y mantiene cada conector.`,
+        voice: `Los Conectores. Son los carteros digitales. Recogen los logs de tu oficina, firewalls, servidores, todo, y los envían a la nube. Sin ellos, sería como tener cámaras de seguridad que nadie mira. ONESEC configura y mantiene cada uno de estos conectores.`
+      },
+      { // 9 — START OF CLOUD SECTION
+        card: 'c-loganalytics', zoom: 1.5,
+        text: `${skipTo >= 9 ? nombre + ', entramos directo a la nube. ' : ''}<b>Log Analytics</b>: el lago de datos donde llega TODA la informacion de seguridad de ${empresa}. Imagina un detective que guarda cada pista en una mega-carpeta. Luego puedes buscar: <i>"Muestrame los logins fallidos de las ultimas 24 horas"</i> usando un lenguaje llamado <b>KQL</b>. Es como Google, pero para eventos de seguridad.`,
+        voice: `${skipTo >= 9 ? nombre + ', entramos directo a la nube. ' : ''}Log Analytics, el lago de datos. Aquí llega toda la información de seguridad de ${empresa}. Imagina un detective que guarda cada pista en una mega-carpeta organizada. Luego puedes buscar cosas como: muéstrame los logins fallidos de las últimas 24 horas. Eso se hace con un lenguaje llamado KQL. Es como Google, pero para eventos de seguridad.`
+      },
+      { // 10
+        card: 'c-sentinel', zoom: 1.5,
+        text: `Y ahora el JEFE: <b>Microsoft Sentinel</b>. El cerebro que ONESEC opera para ${empresa}. Recibe <b>1.2 millones de eventos</b>, los correlaciona con inteligencia artificial y dice: "Este patron de fuerza bruta mas movimiento lateral mas cifrado... es RANSOMWARE". Sherlock Holmes digital, 24/7, sin dormir ni quejarse.`,
+        voice: `Y ahora el jefe. Microsoft Sentinel. El cerebro que ONESEC opera para ${empresa}. Recibe 1.2 millones de eventos, los correlaciona con inteligencia artificial y dice: este patrón de fuerza bruta más movimiento lateral más cifrado, esto es ransomware. Es como tener un Sherlock Holmes digital trabajando 24 horas, 7 días a la semana, sin dormir y sin quejarse.`
+      },
+      { // 11
+        card: 'c-mitre', zoom: 1.5,
+        text: `<b>MITRE ATT&CK</b>: el diccionario universal de maldades hacker. Mas de <b>200 tecnicas</b> catalogadas. Es un manual que dice: "Si ves ESTO, estan intentando ESTO OTRO". ONESEC usa este diccionario para crear <b>85 reglas</b> y <b>24 queries de caceria</b> personalizadas para ${empresa}.`,
+        voice: `MITRE ATT&CK. El diccionario universal de maldades hacker. Cataloga más de 200 técnicas que usan los atacantes. Es como un manual que dice: si ves esto, probablemente están intentando esto otro. ONESEC usa este diccionario para crear 85 reglas y 24 queries de cacería personalizadas para ${empresa}.`
+      },
+      { // 12
+        card: 'c-copilot', zoom: 1.5,
+        text: `<b>Security Copilot</b>: tu asistente de IA. ${nombre}, le preguntas: <i>"Quien fue afectado?"</i> y en <b>30 segundos</b> te da un resumen ejecutivo que puedes enviarle al jefe sin que te mire confundido. Es como ChatGPT pero para seguridad, con acceso a TODOS los datos de ${empresa}. ONESEC ya lo tiene integrado con Sentinel.`,
+        voice: `Security Copilot, tu asistente de inteligencia artificial. ${nombre}, le preguntas: ¿quién fue afectado? Y en 30 segundos te da un resumen ejecutivo que puedes enviarle al jefe sin que te mire confundido. Es como ChatGPT, pero para seguridad, y con acceso a todos los datos de ${empresa}. ONESEC ya lo tiene integrado con Sentinel.`
+      },
+      { // 13
+        card: 'c-playbooks', zoom: 1.5,
+        text: `Los <b>Playbooks</b>: recetas automaticas de defensa creadas por ONESEC. Cuando Sentinel detecta algo malo, el Playbook se ejecuta SOLITO: bloquea al atacante, aisla la computadora, notifica por Teams y crea un ticket. Todo en segundos. <b>Sin que nadie mueva un dedo.</b>`,
+        voice: `Los Playbooks, las recetas automáticas de defensa creadas por ONESEC. Cuando Sentinel detecta algo malo, el Playbook se ejecuta solito: bloquea al atacante, aísla la computadora infectada, notifica al equipo por Teams y crea un ticket. Todo en segundos, sin que nadie tenga que mover un dedo.`
+      },
+      { // 14
+        card: 'c-workbooks', zoom: 1.5,
+        text: `Los <b>Workbooks</b>: los dashboards ejecutivos. ${nombre}, aca es donde la data se convierte en algo que tu jefe entiende. Graficas, KPIs, drill-down interactivos. ONESEC los diseña para que en una reunion puedas decir: "Bloqueamos 2,400 ataques este mes" y mostrar la grafica. Hasta se exportan a PDF para los que todavia imprimen cosas.`,
+        voice: `Los Workbooks, los dashboards ejecutivos. ${nombre}, acá es donde la data se convierte en algo que tu jefe entiende. Gráficas, KPIs, drill-down interactivos. ONESEC los diseña para que en una reunión puedas decir: bloqueamos 2,400 ataques este mes, y mostrar la gráfica bonita. Hasta se exportan a PDF para los que todavía imprimen cosas.`
+      },
+      { // 15
+        card: 'c-logicapps', zoom: 1.5,
+        text: `<b>Logic Apps</b>: el director de orquesta. Conecta mas de <b>400 servicios</b>: Teams, Slack, Jira, ServiceNow... Cuando pasa algo, coordina: "Tu bloqueas, tu notificas, tu haces el reporte". Todo visual, arrastra y suelta. ONESEC configura estas automatizaciones a medida de ${empresa}.`,
+        voice: `Logic Apps, el director de orquesta de la automatización. Conecta más de 400 servicios: Teams, Slack, Jira, ServiceNow. Cuando pasa algo, coordina la respuesta: tú bloqueas, tú notificas, tú creas el reporte. Todo visual, arrastra y suelta. ONESEC configura estas automatizaciones a la medida de ${empresa}.`
+      },
+      { // 16
+        card: 'c-soc', zoom: 1.4,
+        text: `Y aqui esta el corazon de todo: <b>el SOC de ONESEC</b>. Nuestro Centro de Operaciones funciona <b>24/7/365</b>. 🔴 <b>Red Team</b>: atacamos TU infraestructura antes que los malos. 🔵 <b>Blue Team</b>: defendemos en tiempo real. 🟢 <b>Green Team</b>: mejoramos continuamente. ${nombre}, si algo pasa a las 3am de un domingo en ${empresa}, <b>ONESEC</b> ya esta trabajando en ello.`,
+        voice: `Y aquí está el corazón de todo. El SOC de ONESEC. Nuestro Centro de Operaciones de Seguridad funciona 24 horas, 7 días, 365 días del año. El Red Team ataca tu infraestructura antes que los malos, para encontrar las debilidades primero. El Blue Team defiende en tiempo real. Y el Green Team mejora continuamente los procesos y las reglas. ${nombre}, si algo pasa a las 3 de la mañana de un domingo en ${empresa}, ONESEC ya está trabajando en ello.`
+      },
+      { // 17
+        card: null, zoom: null,
+        text: `${nombre}, ese es el ecosistema completo que <b>ONESEC</b> implementa, opera y mejora para proteger a <b>${empresa}</b>. Cada pieza esta conectada: desde el firewall hasta el SOC, desde el primer email hasta el reporte ejecutivo. Todo diseñado para que tu te concentres en tu negocio y nosotros nos ocupemos de la seguridad. Ahora, quieres ver como reaccionamos ante un ataque real? Selecciona Phishing, Ransomware o Insider arriba. 💪`,
+        voice: `${nombre}, ese es el ecosistema completo que ONESEC implementa, opera y mejora continuamente para proteger a ${empresa}. Cada pieza está conectada: desde el firewall hasta el SOC, desde el primer email sospechoso hasta el reporte ejecutivo. Todo diseñado para que tú te concentres en tu negocio y nosotros nos ocupemos de la seguridad. Ahora, ¿quieres ver cómo reaccionamos ante un ataque real? Selecciona un escenario de Phishing, Ransomware o Insider arriba y presiona iniciar recorrido.`
+      }
+    ];
+
+    activeSteps = tour;
+    activeSkipTo = skipTo;
+    currentStep = skipTo;
+
+    document.getElementById('btnPlay').classList.remove('show');
+    document.getElementById('btnCloud').style.display = 'none';
+    document.getElementById('btnStop').classList.add('show');
+    showNavButtons(true);
+    document.getElementById('stepBar').classList.add('show');
+    document.getElementById('narbar').classList.add('show');
+
+    // Build step indicators
+    const stepsToShow = tour.slice(skipTo);
+    const ind = document.getElementById('stepInd');
+    ind.innerHTML = '';
+    stepsToShow.forEach((_, i) => {
+      if (i > 0) { const ln = document.createElement('div'); ln.className = 'step-line'; ln.id = 'sl' + i; ind.appendChild(ln); }
+      const d = document.createElement('div'); d.className = 'step-dot'; d.id = 'sd' + i; d.textContent = i + 1; ind.appendChild(d);
+    });
+
+    while (currentStep < tour.length && scenarioPlaying) {
+      const i = currentStep;
+      manualMode = false;
+      const displayIdx = i - skipTo;
+      const step = tour[i];
+
+      // Update step indicators
+      for (let j = 0; j < stepsToShow.length; j++) {
+        const dot = document.getElementById('sd' + j);
+        dot.classList.remove('current', 'done');
+        if (j < displayIdx) dot.classList.add('done');
+        if (j === displayIdx) dot.classList.add('current');
+        if (j > 0) { const ln = document.getElementById('sl' + j); ln.classList.toggle('done', j <= displayIdx); }
+      }
+
+      document.getElementById('stepDesc').innerHTML = `Paso <b>${displayIdx + 1}/${stepsToShow.length}</b> — ${step.text}`;
+      document.getElementById('narText').innerHTML = step.text;
+
+      // Clear previous highlights
+      document.querySelectorAll('.card').forEach(c => { c.classList.remove('zoomed', 'under-attack', 'defending'); });
+
+      if (step.card) {
+        const cardEl = document.getElementById(step.card);
+        if (cardEl) { cardEl.classList.add('defending', 'zoomed'); }
+        zoomToCard(step.card, step.zoom);
+      } else {
+        resetZoom();
+        manualScale = 1;
+      }
+
+      // Speak + wait (can be interrupted by manual step)
+      if (voiceOn && step.voice) {
+        AudioSys.play('scan');
+        await speak(step.voice);
+        if (!scenarioPlaying || manualMode) { if (manualMode) continue; break; }
+        await new Promise(r => { manualResolve = r; setTimeout(r, 600); });
+        if (manualMode) continue;
+      } else {
+        await new Promise(r => { manualResolve = r; setTimeout(r, 4000); });
+        if (manualMode) continue;
+      }
+
+      if (!scenarioPlaying) break;
+      currentStep++;
+    }
+
+    if (scenarioPlaying && currentStep >= tour.length) {
+      for (let j = 0; j < stepsToShow.length; j++) {
+        const dot = document.getElementById('sd' + j);
+        dot.classList.remove('current');
+        dot.classList.add('done');
+      }
+      document.getElementById('stepDesc').innerHTML = '<b>✅ Tour completado</b> — Ya conoces el ecosistema de seguridad de ONESEC.';
+      document.getElementById('narText').innerHTML = '✅ <b>Tour completado.</b> Ahora prueba un escenario de ataque para ver a ONESEC en accion.';
+      AudioSys.play('success');
+      if (voiceOn) await speak(`${nombre}, tour completado. Ahora ya conoces cómo ONESEC protege a ${empresa}. Selecciona un escenario de ataque para vernos en acción.`);
+      setTimeout(() => {
+        resetZoom();
+        manualScale = 1;
+        document.querySelectorAll('.card').forEach(c => { c.classList.remove('zoomed', 'under-attack', 'defending'); });
+      }, 2000);
+    }
+
+    scenarioPlaying = false;
+    activeSteps = null;
+    manualResolve = null;
+    document.getElementById('btnStop').classList.remove('show');
+    showNavButtons(false);
+    document.getElementById('btnPlay').classList.add('show');
+    document.getElementById('btnPlay').textContent = '▶ CONOCER ECOSISTEMA';
+    document.getElementById('btnCloud').style.display = 'flex';
+  }
+
+  // Play scenario step by step with zoom + voice
+  async function playScenario() {
+          if (scenarioPlaying) return;
+          if (curSc === 'idle') { playEcosystemTour(); return; }
+          if (!SCENARIOS[curSc]) return;
+          scenarioPlaying = true;
+          manualMode = false;
+          AudioSys.play('warning');
+          const sc = SCENARIOS[curSc];
+          const steps = sc.steps;
+          activeSteps = steps;
+          activeSkipTo = 0;
+          currentStep = 0;
+
+          document.getElementById('btnPlay').classList.remove('show');
+          document.getElementById('btnStop').classList.add('show');
+          document.getElementById('stepBar').classList.add('show');
+          document.getElementById('narbar').classList.add('show');
+          showNavButtons(true);
+
+          // Build step indicators
+          const ind = document.getElementById('stepInd');
+          ind.innerHTML = '';
+          steps.forEach((_, i) => {
+            if (i > 0) { const ln = document.createElement('div'); ln.className = 'step-line'; ln.id = 'sl' + i; ind.appendChild(ln); }
+            const d = document.createElement('div'); d.className = 'step-dot'; d.id = 'sd' + i; d.textContent = i + 1; ind.appendChild(d);
+          });
+
+          while (currentStep < steps.length && scenarioPlaying) {
+            const i = currentStep;
+            const step = steps[i];
+            manualMode = false;
+
+            // Update step indicators
+            for (let j = 0; j < steps.length; j++) {
+              const dot = document.getElementById('sd' + j);
+              dot.classList.remove('current', 'done');
+              if (j < i) dot.classList.add('done');
+              if (j === i) dot.classList.add('current');
+              if (j > 0) { const ln = document.getElementById('sl' + j); ln.classList.toggle('done', j <= i); }
+            }
+
+            // Update description
+            document.getElementById('stepDesc').innerHTML = `Paso <b>${i + 1}/${steps.length}</b> — ${step.text}`;
+            document.getElementById('narText').innerHTML = step.text;
+
+            // Highlight card
+            document.querySelectorAll('.card').forEach(c => { c.classList.remove('zoomed', 'under-attack', 'defending'); });
+            const cardEl = document.getElementById(step.card);
+            if (cardEl) {
+              if (['c-attacker'].includes(step.card) || (curSc === 'insider' && ['c-user', 'c-dbserver', 'c-appserver'].includes(step.card) && i < 3)) {
+                cardEl.classList.add('under-attack');
+              } else {
+                cardEl.classList.add('defending');
+              }
+              cardEl.classList.add('zoomed');
+            }
+
+            // Zoom to the card's actual center position
+            zoomToCard(step.card, step.zoom);
+
+            // Speak (interruptible by manual nav)
+            if (voiceOn && step.voice) {
+              AudioSys.play('scan');
+              await speak(step.voice);
+              if (!scenarioPlaying) break;
+              await new Promise(r => { manualResolve = r; setTimeout(r, 800); });
+              if (manualMode) continue;
+            } else {
+              await new Promise(r => { manualResolve = r; setTimeout(r, 3500); });
+              if (manualMode) continue;
+            }
+
+            currentStep++;
+          }
+
+          if (scenarioPlaying) {
+            // Mark all done
+            for (let j = 0; j < steps.length; j++) {
+              const dot = document.getElementById('sd' + j);
+              dot.classList.remove('current');
+              dot.classList.add('done');
+            }
+            document.getElementById('stepDesc').innerHTML = '<b>✅ Escenario completado</b> — Todos los pasos ejecutados correctamente.';
+            document.getElementById('narText').innerHTML = '✅ <b>¡Escenario completado!</b> La amenaza fue detectada y neutralizada exitosamente.';
+            AudioSys.play('success');
+            if (window.OneSecAI) window.OneSecAI.explainScenario(curSc);
+            if (voiceOn) await speak('Escenario completado. La amenaza fue detectada y neutralizada exitosamente por el ecosistema de seguridad Microsoft y el SOC de ONESEC.');
+            setTimeout(() => {
+              resetZoom();
+              document.querySelectorAll('.card').forEach(c => { c.classList.remove('zoomed', 'under-attack', 'defending'); });
+            }, 2000);
+          }
+
+          scenarioPlaying = false;
+          activeSteps = null;
+          manualResolve = null;
+          showNavButtons(false);
+          document.getElementById('btnStop').classList.remove('show');
+          document.getElementById('btnPlay').classList.add('show');
+    }
+
+    function stopScenario() {
+      scenarioPlaying = false;
+      synth.cancel();
+      speaking = false;
+      manualMode = false;
+      activeSteps = null;
+      if (manualResolve) { manualResolve(); manualResolve = null; }
+      resetZoom();
+      document.querySelectorAll('.card').forEach(c => { c.classList.remove('zoomed', 'under-attack', 'defending'); });
+      document.getElementById('btnStop').classList.remove('show');
+      document.getElementById('btnPlay').classList.add('show');
+      document.getElementById('btnCloud').style.display = curSc === 'idle' ? 'flex' : 'none';
+      document.getElementById('stepBar').classList.remove('show');
+      document.getElementById('narbar').classList.remove('show');
+      showNavButtons(false);
+      if (autoDemoRunning) {
+        autoDemoRunning = false;
+        document.getElementById('ademoBadge').classList.remove('show');
+        document.getElementById('ademoProgress').classList.remove('show');
+        stopMetrics();
+        stopFlowParticles();
+      }
+      toast('⏹ Recorrido detenido', 2000);
+    }
+
+    // Detail overlay
+    function openDet(k) {
+      if (scenarioPlaying) return;
+      const d = DT[k]; if (!d) return;
+      const feats = d.f ? '<div class="df">' + d.f.map(f => '<div class="dfi"><span class="dd" style="background:' + f.c + '"></span>' + f.l + '</div>').join('') + '</div>' : '';
+      document.getElementById('detBox').innerHTML = `<button class="dx" onclick="closeDet()">✕</button><h3 style="color:${d.c}">${d.i} ${d.t}</h3><div class="ds">${d.s}</div><p>${d.b}</p>${feats}`;
+      document.getElementById('ov').classList.add('show');
+    }
+    function closeDet() { document.getElementById('ov').classList.remove('show'); }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeDet(); closeGuide(); if (scenarioPlaying) stopScenario(); } });
+
+    window.addEventListener('resize', fitMap);
+    setTimeout(fitMap, 100);
+    // Preload voices
+    if (synth) synth.getVoices();
+    if (synth) synth.onvoiceschanged = () => synth.getVoices();
+  </script>
+  <script src="ai_core.js"></script>
+</body>
+
+</html>
